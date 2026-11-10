@@ -1,0 +1,253 @@
+@import "./motion.css";
+
+/* linen's tokens: paper, rules, and ink.
+ *
+ * An app imports this after Tailwind and gives it two things of its own: the
+ * hue its paper and ink share (`--hue` on the root) and its faces
+ * (`--font-sans`, `--font-display`, `--font-mono` in its own `@theme`). It may
+ * also tune `--color-ink` there, since an ink's lightness and chroma read
+ * differently at each hue. Everything else is mixed from those.
+ *
+ * This block is the configuration, not a copy of it: Tailwind generates its
+ * utilities from these variables, so a colour or a step exists once. `static`
+ * keeps every variable in the stylesheet whether or not a utility used it.
+ *
+ * Every colour that differs between the two themes says so on its own line,
+ * as `light-dark(light, dark)`. Dark is selected rather than inverted (its
+ * steps are their own values), but a step and its counterpart are one
+ * declaration, so neither can be revised without the other. */
+
+/* The components' own classes, so an app's Tailwind sees them. */
+@source "../";
+
+@layer base {
+    :root {
+        --hue: 296;
+    }
+}
+
+@theme static {
+    --font-sans:
+        ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
+    --font-display: var(--font-sans);
+    --font-mono:
+        ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
+        monospace;
+
+    /* The ink, and the two states held in reserve. Everything below them is
+     * mixed, not picked. */
+    --color-ink: light-dark(
+        oklch(46% 0.11 var(--hue)),
+        oklch(76% 0.105 var(--hue))
+    );
+    --color-positive: light-dark(oklch(52% 0.1 158), oklch(72% 0.09 158));
+    --color-danger: light-dark(oklch(50% 0.14 27), oklch(68% 0.11 25));
+    --color-warn: light-dark(oklch(53.5% 0.11 80), oklch(74% 0.09 82));
+
+    /* Paper: the ink's own hue at a whisper of chroma, so the page is one
+     * temperature and no neutral has a hue of its own. */
+    --color-bg: light-dark(
+        oklch(98.3% 0.004 var(--hue)),
+        oklch(17.5% 0.008 var(--hue))
+    );
+    /* White, but declared at the ink's hue: color-mix interpolates hue even
+     * at zero chroma, and a hue of 0 would drag every mixed tint toward
+     * rose. */
+    --color-surface: light-dark(
+        oklch(100% 0 var(--hue)),
+        oklch(21% 0.009 var(--hue))
+    );
+    --color-sunken: light-dark(
+        oklch(95.8% 0.006 var(--hue)),
+        oklch(14.5% 0.007 var(--hue))
+    );
+    --color-border: light-dark(
+        oklch(91.5% 0.008 var(--hue)),
+        oklch(28% 0.012 var(--hue))
+    );
+    --color-border-strong: light-dark(
+        oklch(86.5% 0.014 var(--hue)),
+        oklch(34% 0.016 var(--hue))
+    );
+    --color-text: light-dark(
+        oklch(22% 0.016 var(--hue)),
+        oklch(93% 0.007 var(--hue))
+    );
+    --color-text-secondary: light-dark(
+        oklch(45% 0.02 var(--hue)),
+        oklch(73% 0.014 var(--hue))
+    );
+    --color-text-muted: light-dark(
+        oklch(52.5% 0.02 var(--hue)),
+        oklch(61% 0.014 var(--hue))
+    );
+
+    /* The ink where it marks an affordance, and its tint as a mix. The dark
+     * theme needs a deeper draught of it: a light ink thins out faster
+     * against a dark ground. */
+    --color-accent: var(--color-ink);
+    --color-accent-weak: light-dark(
+        color-mix(in oklch, var(--color-ink) 11%, var(--color-surface)),
+        color-mix(in oklch, var(--color-ink) 24%, var(--color-surface))
+    );
+
+    /* The ink's shadow behind a dialog. */
+    --color-scrim: light-dark(
+        oklch(25% 0.02 var(--hue) / 0.35),
+        oklch(8% 0.01 var(--hue) / 0.6)
+    );
+
+    /* Size / line. Hierarchy comes from weight and colour before size. The
+     * two below the scale are for marks rather than reading: a count on a
+     * badge or a key, and a tab bar's labels under their icons. */
+    --text-3xs: 10px;
+    --text-3xs--line-height: 14px;
+    --text-2xs: 11px;
+    --text-2xs--line-height: 16px;
+    --text-xs: 12px;
+    --text-xs--line-height: 16px;
+    --text-sm: 13px;
+    --text-sm--line-height: 20px;
+    --text-base: 14px;
+    --text-base--line-height: 22px;
+    --text-md: 16px;
+    --text-md--line-height: 24px;
+    --text-lg: 20px;
+    --text-lg--line-height: 28px;
+    --text-xl: 28px;
+    --text-xl--line-height: 32px;
+    --text-hero: 40px;
+    --text-hero--line-height: 44px;
+
+    /* 4px base. Tailwind's spacing scale multiplies this, so `p-4` is 16px. */
+    --spacing: 4px;
+
+    /* A control and the field beside it share one radius; what sits inside a
+     * control, such as an option or a chip, takes the smaller one. */
+    --radius-check: 3px;
+    --radius-input: 6px;
+    --radius-button: 8px;
+    --radius-card: 12px;
+    --radius-dialog: 16px;
+
+    /* The inset every card's contents share, so a title, a heading, and the
+     * values under it start on one edge. It widens with the screen below. */
+    --spacing-gutter: 12px;
+
+    /* The only shadow in the system belongs to what floats. */
+    --shadow-overlay: 0 8px 24px -8px
+        light-dark(oklch(22% 0.016 var(--hue) / 0.18), oklch(0% 0 0 / 0.5));
+
+    /* Outer control heights include borders and padding. Composite controls
+     * own their height; their children fill the available space. */
+    --height-record: 56px;
+    --height-control: 32px;
+    --height-control-compact: 28px;
+    --height-control-inline: 24px;
+
+    --height-row: 44px;
+    --height-row-compact: 36px;
+    --height-toolbar: 48px;
+    --height-sections: 44px;
+    --width-rail: 220px;
+    /* The rail folded to its icons: one control-height square inside the
+     * rail's own 12px gutters. */
+    --width-rail-compact: 56px;
+    /* The phone's tab bar, excluding the safe-area inset it adds beneath
+     * itself. */
+    --height-tabbar: 56px;
+
+    /* The content column. Every band of chrome centres its contents in this
+     * width, so nothing on a screen is wider than anything else on it. */
+    --width-content: 1180px;
+}
+
+@media (width >= 48rem) {
+    :root {
+        --spacing-gutter: 16px;
+    }
+}
+
+/* The band the status bar covers when the page is drawn beneath it, as in an
+ * app saved to a phone's home screen with a translucent status bar; nothing in
+ * a browser's own window. The frame starts below it, and what sticks to the
+ * top sticks below it. */
+:root {
+    --inset-top: env(safe-area-inset-top, 0px);
+}
+
+/* What floats at the foot of a phone's screen, a toast, stands clear of the
+ * tab bar while one is on the page, and on the bottom edge otherwise. */
+:root:has([data-tab-bar]) {
+    --inset-tabbar: var(--height-tabbar);
+}
+
+/* Which half of every `light-dark()` above is in force.
+ *
+ * The page follows prefers-color-scheme, and data-theme overrides it in both
+ * directions. Because the tokens resolve against the colour scheme in force
+ * rather than against a selector, this is the whole of theme switching. */
+@layer base {
+    html {
+        color-scheme: light dark;
+    }
+
+    :root[data-theme="light"] {
+        color-scheme: light;
+    }
+
+    :root[data-theme="dark"] {
+        color-scheme: dark;
+    }
+
+    body {
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        font-family: var(--font-sans);
+        font-size: var(--text-base);
+        line-height: var(--text-base--line-height);
+        -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection {
+        background: color-mix(in oklch, var(--color-ink) 22%, transparent);
+    }
+
+    /* The ink is an affordance colour, so it marks focus rather than
+     * decorating a surface. */
+    :focus-visible {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 1px;
+    }
+
+    /* A native control paints its own mark, and the colour it reaches for is
+     * the operating system's rather than this one's. */
+    input {
+        accent-color: var(--color-accent);
+    }
+
+    /* Scrolling panes take the page's colours. */
+    * {
+        scrollbar-color: var(--color-border-strong) transparent;
+        scrollbar-width: thin;
+    }
+}
+
+/* The mark on a row that just arrived, layered over whatever the row is
+ * painted with so its hover and selection colours stay its own. Motion
+ * carries `--arrival` from 1 to 0 (SettlingRows.tsx). */
+@property --arrival {
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 0;
+}
+
+.arrival {
+    --arrival-tint: color-mix(
+        in oklch,
+        var(--color-accent-weak) calc(var(--arrival) * 100%),
+        transparent
+    );
+    background-image: linear-gradient(var(--arrival-tint), var(--arrival-tint));
+}

@@ -1,0 +1,179 @@
+/* The motion CSS runs (LANGUAGE.md, "Motion").
+ *
+ * Base UI decides when its popups, dialogs and panels mount and unmount. It
+ * marks an entrance's first frame with [data-starting-style] and an exit with
+ * [data-ending-style], and keeps the element until the transition ends. A
+ * popup or dialog that mounts already open has no first frame for Base UI to
+ * mark, so @starting-style says the same for it. They move to the springs
+ * motion.tsx publishes as --motion-leave, --motion-state and
+ * --motion-enter, which stillness makes 0s.
+ *
+ * Only opacity and transforms move, so the compositor runs these at the
+ * display's own rate. A panel's height is the exception: it is the change. */
+
+/* Stillness outranks the published springs, from the frame it is asked for. */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --motion-leave: 0s !important;
+        --motion-state: 0s !important;
+        --motion-enter: 0s !important;
+    }
+}
+
+@layer components {
+    /* A popup grows out of the middle of the control's edge it opened from,
+     * and leaves toward it faster. Leaving, it is inert (renderLeaving in
+     * motion.tsx), so the next control a hand reaches for
+     * answers at once. */
+    .popup {
+        transform-origin: var(--transform-origin);
+        transition:
+            opacity var(--motion-enter),
+            scale var(--motion-enter);
+    }
+
+    .popup[data-starting-style] {
+        opacity: 0;
+        scale: 0.96;
+    }
+
+    @starting-style {
+        .popup {
+            opacity: 0;
+            scale: 0.96;
+        }
+    }
+
+    .popup[data-ending-style] {
+        opacity: 0;
+        scale: 0.98;
+        transition:
+            opacity var(--motion-leave),
+            scale var(--motion-leave);
+    }
+
+    /* A toast arrives over an entrance and fades as it leaves. A swipe
+     * carries it with the finger (Base UI's --toast-swipe-movement), and it
+     * leaves the way it was swiped. */
+    .toast {
+        translate: var(--toast-swipe-movement-x, 0)
+            var(--toast-swipe-movement-y, 0);
+        transition:
+            opacity var(--motion-enter),
+            scale var(--motion-enter);
+    }
+
+    .toast[data-starting-style] {
+        opacity: 0;
+        scale: 0.985;
+    }
+
+    .toast[data-ending-style] {
+        opacity: 0;
+        transition:
+            opacity var(--motion-leave),
+            translate var(--motion-leave);
+    }
+
+    .toast[data-ending-style][data-swipe-direction="down"] {
+        translate: var(--toast-swipe-movement-x, 0)
+            calc(var(--toast-swipe-movement-y, 0px) + 150%);
+    }
+
+    .toast[data-ending-style][data-swipe-direction="right"] {
+        translate: calc(var(--toast-swipe-movement-x, 0px) + 150%)
+            var(--toast-swipe-movement-y, 0);
+    }
+
+    /* The mark on a control that opens something turns while it is open:
+     * Base UI says so on the control, as a popup or as a panel. */
+    .turning {
+        transition: rotate var(--motion-state);
+    }
+
+    :is([data-popup-open], [data-panel-open]) .turning {
+        rotate: 180deg;
+    }
+
+    /* A switch's thumb travels to the side it was turned to. */
+    .thumb {
+        transition: translate var(--motion-state);
+    }
+
+    /* A dialog is modal and alone, so it rises from the middle of the page
+     * with its scrim rather than from a control. */
+    .dialog-backdrop {
+        transition: opacity var(--motion-enter);
+    }
+
+    .dialog-backdrop[data-starting-style],
+    .dialog-backdrop[data-ending-style] {
+        opacity: 0;
+    }
+
+    @starting-style {
+        .dialog-backdrop {
+            opacity: 0;
+        }
+    }
+
+    .dialog-backdrop[data-ending-style] {
+        pointer-events: none;
+        transition: opacity var(--motion-leave);
+    }
+
+    .dialog {
+        transition:
+            opacity var(--motion-enter),
+            scale var(--motion-enter);
+    }
+
+    .dialog[data-starting-style],
+    .dialog[data-ending-style] {
+        opacity: 0;
+        scale: 0.97;
+    }
+
+    @starting-style {
+        .dialog {
+            opacity: 0;
+            scale: 0.97;
+        }
+    }
+
+    .dialog[data-ending-style] {
+        transition:
+            opacity var(--motion-leave),
+            scale var(--motion-leave);
+    }
+
+    /* A panel unfolds from the control above it to its own height and folds
+     * back faster, inert as it goes. It holds its content's margins, so the
+     * height it travels to is the height it rests at, and the clip margin
+     * keeps a focus ring at its edge whole. */
+    .panel {
+        display: flow-root;
+        height: var(--collapsible-panel-height);
+        overflow: clip;
+        overflow-clip-margin: 3px;
+        transition:
+            height var(--motion-enter),
+            opacity var(--motion-enter);
+    }
+
+    .panel[data-starting-style],
+    .panel[data-ending-style] {
+        height: 0;
+        opacity: 0;
+    }
+
+    .panel[data-ending-style] {
+        transition:
+            height var(--motion-state),
+            opacity var(--motion-state);
+    }
+
+    .panel[hidden]:not([hidden="until-found"]) {
+        display: none;
+    }
+}

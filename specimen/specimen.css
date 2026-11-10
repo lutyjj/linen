@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@import "@fontsource-variable/instrument-sans";
+@import "../src/styles/linen.css";
+
+@source "./";
+
+@theme {
+    --font-sans:
+        "Instrument Sans Variable", ui-sans-serif, system-ui, -apple-system,
+        "Segoe UI", sans-serif;
+}
