@@ -7,9 +7,10 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
     root: "specimen",
     plugins: [react(), tailwindcss()],
-    // One page, loaded at once; nothing ships from it.
+    // One page, loaded at once; nothing ships from it, so it builds apart from
+    // the package's dist.
     build: {
-        outDir: "../dist",
+        outDir: "dist",
         emptyOutDir: true,
         chunkSizeWarningLimit: 1024,
     },

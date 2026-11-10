@@ -24,11 +24,13 @@
         };
       });
 
-      # Formatting, lint, types and tests, then the specimen's build, which
-      # compiles every component through Tailwind and Vite as an app does.
-      # Tailwind drops a class it does not know without an error, so a
-      # misspelt utility shows only in the specimen itself.
-      checks = forSystems (
+      # The tarball a release attaches, packed from the locked dependencies
+      # once `pnpm run check` passes: the package's build, which publint and
+      # attw check as packed, then formatting, lint, types, tests and the
+      # specimen's build, which compiles every component through Tailwind and
+      # Vite as an app does. Tailwind drops a class it does not know without
+      # an error, so a misspelt utility shows only in the specimen itself.
+      packages = forSystems (
         system:
         let
           pkgs = pkgsFor system;
@@ -38,8 +40,10 @@
               lib.fileset.unions [
                 ./flake.nix
                 ./flake.lock
+                (lib.fileset.maybeMissing ./.github)
                 (lib.fileset.maybeMissing ./node_modules)
                 (lib.fileset.maybeMissing ./dist)
+                (lib.fileset.maybeMissing ./specimen/dist)
                 (lib.fileset.maybeMissing ./result)
               ]
             );
@@ -47,7 +51,7 @@
         in
         {
           default = pkgs.stdenvNoCC.mkDerivation (finalAttrs: {
-            pname = "linen-check";
+            pname = "linen";
             version = (lib.importJSON ./package.json).version;
             inherit src;
             nativeBuildInputs = [
@@ -61,16 +65,42 @@
               inherit (finalAttrs) pname version src;
               pnpm = pkgs.pnpm;
               fetcherVersion = 5;
-              hash = "sha256-RYM6oKI1oVXb5IEcyDtEkT6vLOIi/1I2Y4XbZ4PtV2M=";
+              hash = "sha256-cNFUuL5UIbOr6kV+VjNXWpId/OxB6xrSm5mjNIuyhq0=";
             };
+            # tsdown writes package.json's exports, and an app that uses a
+            # checkout as a workspace package reads the committed ones, so the
+            # two must agree.
             buildPhase = ''
               runHook preBuild
+              cp package.json "$TMPDIR/package.json"
               pnpm run check
+              if ! diff -u "$TMPDIR/package.json" package.json; then
+                echo "package.json is not what tsdown writes: run pnpm run build and commit it" >&2
+                exit 1
+              fi
               runHook postBuild
             '';
-            installPhase = "touch $out";
+            installPhase = ''
+              runHook preInstall
+              mkdir -p $out
+              pnpm pack --pack-destination $out
+              runHook postInstall
+            '';
+            # The built module loads in Node, as a test runner or a server
+            # render loads it.
+            doInstallCheck = true;
+            installCheckPhase = ''
+              runHook preInstallCheck
+              node --input-type=module -e 'await import("./dist/index.js")'
+              runHook postInstallCheck
+            '';
           });
         }
       );
+
+      # Building the package runs every check.
+      checks = forSystems (system: {
+        inherit (self.packages.${system}) default;
+      });
     };
 }

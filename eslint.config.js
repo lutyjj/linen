@@ -11,7 +11,7 @@ import tseslint from "typescript-eslint";
  * `eslint-config-prettier` switches off everything stylistic.
  */
 export default tseslint.config(
-    { ignores: ["dist"] },
+    { ignores: ["dist", "specimen/dist"] },
     js.configs.recommended,
     ...tseslint.configs.recommendedTypeChecked,
     {

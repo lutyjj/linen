@@ -20,5 +20,5 @@
         "resolveJsonModule": true,
         "forceConsistentCasingInFileNames": true
     },
-    "include": ["src", "specimen", "vite.config.ts"]
+    "include": ["src", "specimen", "vite.config.ts", "tsdown.config.ts"]
 }

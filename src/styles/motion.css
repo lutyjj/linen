@@ -1,4 +1,4 @@
-/* The motion CSS runs (LANGUAGE.md, "Motion").
+/* The motion CSS runs (https://github.com/lutyjj/linen/blob/main/LANGUAGE.md, "Motion").
  *
  * Base UI decides when its popups, dialogs and panels mount and unmount. It
  * marks an entrance's first frame with [data-starting-style] and an exit with
