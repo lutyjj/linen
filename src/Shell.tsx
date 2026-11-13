@@ -14,7 +14,14 @@ import {
 import { Link, NavLink, useLocation } from "react-router";
 
 import { classes } from "./classes";
-import { arrive, renderLeaving, spring, useStill } from "./motion";
+import {
+    arrive,
+    type MotionToken,
+    renderLeaving,
+    seconds,
+    spring,
+    useStill,
+} from "./motion";
 import { POPUP_CLASS, POSITIONER_CLASS } from "./Popup";
 import { chosenLayerClass, ChosenMark } from "./SegmentedControl";
 import { TopBarLead } from "./TopBar";
@@ -620,11 +627,19 @@ function TopNav({
     );
 }
 
+/** How long the places of the top bar take to make room for a chosen one. */
+const MAKE_ROOM: MotionToken = "state";
+
 /**
  * A place in the top bar. The current one wears its words and the chosen
  * mark, which slides to the next place chosen while the others make room;
  * the rest show their icons and keep their words for assistive technology,
  * so the bar fits a phone's width.
+ *
+ * The chosen place takes its full width at once and the others slide out of
+ * its way, so its words wait as long as the places take to make room, and
+ * only then fade in. The wait is a time, not the room itself: a main thread
+ * that stalls during the move lets them in early.
  */
 function TopNavLink({
     to,
@@ -641,7 +656,7 @@ function TopNavLink({
     return (
         <MotionNavLink
             layout={still ? false : "position"}
-            transition={spring("state")}
+            transition={spring(MAKE_ROOM)}
             to={to}
             end={exact}
             className={({ isActive }) =>
@@ -665,7 +680,10 @@ function TopNavLink({
                         <m.span
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={spring("enter")}
+                            transition={{
+                                ...spring("enter"),
+                                delay: seconds(MAKE_ROOM),
+                            }}
                             className="relative"
                         >
                             {label}
