@@ -14,6 +14,10 @@ import { spring, useStill } from "./motion";
  * layout id, so choosing another option moves the mark rather than replacing
  * it. Motion carries it there with a transform, and keeps its corners round
  * while it stretches, which is why the radius is stated on the element.
+ *
+ * Every option of the group wears `chosenLayerClass`, or the mark paints over
+ * the options it slides across; the group is `isolate`, so those layers stay
+ * inside it.
  */
 export function ChosenMark({
     group,
@@ -41,6 +45,17 @@ export function ChosenMark({
             style={{ borderRadius }}
         />
     );
+}
+
+/**
+ * The layer each option of a group with a chosen mark stands on. The mark is
+ * drawn inside the chosen option, so on its way from an earlier option it
+ * would paint over the words of every option it passes; the chosen option
+ * stands beneath the others, and the mark slides under them. Put `isolate`
+ * on the group, so these layers stay inside it.
+ */
+export function chosenLayerClass(chosen: boolean): string {
+    return chosen ? "z-0" : "z-1";
 }
 
 /**
@@ -76,7 +91,7 @@ export function SegmentedControl<Value extends string>({
             onValueChange={(next) => {
                 if (next !== value) onChange(next as Value);
             }}
-            className="relative inline-flex h-(--height-control) shrink-0 items-stretch rounded-button border border-border-strong bg-surface p-0.5"
+            className="relative isolate inline-flex h-(--height-control) shrink-0 items-stretch rounded-button border border-border-strong bg-surface p-0.5"
         >
             {options.map((option) => {
                 const active = option.value === value;
@@ -88,6 +103,7 @@ export function SegmentedControl<Value extends string>({
                         className={classes(
                             "relative flex cursor-pointer flex-col items-center justify-center rounded-input px-2 text-sm",
                             CHOSEN_WIDTH_CLASS,
+                            chosenLayerClass(active),
                             active
                                 ? "font-medium text-accent"
                                 : "text-text-secondary hover:text-text",

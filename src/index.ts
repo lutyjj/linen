@@ -69,6 +69,7 @@ export { PromptDialog } from "./PromptDialog";
 export { type Section, SectionNav } from "./SectionNav";
 export {
     CHOSEN_WIDTH_CLASS,
+    chosenLayerClass,
     ChosenMark,
     SegmentedControl,
 } from "./SegmentedControl";

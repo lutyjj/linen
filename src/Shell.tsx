@@ -16,7 +16,7 @@ import { Link, NavLink, useLocation } from "react-router";
 import { classes } from "./classes";
 import { arrive, renderLeaving, spring, useStill } from "./motion";
 import { POPUP_CLASS, POSITIONER_CLASS } from "./Popup";
-import { ChosenMark } from "./SegmentedControl";
+import { chosenLayerClass, ChosenMark } from "./SegmentedControl";
 import { TopBarLead } from "./TopBar";
 import { useWords } from "./words";
 
@@ -604,7 +604,7 @@ function TopNav({
                     <m.div
                         {...arrive()}
                         key={placesKey}
-                        className="flex w-max min-w-full items-center justify-end gap-1 overflow-clip p-1"
+                        className="isolate flex w-max min-w-full items-center justify-end gap-1 overflow-clip p-1"
                     >
                         {places.map((place) => (
                             <TopNavLink
@@ -647,6 +647,7 @@ function TopNavLink({
             className={({ isActive }) =>
                 classes(
                     "relative flex h-(--height-control) shrink-0 items-center gap-1.5 rounded-button px-2 text-sm whitespace-nowrap",
+                    chosenLayerClass(isActive),
                     isActive
                         ? "font-medium text-accent"
                         : "text-text-secondary hover:bg-border hover:text-text",

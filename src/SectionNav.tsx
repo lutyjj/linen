@@ -3,7 +3,11 @@ import { useEffect, useId, useRef } from "react";
 import { NavLink, useLocation } from "react-router";
 
 import { classes } from "./classes";
-import { CHOSEN_WIDTH_CLASS, ChosenMark } from "./SegmentedControl";
+import {
+    CHOSEN_WIDTH_CLASS,
+    chosenLayerClass,
+    ChosenMark,
+} from "./SegmentedControl";
 import { COLUMN_CLASS } from "./TopBar";
 
 export interface Section {
@@ -55,7 +59,7 @@ export function SectionNav({
                     phone has to scroll to. */}
                 <div
                     ref={group}
-                    className="relative flex min-h-[var(--height-sections)] w-max min-w-full flex-nowrap items-center gap-1 py-1.5 md:w-auto md:flex-wrap"
+                    className="relative isolate flex min-h-[var(--height-sections)] w-max min-w-full flex-nowrap items-center gap-1 py-1.5 md:w-auto md:flex-wrap"
                 >
                     {sections.map((section) => (
                         <NavLink
@@ -66,6 +70,7 @@ export function SectionNav({
                                 classes(
                                     "relative flex shrink-0 flex-col items-center rounded-button px-2.5 py-1.5 text-sm whitespace-nowrap ",
                                     CHOSEN_WIDTH_CLASS,
+                                    chosenLayerClass(isActive),
                                     isActive
                                         ? "font-medium text-accent"
                                         : "text-text-secondary hover:bg-border hover:text-text",
