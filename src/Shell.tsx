@@ -586,16 +586,25 @@ function TopNav({
                 {/* Places that outgrow the phone scroll rather than widen the
                     page, so Motion is told to measure the mark inside the
                     scroll; the padding keeps a focus ring inside it. The
-                    places measure their offsets from the scroller. */}
+                    places measure their offsets from the scroller.
+
+                    Only where the places are laid out reaches the scroll, not
+                    where Motion draws them on their way, or a scrollbar would
+                    come and go with every move: the bar never scrolls down,
+                    where the row arrives from, and the row clips a place drawn
+                    past its ends. While the places fit, the row spans the room
+                    the wordmark leaves, so its ends stay put when a shorter
+                    word narrows the places, and a place sliding over from
+                    where it stood is drawn whole. */}
                 <m.div
                     ref={scroller}
                     layoutScroll
-                    className="relative -my-1 -mr-1 ml-auto min-w-0 overflow-x-auto"
+                    className="relative -my-1 -mr-1 min-w-0 flex-1 overflow-x-auto overflow-y-hidden"
                 >
                     <m.div
                         {...arrive()}
                         key={placesKey}
-                        className="flex w-max items-center gap-1 p-1"
+                        className="flex w-max min-w-full items-center justify-end gap-1 overflow-clip p-1"
                     >
                         {places.map((place) => (
                             <TopNavLink
