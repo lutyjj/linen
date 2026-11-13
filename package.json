@@ -1,7 +1,7 @@
 {
     "name": "linen",
     "private": true,
-    "version": "0.1.0",
+    "version": "0.1.1",
     "type": "module",
     "description": "A calm design language for React apps: tokens, motion, and the components that wear them.",
     "license": "MIT",

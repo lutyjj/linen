@@ -7,7 +7,7 @@ A calm design language for React apps: tokens, motion, and the components that w
 In an app that builds with Tailwind CSS 4, install a [release](https://github.com/lutyjj/linen/releases) and its peers:
 
 ```sh
-pnpm add https://github.com/lutyjj/linen/releases/download/v0.1.0/linen-0.1.0.tgz \
+pnpm add https://github.com/lutyjj/linen/releases/download/v0.1.1/linen-0.1.1.tgz \
     react react-dom react-router motion @base-ui/react lucide-react
 ```
 
