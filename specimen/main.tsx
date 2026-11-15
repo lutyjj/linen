@@ -7,15 +7,8 @@ import {
     Sparkles,
     SwatchBook,
 } from "lucide-react";
-import { StrictMode, useState } from "react";
+import { StrictMode, useLayoutEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import {
-    BrowserRouter,
-    Navigate,
-    Route,
-    Routes,
-    useLocation,
-} from "react-router";
 
 import {
     AccountMenu,
@@ -32,12 +25,12 @@ import {
     ToastProvider,
     TopBar,
 } from "../src";
-import { reactRouter } from "../src/navigation/react-router";
 import { ControlsSection } from "./ControlsSection";
 import { FeedbackSection } from "./FeedbackSection";
 import { FoundationsSection } from "./FoundationsSection";
 import { LayoutSection } from "./LayoutSection";
 import { MotionSection } from "./MotionSection";
+import { historyNavigation, navigate } from "./navigation";
 
 const { useTheme } = createThemeStore({ key: "linen:theme" });
 
@@ -100,11 +93,16 @@ const THEMES: { value: ThemePreference; label: string }[] = [
 ];
 
 function Specimen() {
-    const { pathname } = useLocation();
+    const pathname = historyNavigation.usePathname();
     const { preference, setPreference } = useTheme();
     const [hue, setHue] = useState("296");
     const [phoneNav, setPhoneNav] = useState<PhoneNav>("bottom");
     const screen = SCREENS.find((one) => pathname.startsWith(one.to));
+    // An address the specimen has no page for opens its first page.
+    useLayoutEffect(() => {
+        if (screen === undefined)
+            navigate(PLACES[0]?.href ?? "/", { replace: true });
+    }, [screen]);
 
     const changeHue = (next: string) => {
         document.documentElement.style.setProperty("--hue", next);
@@ -161,17 +159,7 @@ function Specimen() {
             }
         >
             <TopBar title={screen?.label ?? "linen"} />
-            <Content>
-                <Routes>
-                    {SCREENS.map(({ to, element }) => (
-                        <Route key={to} path={to} element={element} />
-                    ))}
-                    <Route
-                        path="*"
-                        element={<Navigate to="/foundations" replace />}
-                    />
-                </Routes>
-            </Content>
+            <Content>{screen?.element}</Content>
         </Shell>
     );
 }
@@ -180,11 +168,9 @@ const root = document.getElementById("root");
 if (root === null) throw new Error("no #root element");
 createRoot(root).render(
     <StrictMode>
-        <LinenProvider navigation={reactRouter}>
+        <LinenProvider navigation={historyNavigation}>
             <ToastProvider>
-                <BrowserRouter>
-                    <Specimen />
-                </BrowserRouter>
+                <Specimen />
             </ToastProvider>
         </LinenProvider>
     </StrictMode>,
