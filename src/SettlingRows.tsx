@@ -1,10 +1,6 @@
+import { type HTMLMotionProps, m, type MotionProps } from "motion/react";
 import {
-    type HTMLMotionProps,
-    m,
-    type MotionProps,
-    type Variants,
-} from "motion/react";
-import {
+    type AnimationEvent,
     Children,
     createContext,
     isValidElement,
@@ -15,7 +11,7 @@ import {
 } from "react";
 
 import { classes } from "./classes";
-import { EASE, seconds, useStill } from "./motion";
+import { useStill } from "./motion";
 
 interface Settling {
     /** Whether rows travel when one above them leaves or arrives. */
@@ -103,26 +99,12 @@ function RowSet({
     );
 }
 
-/**
- * The arrival mark: the weak accent, held long enough for an eye that was
- * elsewhere to find the row, then gone. It is a variable a stylesheet layers
- * over the row, so the row's own hover and selection colours stay its own.
- */
-const ARRIVAL: Variants = {
-    arriving: { "--arrival": 1 },
-    settled: () => ({
-        "--arrival": [1, 1, 0],
-        transition: {
-            type: "tween",
-            duration: seconds("mark"),
-            times: [0, 0.4, 1],
-            ease: EASE.fade,
-        },
-    }),
-} as const;
-
 /** What a settling row's motion element is given. */
-function useSettlingRow(): MotionProps & { className?: string } {
+function useSettlingRow(): MotionProps & {
+    className?: string;
+    "data-arrival"?: "";
+    onAnimationEnd?: (event: AnimationEvent<HTMLElement>) => void;
+} {
     const { settles, marks, ready, revision } = use(SettlingContext);
     const still = useStill();
     // Whether the row came after the list's first rows, settled once as it
@@ -134,46 +116,76 @@ function useSettlingRow(): MotionProps & { className?: string } {
     // A cancelled entrance stays finished when motion is enabled again.
     const [arrivalAllowed, setArrivalAllowed] = useState(!still);
     if (still && arrivalAllowed) setArrivalAllowed(false);
+    // The mark plays once: a row shown again, as a Suspense boundary shows
+    // it, does not wear it a second time.
+    const [markWorn, setMarkWorn] = useState(false);
+    const wornOut = (event: AnimationEvent<HTMLElement>) => {
+        if (
+            event.target === event.currentTarget &&
+            event.animationName === "linen-arrival"
+        ) {
+            setMarkWorn(true);
+        }
+    };
     if (!settles) return {};
-    const marked = arrived && arrivalAllowed;
+    const marked = arrived && arrivalAllowed && !markWorn;
     return {
         // The row moves from where it stood by a transform, which lays
         // nothing out again; only its position is carried, never its size.
         layout: still ? false : "position",
         layoutDependency: revision,
+        // The arrival mark is the stylesheet's (motion.css), which carries
+        // it whether or not Motion runs.
         ...(marks
             ? {
                   className: "arrival",
-                  variants: ARRIVAL,
-                  initial: marked ? "arriving" : false,
-                  animate: marked
-                      ? "settled"
-                      : { "--arrival": 0, transition: { duration: 0 } },
+                  ...(marked
+                      ? {
+                            "data-arrival": "",
+                            onAnimationEnd: wornOut,
+                        }
+                      : {}),
               }
             : {}),
     };
 }
 
 /** A table row that settles with its list, and is a plain row outside one. */
-export function SettlingTr({ className, ...props }: HTMLMotionProps<"tr">) {
+export function SettlingTr({
+    className,
+    onAnimationEnd,
+    ...props
+}: HTMLMotionProps<"tr">) {
     const settling = useSettlingRow();
     return (
         <m.tr
             {...props}
             {...settling}
             className={classes(className, settling.className)}
+            onAnimationEnd={(event) => {
+                onAnimationEnd?.(event);
+                settling.onAnimationEnd?.(event);
+            }}
         />
     );
 }
 
 /** A list item that settles with its list, and is a plain item outside one. */
-export function SettlingItem({ className, ...props }: HTMLMotionProps<"div">) {
+export function SettlingItem({
+    className,
+    onAnimationEnd,
+    ...props
+}: HTMLMotionProps<"div">) {
     const settling = useSettlingRow();
     return (
         <m.div
             {...props}
             {...settling}
             className={classes(className, settling.className)}
+            onAnimationEnd={(event) => {
+                onAnimationEnd?.(event);
+                settling.onAnimationEnd?.(event);
+            }}
         />
     );
 }

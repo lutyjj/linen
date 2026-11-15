@@ -1,25 +1,11 @@
-import { act, render, screen } from "@testing-library/react";
-import { MotionGlobalConfig, processFrame } from "motion/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { StrictMode } from "react";
-import { afterEach, beforeEach, expect, it } from "vitest";
+import { expect, it } from "vitest";
 
-import { MotionProvider, seconds } from "./motion";
+import { MotionProvider } from "./motion";
 import { SettlingItem, SettlingRows } from "./SettlingRows";
 
-// The mark is a tint a row holds for its first moments, so animations run,
-// on Motion's manual clock, which the test moves frame by frame.
-let now = 0;
-beforeEach(() => {
-    MotionGlobalConfig.skipAnimations = false;
-    MotionGlobalConfig.useManualTiming = true;
-});
-afterEach(() => {
-    MotionGlobalConfig.useManualTiming = false;
-    MotionGlobalConfig.skipAnimations = true;
-});
-
-// StrictMode runs every effect twice, as a remount does, which replays a
-// row's animation.
+// StrictMode runs every effect twice, as a remount does.
 function List({
     loaded = true,
     rows,
@@ -44,46 +30,57 @@ function List({
     );
 }
 
-/** Moves the clock on by some milliseconds, frame by frame. */
-function wait(ms: number) {
+/** Whether a row wears the arrival mark, which the stylesheet plays. */
+const marked = (row: string) =>
+    screen.getByText(row).hasAttribute("data-arrival");
+
+/** The stylesheet's arrival animation reaching its end on a row. */
+function markEnds(row: string) {
     act(() => {
-        for (const end = now + ms; now < end;) processFrame((now += 1000 / 60));
+        fireEvent.animationEnd(screen.getByText(row), {
+            animationName: "linen-arrival",
+        });
     });
 }
 
-/** How strongly a row wears the arrival mark now. */
-const mark = (row: string) =>
-    Number(screen.getByText(row).style.getPropertyValue("--arrival"));
-
-it("marks no row the list starts with, and every row after, for a while", () => {
+it("marks no row the list starts with, and every row after, until its mark ends", () => {
     const list = render(<List rows={["Atlas"]} />);
-    wait(100);
-    expect(mark("Atlas")).toBe(0);
+    expect(marked("Atlas")).toBe(false);
 
     list.rerender(<List rows={["Atlas", "Harbor"]} />);
-    wait(100);
-    expect(mark("Harbor")).toBe(1);
-    expect(mark("Atlas")).toBe(0);
+    expect(marked("Harbor")).toBe(true);
+    expect(marked("Atlas")).toBe(false);
 
-    wait(seconds("mark") * 1000);
-    expect(mark("Harbor")).toBe(0);
+    markEnds("Harbor");
+    expect(marked("Harbor")).toBe(false);
+    // Shown again, the row does not wear its mark a second time.
+    list.rerender(<List rows={["Harbor", "Atlas"]} />);
+    expect(marked("Harbor")).toBe(false);
+});
+
+it("keeps the mark through an animation of something inside the row", () => {
+    const list = render(<List rows={[]} />);
+    list.rerender(<List rows={["Atlas"]} />);
+    act(() => {
+        fireEvent.animationEnd(screen.getByText("Atlas"), {
+            animationName: "linen-turn",
+        });
+    });
+    expect(marked("Atlas")).toBe(true);
 });
 
 it("starts a list given its scope once its rows loaded with those rows", () => {
     const list = render(<List loaded={false} rows={[]} />);
     list.rerender(<List rows={["Atlas", "Harbor"]} />);
-    wait(100);
-    expect(mark("Atlas")).toBe(0);
-    expect(mark("Harbor")).toBe(0);
+    expect(marked("Atlas")).toBe(false);
+    expect(marked("Harbor")).toBe(false);
 
     list.rerender(<List rows={["Atlas", "Harbor", "Orchard"]} />);
-    wait(100);
-    expect(mark("Orchard")).toBe(1);
+    expect(marked("Orchard")).toBe(true);
 });
 
 it("marks the first row of a list that loaded empty", () => {
     const list = render(<List rows={[]} />);
     list.rerender(<List rows={["Atlas"]} />);
-    wait(100);
-    expect(mark("Atlas")).toBe(1);
+    expect(marked("Atlas")).toBe(true);
 });

@@ -89,9 +89,9 @@ export function railItemClass(active: boolean): string {
  * Either way they stay in the row, so a link keeps its accessible name in
  * both widths.
  */
-const LABEL_CLASS = "min-w-0 flex-1 truncate";
+const LABEL_CLASS = "rail-label min-w-0 flex-1 truncate";
 const TIP_CLASS =
-    "pointer-events-none absolute inset-y-0 left-full my-auto ml-2 h-fit rounded-input bg-text px-2 py-1 text-xs font-medium whitespace-nowrap text-bg shadow-overlay group-data-popup-open/item:invisible";
+    "rail-tip pointer-events-none absolute inset-y-0 left-full my-auto ml-2 h-fit rounded-input bg-text px-2 py-1 text-xs font-medium whitespace-nowrap text-bg shadow-overlay group-data-popup-open/item:invisible";
 
 function RailLabel({
     compact,
@@ -101,21 +101,7 @@ function RailLabel({
     children: ReactNode;
 }) {
     return (
-        <m.span
-            className={compact ? TIP_CLASS : LABEL_CLASS}
-            initial={false}
-            animate="rest"
-            variants={{
-                rest: {
-                    opacity: compact ? 0 : 1,
-                    x: compact ? -4 : 0,
-                    transition: compact ? { duration: 0 } : spring("enter"),
-                },
-                hint: { opacity: 1, x: 0, transition: spring("enter") },
-            }}
-        >
-            {children}
-        </m.span>
+        <span className={compact ? TIP_CLASS : LABEL_CLASS}>{children}</span>
     );
 }
 
@@ -163,12 +149,10 @@ function RailBadge({ active, count }: { active: boolean; count: string }) {
 }
 
 function RailLink({ href, icon, label, exact = false, badge }: Place) {
-    const MotionLink = useMotionLink();
+    const { Link } = useNavigation();
     const current = useCurrent(href, exact);
     return (
-        <MotionLink
-            whileHover="hint"
-            whileFocus="hint"
+        <Link
             href={href}
             aria-current={current ? "page" : undefined}
             className={railItemClass(current)}
@@ -178,7 +162,7 @@ function RailLink({ href, icon, label, exact = false, badge }: Place) {
                     <RailBadge active={current} count={badge} />
                 )}
             </RailRow>
-        </MotionLink>
+        </Link>
     );
 }
 
@@ -196,9 +180,7 @@ function RailFold({
 }) {
     const words = useWords();
     return (
-        <m.button
-            whileHover="hint"
-            whileFocus="hint"
+        <button
             type="button"
             onClick={() => setCompact(!compact)}
             className={classes(
@@ -206,17 +188,15 @@ function RailFold({
                 "w-(--height-control) justify-center px-0",
             )}
         >
-            <m.span
-                initial={false}
-                animate={{ rotate: compact ? 180 : 0 }}
-                className="flex"
+            <span
+                className={classes("rail-fold flex", compact && "rotate-180")}
             >
                 <ChevronsLeft aria-hidden="true" className="size-4" />
-            </m.span>
+            </span>
             <RailLabel compact>
                 {compact ? words.expandRail : words.collapseRail}
             </RailLabel>
-        </m.button>
+        </button>
     );
 }
 
@@ -240,7 +220,7 @@ export function RailChoice({
     return (
         <Popover.Root>
             <Popover.Trigger
-                render={<m.button whileHover="hint" whileFocus="hint" />}
+                render={<button />}
                 className={railItemClass(false)}
             >
                 <RailRow icon={icon} label={label} />
@@ -300,7 +280,7 @@ export function AccountMenu({
     return (
         <Popover.Root>
             <Popover.Trigger
-                render={<m.button whileHover="hint" whileFocus="hint" />}
+                render={<button />}
                 aria-label={label}
                 className={classes(
                     railItemClass(false),
@@ -530,12 +510,10 @@ function TabBar({ label, places, placesKey }: PlaceList) {
 
 /** A place in the tab bar: its icon over its words. */
 function TabLink({ href, label, icon: Icon, exact = false, badge }: Place) {
-    const MotionLink = useMotionLink();
+    const { Link } = useNavigation();
     const current = useCurrent(href, exact);
     return (
-        <MotionLink
-            whileHover="hint"
-            whileFocus="hint"
+        <Link
             href={href}
             aria-current={current ? "page" : undefined}
             className={classes(
@@ -551,7 +529,7 @@ function TabLink({ href, label, icon: Icon, exact = false, badge }: Place) {
                     className="absolute top-1.5 right-[calc(50%-16px)] size-2 rounded-full bg-warn"
                 />
             )}
-        </MotionLink>
+        </Link>
     );
 }
 

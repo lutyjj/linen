@@ -5,18 +5,67 @@
  * [data-ending-style], and keeps the element until the transition ends. A
  * popup or dialog that mounts already open has no first frame for Base UI to
  * mark, so @starting-style says the same for it. They move to the springs
- * motion.tsx publishes as --motion-leave, --motion-state and
- * --motion-enter, which stillness makes 0s.
+ * below, which stillness makes 0s.
  *
  * Only opacity and transforms move, so the compositor runs these at the
  * display's own rate. A panel's height is the exception: it is the change. */
 
-/* Stillness outranks the published springs, from the frame it is asked for. */
+/* The springs of motion.tsx's leave, state and enter, each its settling time
+ * and its curve, and the arrival mark's hold. motion.test.ts holds them to
+ * the springs Motion runs, so what CSS moves and what Motion moves keep one
+ * clock, and they need no script to arrive. */
+:root {
+    --motion-leave: 250ms
+        linear(0, 0.4615, 0.8176, 0.9471, 0.9858, 0.9964, 0.9991, 1);
+    --motion-state: 400ms
+        linear(
+            0,
+            0.2531,
+            0.5773,
+            0.7868,
+            0.8991,
+            0.9541,
+            0.9797,
+            0.9912,
+            0.9963,
+            0.9984,
+            0.9993,
+            1,
+            1
+        );
+    --motion-enter: 550ms
+        linear(
+            0,
+            0.1236,
+            0.341,
+            0.5416,
+            0.6959,
+            0.8046,
+            0.8772,
+            0.9242,
+            0.9538,
+            0.9722,
+            0.9834,
+            0.9901,
+            0.9942,
+            0.9966,
+            0.998,
+            0.9988,
+            0.9993,
+            1
+        );
+    --motion-mark: 1200ms;
+    --motion-land: 1000ms;
+}
+
+/* Stillness outranks the springs, from the frame it is asked for. */
 @media (prefers-reduced-motion: reduce) {
     :root {
         --motion-leave: 0s !important;
         --motion-state: 0s !important;
         --motion-enter: 0s !important;
+        --motion-mark: 0s !important;
+        --motion-land: 0s !important;
     }
 }
 
@@ -89,6 +138,12 @@
      * Base UI says so on the control, as a popup or as a panel. */
     .turning {
         transition: rotate var(--motion-state);
+    }
+
+    /* The rail's fold points the way the rail will go, and turns over enter
+     * when the rail folds or unfolds. */
+    .rail-fold {
+        transition: rotate var(--motion-enter);
     }
 
     :is([data-popup-open], [data-panel-open]) .turning {
@@ -175,5 +230,93 @@
 
     .panel[hidden]:not([hidden="until-found"]) {
         display: none;
+    }
+
+    /* A folded rail names each row in a tip while a pointer rests on the row
+     * or the keyboard brings focus to it; a tap is no hover, so a touch
+     * leaves no tip standing. The tip arrives over enter and goes at once, so
+     * a pointer passing down the rail leaves no trail of tips; unfolding
+     * brings the words back into the row over enter. */
+    .rail-tip {
+        opacity: 0;
+        translate: -4px 0;
+    }
+
+    :where(.group\/item):focus-visible .rail-tip {
+        opacity: 1;
+        translate: 0 0;
+        transition:
+            opacity var(--motion-enter),
+            translate var(--motion-enter);
+    }
+
+    @media (hover: hover) {
+        :where(.group\/item):hover .rail-tip {
+            opacity: 1;
+            translate: 0 0;
+            transition:
+                opacity var(--motion-enter),
+                translate var(--motion-enter);
+        }
+    }
+
+    .rail-label {
+        transition:
+            opacity var(--motion-enter),
+            translate var(--motion-enter);
+    }
+
+    /* A pending refresh turns, a whole turn per land (RefreshMotion). */
+    .refresh-turning {
+        animation: linen-turn var(--motion-land) linear infinite;
+    }
+
+    /* A toast's run fills its hairline as it goes. */
+    .toast-progress {
+        transform-origin: left;
+        transition: scale var(--motion-enter);
+    }
+
+    /* A row that just arrived holds the mark long enough for an eye that was
+     * elsewhere to find it, then lets it go. */
+    .arrival[data-arrival] {
+        animation: linen-arrival var(--motion-mark) ease-out;
+    }
+}
+
+@keyframes linen-turn {
+    to {
+        rotate: 1turn;
+    }
+}
+
+@keyframes linen-arrival {
+    0%,
+    40% {
+        --arrival: 1;
+    }
+    100% {
+        --arrival: 0;
+    }
+}
+
+/* A change the whole page wears fades over enter (crossFade in motion.tsx). */
+.cross-fade::view-transition-old(root) {
+    animation: linen-cross-fade-out var(--motion-enter) both;
+}
+
+.cross-fade::view-transition-new(root) {
+    animation: linen-cross-fade-in var(--motion-enter) both;
+}
+
+@keyframes linen-cross-fade-out {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes linen-cross-fade-in {
+    from {
+        opacity: 0;
     }
 }

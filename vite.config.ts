@@ -20,5 +20,7 @@ export default defineConfig({
         globals: true,
         setupFiles: ["src/test/setup.ts"],
         include: ["src/**/*.test.{ts,tsx}"],
+        // The stylesheet is read as text where a test holds it to the code.
+        css: { include: [/src\/styles\/.+\.css/] },
     },
 });

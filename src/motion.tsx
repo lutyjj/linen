@@ -1,8 +1,6 @@
-import { animateView, spring as springGenerator } from "motion";
 import {
     domMax,
     LazyMotion,
-    m,
     MotionConfig,
     type MotionProps,
     type Transition,
@@ -10,7 +8,7 @@ import {
 import {
     type HTMLAttributes,
     type ReactNode,
-    useLayoutEffect,
+    useState,
     useSyncExternalStore,
 } from "react";
 import { flushSync } from "react-dom";
@@ -85,7 +83,11 @@ export function useLoop(): boolean {
     return !still && visible;
 }
 
-/** A pending refresh turns only while visible. */
+/**
+ * A pending refresh turns only while visible, a whole turn per `land`. When
+ * the refresh ends, the turn under way finishes, so the mark comes to rest
+ * upright rather than snapping back (motion.css).
+ */
 export function RefreshMotion({
     active,
     children,
@@ -94,57 +96,31 @@ export function RefreshMotion({
     children: ReactNode;
 }) {
     const loops = useLoop();
+    const [turning, setTurning] = useState(false);
+    if (active && loops && !turning) setTurning(true);
+    if (!loops && turning) setTurning(false);
     return (
-        <m.span
-            className="inline-flex"
-            animate={{ rotate: 0 }}
-            whileInView={
-                active && loops
-                    ? {
-                          rotate: 360,
-                          transition: {
-                              type: "tween",
-                              ease: "linear",
-                              duration: seconds("land"),
-                              repeat: Infinity,
-                          },
-                      }
-                    : undefined
-            }
+        <span
+            className={turning ? "refresh-turning inline-flex" : "inline-flex"}
+            onAnimationIteration={(event) => {
+                // Only its own turn: what it holds may move by its own.
+                if (
+                    !active &&
+                    event.target === event.currentTarget &&
+                    event.animationName === "linen-turn"
+                ) {
+                    setTurning(false);
+                }
+            }}
         >
             {children}
-        </m.span>
+        </span>
     );
-}
-
-/**
- * The springs CSS runs, as custom properties on the root: Base UI's popups,
- * dialogs and panels read `--motion-leave`, `--motion-state` and
- * `--motion-enter` (each a duration and a `linear()` curve), so what CSS
- * moves and what Motion moves keep one clock. Stillness
- * is the stylesheet's to apply (motion.css), so it holds from the
- * frame the preference changes.
- */
-const CSS_TIMING = [
-    "leave",
-    "state",
-    "enter",
-] as const satisfies readonly MotionToken[];
-
-function publishTiming(): void {
-    const root = document.documentElement.style;
-    for (const token of CSS_TIMING) {
-        root.setProperty(
-            `--motion-${token}`,
-            String(springGenerator(DURATION[token], 0)),
-        );
-    }
 }
 
 /** Layout, exits and state changes share a spring and respect stillness. */
 export function MotionProvider({ children }: { children: ReactNode }) {
     const still = useStill();
-    useLayoutEffect(publishTiming, []);
     return (
         <LazyMotion features={domMax} strict>
             <MotionConfig
@@ -201,7 +177,7 @@ export function series(depth = 0): MotionProps {
  * Make a change the whole page wears, such as its theme or its language, as
  * one cross-fade rather than one frame. The change is applied at once and
  * the fade follows it. This is the platform's View Transitions API: the
- * whole page is one snapshot, with Motion owning timing and playback.
+ * whole page is one snapshot, and motion.css fades it over `enter`.
  */
 export function crossFade(change: () => void): void {
     if (
@@ -211,11 +187,14 @@ export function crossFade(change: () => void): void {
         change();
         return;
     }
-    void animateView(() => flushSync(change), {
-        type: springGenerator,
-        visualDuration: seconds("enter"),
-        bounce: 0,
-    })
-        .old({ opacity: [1, 0] })
-        .new({ opacity: [0, 1] });
+    const root = document.documentElement;
+    root.classList.add("cross-fade");
+    const fade = document.startViewTransition(() => flushSync(change));
+    latestFade = fade;
+    // A change made mid-fade skips this one; the newer fade keeps the class.
+    void fade.finished.finally(() => {
+        if (latestFade === fade) root.classList.remove("cross-fade");
+    });
 }
+
+let latestFade: ViewTransition | undefined;

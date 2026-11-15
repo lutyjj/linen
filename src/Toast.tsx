@@ -1,6 +1,5 @@
 import { Toast as BaseToast } from "@base-ui/react/toast";
 import { X } from "lucide-react";
-import { m } from "motion/react";
 import {
     createContext,
     type ReactNode,
@@ -260,10 +259,9 @@ function ToastSurface({
                     aria-hidden="true"
                     className="absolute inset-x-0 bottom-0 h-0.5 bg-bg/15"
                 >
-                    <m.span
-                        className="block h-full origin-left bg-bg"
-                        initial={false}
-                        animate={{ scaleX: message.progress }}
+                    <span
+                        className="toast-progress block h-full bg-bg"
+                        style={{ scale: `${message.progress} 1` }}
                     />
                 </span>
             )}

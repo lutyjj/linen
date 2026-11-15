@@ -44,3 +44,22 @@ if (!("scrollIntoView" in Element.prototype)) {
         value: () => undefined,
     });
 }
+
+// Nor does jsdom know an animation's events, which name the animation.
+if (!("AnimationEvent" in window)) {
+    class AnimationEventStub extends Event {
+        readonly animationName: string;
+        readonly elapsedTime: number;
+        readonly pseudoElement: string;
+        constructor(type: string, init: AnimationEventInit = {}) {
+            super(type, init);
+            this.animationName = init.animationName ?? "";
+            this.elapsedTime = init.elapsedTime ?? 0;
+            this.pseudoElement = init.pseudoElement ?? "";
+        }
+    }
+    Object.defineProperty(window, "AnimationEvent", {
+        configurable: true,
+        value: AnimationEventStub,
+    });
+}
