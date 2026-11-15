@@ -15,8 +15,9 @@ const STILL = [
 
 /** React resolved to Preact's compatibility layer, as a Preact app has it. */
 const PREACT = [
-    // Testing Library's own build requires react-dom, which no alias reaches;
-    // its module build imports it.
+    // Testing Library's package points Node at its CommonJS build, whose
+    // require of react-dom no alias reaches; its module build imports it.
+    // This goes once the package hands Vitest its module build.
     {
         find: /^@testing-library\/react$/,
         replacement:
@@ -89,7 +90,7 @@ export default defineConfig(({ mode }) => ({
                 },
                 test: {
                     name: "preact",
-                    setupFiles: ["src/test/still.ts"],
+                    setupFiles: ["src/test/still.ts", "src/test/preact.ts"],
                     exclude: [
                         "src/motion/springs.test.ts",
                         "src/foundation/merge-config.test.ts",
