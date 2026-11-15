@@ -23,6 +23,7 @@ export const POPUP_SEARCH_CLASS = `${CONTROL_CLASS} mb-1 w-full outline-none`;
 export function SearchSelect({
     label,
     hint,
+    error,
     placeholder,
     searchLabel,
     choices,
@@ -35,6 +36,7 @@ export function SearchSelect({
 }: {
     label: string;
     hint?: ReactNode;
+    error?: ReactNode;
     placeholder: string;
     searchLabel: string;
     choices: readonly Choice[];
@@ -50,8 +52,8 @@ export function SearchSelect({
     const chosen = choices.find((choice) => choice.value === value);
 
     return (
-        <Field label={label} hint={hint} width={width} id={id}>
-            {(named) => (
+        <Field label={label} hint={hint} error={error} width={width} id={id}>
+            {(control) => (
                 <Combobox.Root
                     items={choices}
                     autoHighlight
@@ -66,7 +68,7 @@ export function SearchSelect({
                     }}
                 >
                     <Combobox.Trigger
-                        id={named}
+                        {...control}
                         className={classes(
                             PICKER_CLASS,
                             "flex w-full data-[disabled]:cursor-default data-[disabled]:opacity-50",

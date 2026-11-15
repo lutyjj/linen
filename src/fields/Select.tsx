@@ -38,11 +38,12 @@ export function CellSelect({
     value,
     onValueChange,
     disabled,
-    invalid,
     inline = false,
     className = "",
     id,
     "aria-label": ariaLabel,
+    "aria-describedby": describedBy,
+    "aria-invalid": invalid,
 }: {
     /**
      * Plain choices, and groups of them under a heading, listed in this
@@ -54,7 +55,6 @@ export function CellSelect({
     value: string;
     onValueChange: (value: string) => void;
     disabled?: boolean;
-    invalid?: boolean;
     /**
      * Render the popup in place instead of a portal. Required inside another
      * popup, whose dismissal treats a portalled click as an outside press.
@@ -63,6 +63,9 @@ export function CellSelect({
     className?: string;
     id?: string;
     "aria-label"?: string;
+    "aria-describedby"?: string;
+    /** Set while the value is refused, as a field's error does. */
+    "aria-invalid"?: boolean;
 }) {
     const entries: readonly (Choice | ChoiceGroup)[] =
         placeholder === undefined
@@ -150,10 +153,11 @@ export function CellSelect({
             <BaseSelect.Trigger
                 id={id}
                 aria-label={ariaLabel}
-                data-invalid={invalid === true || undefined}
+                aria-describedby={describedBy}
+                aria-invalid={invalid}
                 className={classes(
                     PICKER_CLASS,
-                    "data-[disabled]:cursor-default data-[disabled]:opacity-50 data-[invalid]:border-warn data-[invalid]:text-warn",
+                    "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
                     value === "" ? "text-text-secondary" : "",
                     className,
                 )}
@@ -170,25 +174,31 @@ export function CellSelect({
     );
 }
 
+/** A picker under its name, with its hint and, once refused, its error. */
 export function Select({
     label,
     hint,
+    error,
     width,
     className = "",
     ...rest
 }: {
     label: string;
     hint?: ReactNode;
+    error?: ReactNode;
     width?: number;
     className?: string;
-} & Omit<Parameters<typeof CellSelect>[0], "id" | "className">) {
+} & Omit<
+    Parameters<typeof CellSelect>[0],
+    "id" | "className" | "aria-describedby" | "aria-invalid"
+>) {
     return (
-        <Field label={label} hint={hint} width={width}>
-            {(id) => (
+        <Field label={label} hint={hint} error={error} width={width}>
+            {(control) => (
                 <CellSelect
-                    id={id}
-                    className={classes("w-full", className)}
                     {...rest}
+                    {...control}
+                    className={classes("w-full", className)}
                 />
             )}
         </Field>
