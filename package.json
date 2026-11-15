@@ -16,6 +16,9 @@
     "files": [
         "dist"
     ],
+    "sideEffects": [
+        "**/*.css"
+    ],
     "publishConfig": {
         "exports": {
             ".": "./dist/index.js",
