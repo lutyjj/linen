@@ -31,7 +31,7 @@ import {
     type ThemePreference,
     TopBar,
 } from "../src";
-import { reactRouter } from "../src/react-router";
+import { reactRouter } from "../src/navigation/react-router";
 import { ControlsSection } from "./ControlsSection";
 import { FeedbackSection } from "./FeedbackSection";
 import { FoundationsSection } from "./FoundationsSection";

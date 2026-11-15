@@ -1,6 +1,6 @@
 import { useCallback, useSyncExternalStore } from "react";
 
-import { crossFade } from "./motion";
+import { crossFade } from "./motion/crossFade";
 
 /** What the person asked for, which is not the same as what is on screen. */
 export type ThemePreference = "system" | "light" | "dark";

@@ -3,7 +3,7 @@ import { afterEach, vi } from "vitest";
 /*
  * Without Motion, a prop the stand-in does not know reaches the element:
  * React warns about some, and writes others, such as `layout="position"`,
- * onto the element unremarked. Either is a gap in src/still.tsx, so it fails
+ * onto the element unremarked. Either is a gap in src/still/still.tsx, so it fails
  * the test.
  */
 const MOTION_ATTRIBUTES = new Set(
