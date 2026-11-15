@@ -55,8 +55,11 @@ it("folds the steps before the nearest two behind one button", async () => {
     await userEvent.click(
         within(trail).getByRole("button", { name: ENGLISH.foldedSteps }),
     );
+    const folded = await screen.findByRole("dialog", {
+        name: ENGLISH.foldedSteps,
+    });
     expect(
-        await screen.findByRole("menuitem", { name: "Settings" }),
+        within(folded).getByRole("link", { name: "Settings" }),
     ).toHaveAttribute("href", "/settings");
 });
 
@@ -85,7 +88,10 @@ it("closes the folded steps once one is chosen, where the screen stays", async (
     );
     const fold = screen.getByRole("button", { name: ENGLISH.foldedSteps });
     await userEvent.click(fold);
-    await userEvent.click(await screen.findByRole("menuitem", { name: "A" }));
+    const folded = await screen.findByRole("dialog", {
+        name: ENGLISH.foldedSteps,
+    });
+    await userEvent.click(within(folded).getByRole("link", { name: "A" }));
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("a");
     expect(fold).toHaveAttribute("aria-expanded", "false");
 });

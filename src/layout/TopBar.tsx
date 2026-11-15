@@ -1,4 +1,4 @@
-import { Menu } from "@base-ui/react/menu";
+import { Popover } from "@base-ui/react/popover";
 import { Ellipsis } from "lucide-react";
 import {
     type ComponentProps,
@@ -7,11 +7,11 @@ import {
     use,
     useLayoutEffect,
     useRef,
+    useState,
 } from "react";
 
 import { classes } from "../foundation/classes";
 import {
-    OPTION_CLASS,
     POPUP_CLASS,
     POSITIONER_CLASS,
     renderLeaving,
@@ -74,44 +74,53 @@ function Trail({ crumbs }: { crumbs: readonly Crumb[] }) {
     );
 }
 
-/** The steps a deep trail folds away, behind one button. */
+/**
+ * The steps a deep trail folds away, behind one button that opens them as a
+ * list of links: a disclosure, as a site's navigation is, rather than a menu
+ * of commands. Following one closes the list, as the screen it leads to may
+ * be this one with new words.
+ */
 function Folded({ crumbs }: { crumbs: readonly Crumb[] }) {
     const words = useWords();
     const { Link } = useNavigation();
+    const [open, setOpen] = useState(false);
     return (
-        <Menu.Root>
-            <Menu.Trigger
+        <Popover.Root open={open} onOpenChange={setOpen}>
+            <Popover.Trigger
                 aria-label={words.foldedSteps}
                 className="-my-1 flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-input hover:bg-border hover:text-text data-[popup-open]:bg-border data-[popup-open]:text-text"
             >
                 <Ellipsis aria-hidden="true" className="size-3.5" />
-            </Menu.Trigger>
-            <Menu.Portal>
-                <Menu.Positioner
+            </Popover.Trigger>
+            <Popover.Portal>
+                <Popover.Positioner
                     sideOffset={6}
                     align="start"
                     className={POSITIONER_CLASS}
                 >
-                    <Menu.Popup
+                    <Popover.Popup
                         render={renderLeaving}
+                        aria-label={words.foldedSteps}
                         className={classes(POPUP_CLASS, "min-w-44")}
                     >
-                        {crumbs.map((crumb, step) => (
-                            // A link item stays open by default; the screen a
-                            // step leads to may be this one with new words.
-                            <Menu.LinkItem
-                                key={step}
-                                closeOnClick
-                                render={<Link href={crumb.href} />}
-                                className={classes(OPTION_CLASS, "block")}
-                            >
-                                {crumb.label}
-                            </Menu.LinkItem>
-                        ))}
-                    </Menu.Popup>
-                </Menu.Positioner>
-            </Menu.Portal>
-        </Menu.Root>
+                        <Popover.Arrow className="absolute" />
+                        <ol>
+                            {crumbs.map((crumb, step) => (
+                                <li key={step}>
+                                    <Link
+                                        href={crumb.href}
+                                        onClick={() => setOpen(false)}
+                                        className="block rounded-input px-2 py-1.5 hover:bg-accent-weak hover:text-accent"
+                                    >
+                                        {crumb.label}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ol>
+                    </Popover.Popup>
+                </Popover.Positioner>
+            </Popover.Portal>
+        </Popover.Root>
     );
 }
 
