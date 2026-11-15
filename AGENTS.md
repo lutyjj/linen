@@ -46,24 +46,26 @@ A module imports only from the modules after it in this order: `layout`, `naviga
 
 The flake provides Node and pnpm; do not install tools on the host. Run scripts as `nix develop -c pnpm <script>`.
 
-| Command               | Scope                                                                                                                 |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `pnpm specimen`       | The specimen, served by Vite                                                                                          |
-| `pnpm specimen:still` | The specimen with Motion resolved to `linen/still`                                                                    |
-| `pnpm test`           | Every test, once with Motion and once without                                                                         |
-| `pnpm run build`      | The package in `dist/`, checked by publint and attw, and the `exports` it writes into `package.json`                  |
-| `pnpm run check`      | The full gate: build, Prettier, ESLint, types, tests, and both specimen builds                                        |
-| `pnpm format`         | Format every file Prettier owns                                                                                       |
-| `pnpm run generate`   | Rewrite what `tools/` generates, after a component writes a class of a new kind                                       |
-| `nix flake check`     | The release build: `pnpm run check` from the locked dependencies, `exports` parity, the packed tarball, a Node import |
+| Command                | Scope                                                                                                                 |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `pnpm specimen`        | The specimen, served by Vite                                                                                          |
+| `pnpm specimen:still`  | The specimen with Motion resolved to `linen/still`                                                                    |
+| `pnpm specimen:preact` | The specimen on Preact through `preact/compat`, with Motion resolved to `linen/still`                                 |
+| `pnpm test`            | Every test with Motion, again with `linen/still`, and again on Preact                                                 |
+| `pnpm run build`       | The package in `dist/`, checked by publint and attw, and the `exports` it writes into `package.json`                  |
+| `pnpm run check`       | The full gate: build, Prettier, ESLint, types, tests, the specimen's three builds, and `consumer/`'s budgets          |
+| `pnpm format`          | Format every file Prettier owns                                                                                       |
+| `pnpm run generate`    | Rewrite what `tools/` generates, after a component writes a class of a new kind                                       |
+| `nix flake check`      | The release build: `pnpm run check` from the locked dependencies, `exports` parity, the packed tarball, a Node import |
 
 After changing `pnpm-lock.yaml`, update the `pnpmDeps` hash in `flake.nix` as its comment says.
 
 ## Verification and completion
 
 - `pnpm run check` must pass before work is complete. A change to the release assembly (`flake.nix`, `tsdown.config.ts`, `package.json`, the lockfile) also needs `nix flake check`. Report the commands and their results, including checks that failed or could not run.
-- Look at every component you change in the specimen, with Motion and without, in both themes and at desk and phone widths. Tailwind drops a class it does not know without an error, so only the drawn page shows a misspelt utility. A new component or state gets its sample in the specimen.
-- Every component test runs with Motion and with `linen/still`; a Motion prop that reaches the page fails the run.
+- Look at every component you change in the specimen, with Motion, with `linen/still` and on Preact, in both themes and at desk and phone widths. Tailwind drops a class it does not know without an error, so only the drawn page shows a misspelt utility. A new component or state gets its sample in the specimen.
+- Every component test runs with Motion, with `linen/still` and on Preact; a Motion prop that reaches the page fails the run. A component test moves through `src/test/memoryNavigation.tsx`, and only `linen/react-router`'s own tests use React Router.
+- A change that adds weight to `consumer/`'s pages raises `budget.json` in the same commit and says why.
 - Add tests where they protect behaviour an app relies on. Assert through roles, names and what a person sees, with expectations derived from the contract; a class name is an assertion only where the stylesheet keys on it. Tests own their clocks and fixtures.
 - Documentation-only edits need a read against the prose rules below and a check that every link and path they name exists.
 
