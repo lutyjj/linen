@@ -39,6 +39,8 @@ export function App() {
 }
 ```
 
+linen asks Base UI to draw no `<style>` of its own, and `linen.css` holds the rule it would have drawn, so a page served under a Content Security Policy that forbids inline styles needs no nonce for linen.
+
 The links in `Shell`, `TopBar` and `SectionNav` are plain anchors that load the page they lead to. An app with a router hands its links to linen as `navigation`; for React Router, `linen/react-router` exports the adapter, and holding a move for unsaved work (`UnsavedChangesGuard`) needs a data router (`createBrowserRouter`):
 
 ```tsx
@@ -66,7 +68,7 @@ Every state stays, and so does every motion the stylesheet runs: popups, dialogs
 
 ### On Preact
 
-linen runs on Preact through `preact/compat`, without Motion. Its own tests run every component that way, on Preact 11, and `pnpm specimen:preact` draws them. With Vite, `@preact/preset-vite` resolves React to `preact/compat`, and the app resolves Motion to `linen/still`:
+linen runs on Preact 11 through `preact/compat`, without Motion. Its own tests run every component that way on Preact 11.2, whose `preact/compat` tells libraries it is React 19, and `pnpm specimen:preact` draws them. With Vite, `@preact/preset-vite` resolves React to `preact/compat`, and the app resolves Motion to `linen/still`:
 
 ```ts
 import preact from "@preact/preset-vite";

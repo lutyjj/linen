@@ -235,6 +235,17 @@
     }
 }
 
+/* The rule Base UI would draw in a <style> of its own, which LinenProvider
+ * turns off so a strict Content Security Policy needs no nonce: a list it
+ * scrolls itself shows no scrollbar. */
+.base-ui-disable-scrollbar {
+    scrollbar-width: none;
+}
+
+.base-ui-disable-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
 /* The mark on a row that just arrived, layered over whatever the row is
  * painted with so its hover and selection colours stay its own. motion.css
  * carries `--arrival` from 1 to 0 on a row that arrived (src/motion/SettlingRows.tsx). */
