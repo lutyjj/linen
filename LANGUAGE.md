@@ -59,7 +59,7 @@ Every card's contents start on `--spacing-gutter` (12px, 16px from `md`). Two se
 - A setting that takes effect as it turns is a `Switch`; a choice a form submits later is a `Checkbox`. A choice whose answers each need a line is `OptionCards`.
 - Making something asks in a `FormDialog`; every dialog lays out its title, description, body and actions with `DialogLayout`.
 - A destructive act confirms in a `ConfirmDialog` that says what it does. An act that can be put back exactly takes a toast's undo instead.
-- Work a person keeps with a save button is a draft: `useUnsavedChanges` reports it to the one `UnsavedChangesGuard` around the pages (inside a data router, whose navigation it holds), which asks before leaving a page that holds unsaved drafts, names them, and lets the browser ask before the tab closes. A setting that takes effect as it turns is no draft.
+- Work a person keeps with a save button is a draft: `useUnsavedChanges` reports it to the one `UnsavedChangesGuard` around the pages, which holds the app's moves through its navigation's `useBlocker` and asks before leaving a page that holds unsaved drafts, names them, and lets the browser ask before the tab closes. A setting that takes effect as it turns is no draft.
 - A toast is Base UI's: it stands over every dialog and answers a press without closing it. F6 takes the keyboard to it and Shift+Tab back, its time rests while a pointer or the keyboard is on it, and a swipe or Escape sends it away.
 - A value to take whole is a `CopyValue`; a secret shown once is a `ShownOnce`.
 

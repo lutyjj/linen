@@ -31,6 +31,7 @@ import {
     type ThemePreference,
     TopBar,
 } from "../src";
+import { reactRouter } from "../src/react-router";
 import { ControlsSection } from "./ControlsSection";
 import { FeedbackSection } from "./FeedbackSection";
 import { FoundationsSection } from "./FoundationsSection";
@@ -73,7 +74,7 @@ const SCREENS = [
 ] as const;
 
 const PLACES: readonly Place[] = SCREENS.map(({ to, label, icon }) => ({
-    to,
+    href: to,
     label,
     icon,
 }));
@@ -114,7 +115,7 @@ function Specimen() {
             label="Specimen"
             places={PLACES}
             storageKey="linen:rail"
-            home={{ to: "/foundations", label: "linen" }}
+            home={{ href: "/foundations", label: "linen" }}
             phoneNav={phoneNav}
             screen={screen?.to}
             wordmark={
@@ -178,7 +179,7 @@ const root = document.getElementById("root");
 if (root === null) throw new Error("no #root element");
 createRoot(root).render(
     <StrictMode>
-        <LinenProvider>
+        <LinenProvider navigation={reactRouter}>
             <BrowserRouter>
                 <Specimen />
             </BrowserRouter>

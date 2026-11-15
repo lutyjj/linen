@@ -11,7 +11,6 @@ import {
     useRef,
     useState,
 } from "react";
-import { Link, NavLink, useLocation } from "react-router";
 
 import { classes } from "./classes";
 import {
@@ -22,6 +21,7 @@ import {
     spring,
     useStill,
 } from "./motion";
+import { useCurrent, useMotionLink, useNavigation } from "./navigation";
 import { POPUP_CLASS, POSITIONER_CLASS } from "./Popup";
 import { chosenLayerClass, ChosenMark } from "./SegmentedControl";
 import { TopBarLead } from "./TopBar";
@@ -29,7 +29,8 @@ import { useWords } from "./words";
 
 /** A place the navigation leads to. */
 export interface Place {
-    to: string;
+    /** A path from the root, such as `/settings/people`. */
+    href: string;
     label: string;
     icon: LucideIcon;
     /** Where the link is active only on its own address, not beneath it. */
@@ -91,8 +92,6 @@ export function railItemClass(active: boolean): string {
 const LABEL_CLASS = "min-w-0 flex-1 truncate";
 const TIP_CLASS =
     "pointer-events-none absolute inset-y-0 left-full my-auto ml-2 h-fit rounded-input bg-text px-2 py-1 text-xs font-medium whitespace-nowrap text-bg shadow-overlay group-data-popup-open/item:invisible";
-
-const MotionNavLink = m.create(NavLink);
 
 function RailLabel({
     compact,
@@ -163,23 +162,23 @@ function RailBadge({ active, count }: { active: boolean; count: string }) {
     );
 }
 
-function RailLink({ to, icon, label, exact = false, badge }: Place) {
+function RailLink({ href, icon, label, exact = false, badge }: Place) {
+    const MotionLink = useMotionLink();
+    const current = useCurrent(href, exact);
     return (
-        <MotionNavLink
+        <MotionLink
             whileHover="hint"
             whileFocus="hint"
-            to={to}
-            end={exact}
-            className={({ isActive }) => railItemClass(isActive)}
+            href={href}
+            aria-current={current ? "page" : undefined}
+            className={railItemClass(current)}
         >
-            {({ isActive }) => (
-                <RailRow icon={icon} label={label}>
-                    {badge !== undefined && (
-                        <RailBadge active={isActive} count={badge} />
-                    )}
-                </RailRow>
-            )}
-        </MotionNavLink>
+            <RailRow icon={icon} label={label}>
+                {badge !== undefined && (
+                    <RailBadge active={current} count={badge} />
+                )}
+            </RailRow>
+        </MotionLink>
     );
 }
 
@@ -387,7 +386,8 @@ export function MenuChoice({
 
 /** The app's first screen, and the app's name, which names the way there. */
 export interface Home {
-    to: string;
+    /** A path from the root, such as `/`. */
+    href: string;
     label: string;
 }
 
@@ -396,9 +396,10 @@ export interface Home {
  * the person is, as a product's name does on every site.
  */
 function HomeLink({ home, children }: { home: Home; children: ReactNode }) {
+    const { Link } = useNavigation();
     return (
         <Link
-            to={home.to}
+            href={home.href}
             aria-label={home.label}
             className="-m-1 flex shrink-0 items-center rounded-button p-1"
         >
@@ -407,7 +408,7 @@ function HomeLink({ home, children }: { home: Home; children: ReactNode }) {
     );
 }
 
-interface Navigation {
+interface PlaceList {
     /** Names the navigation, apart from a screen's own section navigation. */
     label: string;
     places: readonly Place[];
@@ -434,7 +435,7 @@ function Rail({
     foot,
     storageKey,
     folded,
-}: Navigation & {
+}: PlaceList & {
     home: Home;
     wordmark: ReactNode;
     mark?: ReactNode;
@@ -481,7 +482,7 @@ function Rail({
                     className="flex flex-col gap-0.5"
                 >
                     {places.map((place) => (
-                        <RailLink key={place.to} {...place} />
+                        <RailLink key={place.href} {...place} />
                     ))}
                 </m.div>
 
@@ -507,7 +508,7 @@ export type PhoneNav = "bottom" | "top";
  * padded past the home indicator. Toasts stand above it while it is on the
  * page (`data-tab-bar`, read by linen.css).
  */
-function TabBar({ label, places, placesKey }: Navigation) {
+function TabBar({ label, places, placesKey }: PlaceList) {
     return (
         <nav
             aria-label={label}
@@ -519,34 +520,38 @@ function TabBar({ label, places, placesKey }: Navigation) {
                 key={placesKey}
                 className="flex h-(--height-tabbar) items-stretch"
             >
-                {places.map(({ to, label, icon: Icon, exact, badge }) => (
-                    <MotionNavLink
-                        whileHover="hint"
-                        whileFocus="hint"
-                        key={to}
-                        to={to}
-                        end={exact}
-                        className={({ isActive }) =>
-                            classes(
-                                "relative flex flex-1 flex-col items-center justify-center gap-0.5 text-3xs",
-                                isActive
-                                    ? "font-medium text-accent"
-                                    : "text-text-secondary",
-                            )
-                        }
-                    >
-                        <Icon aria-hidden="true" className="size-5" />
-                        {label}
-                        {badge !== undefined && (
-                            <span
-                                aria-hidden="true"
-                                className="absolute top-1.5 right-[calc(50%-16px)] size-2 rounded-full bg-warn"
-                            />
-                        )}
-                    </MotionNavLink>
+                {places.map((place) => (
+                    <TabLink key={place.href} {...place} />
                 ))}
             </m.div>
         </nav>
+    );
+}
+
+/** A place in the tab bar: its icon over its words. */
+function TabLink({ href, label, icon: Icon, exact = false, badge }: Place) {
+    const MotionLink = useMotionLink();
+    const current = useCurrent(href, exact);
+    return (
+        <MotionLink
+            whileHover="hint"
+            whileFocus="hint"
+            href={href}
+            aria-current={current ? "page" : undefined}
+            className={classes(
+                "relative flex flex-1 flex-col items-center justify-center gap-0.5 text-3xs",
+                current ? "font-medium text-accent" : "text-text-secondary",
+            )}
+        >
+            <Icon aria-hidden="true" className="size-5" />
+            {label}
+            {badge !== undefined && (
+                <span
+                    aria-hidden="true"
+                    className="absolute top-1.5 right-[calc(50%-16px)] size-2 rounded-full bg-warn"
+                />
+            )}
+        </MotionLink>
     );
 }
 
@@ -561,10 +566,10 @@ function TopNav({
     placesKey,
     home,
     wordmark,
-}: Navigation & { home: Home; wordmark: ReactNode }) {
+}: PlaceList & { home: Home; wordmark: ReactNode }) {
     const group = useId();
     const scroller = useRef<HTMLDivElement>(null);
-    const { pathname } = useLocation();
+    const pathname = useNavigation().usePathname();
     // The current place scrolls into the bar's view, and only the bar
     // scrolls: the bar scrolls away with the page, and bringing the place
     // into the window's view would move the page back up to it. Offsets are
@@ -615,7 +620,7 @@ function TopNav({
                     >
                         {places.map((place) => (
                             <TopNavLink
-                                key={place.to}
+                                key={place.href}
                                 group={group}
                                 {...place}
                             />
@@ -642,7 +647,7 @@ const MAKE_ROOM: MotionToken = "state";
  * that stalls during the move lets them in early.
  */
 function TopNavLink({
-    to,
+    href,
     label,
     icon: Icon,
     exact = false,
@@ -653,56 +658,49 @@ function TopNavLink({
     group: string;
 }) {
     const still = useStill();
+    const MotionLink = useMotionLink();
+    const current = useCurrent(href, exact);
     return (
-        <MotionNavLink
+        <MotionLink
             layout={still ? false : "position"}
             transition={spring(MAKE_ROOM)}
-            to={to}
-            end={exact}
-            className={({ isActive }) =>
-                classes(
-                    "relative flex h-(--height-control) shrink-0 items-center gap-1.5 rounded-button px-2 text-sm whitespace-nowrap",
-                    chosenLayerClass(isActive),
-                    isActive
-                        ? "font-medium text-accent"
-                        : "text-text-secondary hover:bg-border hover:text-text",
-                )
-            }
-        >
-            {({ isActive }) => (
-                <>
-                    {isActive && <ChosenMark group={group} radius="button" />}
-                    <Icon
-                        aria-hidden="true"
-                        className="relative size-4 shrink-0"
-                    />
-                    {isActive ? (
-                        <m.span
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{
-                                ...spring("enter"),
-                                delay: seconds(MAKE_ROOM),
-                            }}
-                            className="relative"
-                        >
-                            {label}
-                        </m.span>
-                    ) : (
-                        <span className="sr-only">{label}</span>
-                    )}
-                    {badge !== undefined && (
-                        <span
-                            aria-hidden="true"
-                            className={classes(
-                                "absolute top-1 right-1 size-2 rounded-full",
-                                isActive ? "bg-accent" : "bg-warn",
-                            )}
-                        />
-                    )}
-                </>
+            href={href}
+            aria-current={current ? "page" : undefined}
+            className={classes(
+                "relative flex h-(--height-control) shrink-0 items-center gap-1.5 rounded-button px-2 text-sm whitespace-nowrap",
+                chosenLayerClass(current),
+                current
+                    ? "font-medium text-accent"
+                    : "text-text-secondary hover:bg-border hover:text-text",
             )}
-        </MotionNavLink>
+        >
+            {current && <ChosenMark group={group} radius="button" />}
+            <Icon aria-hidden="true" className="relative size-4 shrink-0" />
+            {current ? (
+                <m.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{
+                        ...spring("enter"),
+                        delay: seconds(MAKE_ROOM),
+                    }}
+                    className="relative"
+                >
+                    {label}
+                </m.span>
+            ) : (
+                <span className="sr-only">{label}</span>
+            )}
+            {badge !== undefined && (
+                <span
+                    aria-hidden="true"
+                    className={classes(
+                        "absolute top-1 right-1 size-2 rounded-full",
+                        current ? "bg-accent" : "bg-warn",
+                    )}
+                />
+            )}
+        </MotionLink>
     );
 }
 
@@ -712,7 +710,7 @@ function PhoneNavigation({
     home,
     wordmark,
     ...navigation
-}: Navigation & { at: PhoneNav; home: Home; wordmark: ReactNode }) {
+}: PlaceList & { at: PhoneNav; home: Home; wordmark: ReactNode }) {
     switch (at) {
         case "bottom":
             return <TabBar {...navigation} />;
@@ -766,7 +764,7 @@ export function Shell({
     phoneNav = "bottom",
     screen,
     children,
-}: Navigation & {
+}: PlaceList & {
     /** Where the wordmark and the mark lead. */
     home: Home;
     /** The product's name at the head of the full rail, and of the phone's

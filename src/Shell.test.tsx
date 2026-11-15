@@ -4,26 +4,29 @@ import { Folder, Users } from "lucide-react";
 import { MemoryRouter } from "react-router";
 import { afterEach, expect, it, vi } from "vitest";
 
+import { reactRouter } from "./react-router";
 import { Shell } from "./Shell";
-import { ENGLISH } from "./words";
+import { ENGLISH, LinenProvider } from "./words";
 
 afterEach(() => vi.restoreAllMocks());
 
-const HOME = { to: "/", label: "linen" };
+const HOME = { href: "/", label: "linen" };
 
 function frame() {
     return render(
-        <MemoryRouter>
-            <Shell
-                label="Places"
-                places={[{ to: "/", label: "Projects", icon: Folder }]}
-                home={HOME}
-                wordmark="linen"
-                storageKey="test:rail"
-            >
-                <p>The screen</p>
-            </Shell>
-        </MemoryRouter>,
+        <LinenProvider navigation={reactRouter}>
+            <MemoryRouter>
+                <Shell
+                    label="Places"
+                    places={[{ href: "/", label: "Projects", icon: Folder }]}
+                    home={HOME}
+                    wordmark="linen"
+                    storageKey="test:rail"
+                >
+                    <p>The screen</p>
+                </Shell>
+            </MemoryRouter>
+        </LinenProvider>,
     );
 }
 
@@ -48,21 +51,28 @@ it("keeps the fold for the page where the browser refuses storage", async () => 
 
 it("shows a phone's places along the top, each still named, and no tab bar", () => {
     render(
-        <MemoryRouter initialEntries={["/people"]}>
-            <Shell
-                label="Places"
-                places={[
-                    { to: "/", label: "Projects", icon: Folder, exact: true },
-                    { to: "/people", label: "People", icon: Users },
-                ]}
-                home={HOME}
-                wordmark="linen"
-                storageKey="test:rail"
-                phoneNav="top"
-            >
-                <p>The screen</p>
-            </Shell>
-        </MemoryRouter>,
+        <LinenProvider navigation={reactRouter}>
+            <MemoryRouter initialEntries={["/people"]}>
+                <Shell
+                    label="Places"
+                    places={[
+                        {
+                            href: "/",
+                            label: "Projects",
+                            icon: Folder,
+                            exact: true,
+                        },
+                        { href: "/people", label: "People", icon: Users },
+                    ]}
+                    home={HOME}
+                    wordmark="linen"
+                    storageKey="test:rail"
+                    phoneNav="top"
+                >
+                    <p>The screen</p>
+                </Shell>
+            </MemoryRouter>
+        </LinenProvider>,
     );
 
     // The rail comes first, then the phone's bar.
@@ -101,24 +111,26 @@ it("puts a phone's places in the tab bar unless the app chooses the top", () => 
 
 it("leads home from the wordmark, and from the mark of a rail the screen folded", () => {
     const places = [
-        { to: "/", label: "Projects", icon: Folder, exact: true },
-        { to: "/people", label: "People", icon: Users },
+        { href: "/", label: "Projects", icon: Folder, exact: true },
+        { href: "/people", label: "People", icon: Users },
     ];
     const at = (folded: boolean) => (
-        <MemoryRouter initialEntries={["/people/7"]}>
-            <Shell
-                label="Places"
-                places={places}
-                home={HOME}
-                wordmark="linen"
-                mark={<svg aria-hidden="true" />}
-                storageKey="test:rail"
-                phoneNav="top"
-                folded={folded}
-            >
-                <p>The screen</p>
-            </Shell>
-        </MemoryRouter>
+        <LinenProvider navigation={reactRouter}>
+            <MemoryRouter initialEntries={["/people/7"]}>
+                <Shell
+                    label="Places"
+                    places={places}
+                    home={HOME}
+                    wordmark="linen"
+                    mark={<svg aria-hidden="true" />}
+                    storageKey="test:rail"
+                    phoneNav="top"
+                    folded={folded}
+                >
+                    <p>The screen</p>
+                </Shell>
+            </MemoryRouter>
+        </LinenProvider>
     );
     const view = render(at(false));
     const [rail, top] = screen.getAllByRole("navigation", { name: "Places" });
@@ -136,4 +148,35 @@ it("leads home from the wordmark, and from the mark of a rail the screen folded"
         "href",
         "/",
     );
+});
+
+it("marks the current place from the page's own address where the app has no router", () => {
+    window.history.pushState({}, "", "/people/7");
+    try {
+        render(
+            <Shell
+                label="Places"
+                places={[
+                    { href: "/", label: "Projects", icon: Folder },
+                    { href: "/people", label: "People", icon: Users },
+                ]}
+                home={HOME}
+                wordmark="linen"
+                storageKey="test:rail"
+            >
+                <p>The screen</p>
+            </Shell>,
+        );
+        const rail = screen.getAllByRole("navigation", { name: "Places" })[0];
+        if (rail === undefined) throw new Error("no rail");
+        const people = within(rail).getByRole("link", { name: "People" });
+        expect(people).toHaveAttribute("href", "/people");
+        expect(people).toHaveAttribute("aria-current", "page");
+        // The root is current only on its own address.
+        expect(
+            within(rail).getByRole("link", { name: "Projects" }),
+        ).not.toHaveAttribute("aria-current");
+    } finally {
+        window.history.pushState({}, "", "/");
+    }
 });

@@ -8,10 +8,10 @@ import {
     useLayoutEffect,
     useRef,
 } from "react";
-import { Link } from "react-router";
 
 import { classes } from "./classes";
 import { renderLeaving } from "./motion";
+import { useNavigation } from "./navigation";
 import { OPTION_CLASS, POPUP_CLASS, POSITIONER_CLASS } from "./Popup";
 import { useWords } from "./words";
 
@@ -50,7 +50,8 @@ export const TopBarLead = createContext<ReactNode>(null);
 
 /** A screen above the one shown, which its trail leads back to. */
 export interface Crumb {
-    to: string;
+    /** A path from the root, such as `/settings/people`. */
+    href: string;
     label: string;
 }
 
@@ -66,6 +67,7 @@ const SHOWN_STEPS = 2;
  */
 function Trail({ crumbs }: { crumbs: readonly Crumb[] }) {
     const words = useWords();
+    const { Link } = useNavigation();
     const folded = crumbs.slice(0, -SHOWN_STEPS);
     const shown = crumbs.slice(-SHOWN_STEPS);
     return (
@@ -80,7 +82,7 @@ function Trail({ crumbs }: { crumbs: readonly Crumb[] }) {
                 {shown.map((crumb, step) => (
                     <li key={step} className="flex min-w-0 items-center">
                         <Link
-                            to={crumb.to}
+                            href={crumb.href}
                             className="truncate rounded-input hover:text-text"
                         >
                             {crumb.label}
@@ -96,6 +98,7 @@ function Trail({ crumbs }: { crumbs: readonly Crumb[] }) {
 /** The steps a deep trail folds away, behind one button. */
 function Folded({ crumbs }: { crumbs: readonly Crumb[] }) {
     const words = useWords();
+    const { Link } = useNavigation();
     return (
         <Menu.Root>
             <Menu.Trigger
@@ -120,7 +123,7 @@ function Folded({ crumbs }: { crumbs: readonly Crumb[] }) {
                             <Menu.LinkItem
                                 key={step}
                                 closeOnClick
-                                render={<Link to={crumb.to} />}
+                                render={<Link href={crumb.href} />}
                                 className={classes(OPTION_CLASS, "block")}
                             >
                                 {crumb.label}

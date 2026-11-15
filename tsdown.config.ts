@@ -9,7 +9,7 @@ import { defineConfig } from "tsdown";
  * publint and attw check.
  */
 export default defineConfig({
-    entry: ["src/index.ts"],
+    entry: ["src/index.ts", "src/react-router.tsx"],
     platform: "neutral",
     dts: true,
     copy: { from: "src/styles/*.css", to: "dist/styles" },

@@ -4,17 +4,18 @@ import { useState } from "react";
 import { MemoryRouter, Route, Routes, useParams } from "react-router";
 import { expect, it } from "vitest";
 
+import { reactRouter } from "./react-router";
 import { TitleField, TopBar, TopBarLead } from "./TopBar";
-import { ENGLISH } from "./words";
+import { ENGLISH, LinenProvider } from "./words";
 
 it("names the screens above this one in a trail the title ends", () => {
     render(
-        <MemoryRouter>
+        <>
             <TopBar
                 title="Atlas"
-                trail={[{ to: "/projects", label: "Projects" }]}
+                trail={[{ href: "/projects", label: "Projects" }]}
             />
-        </MemoryRouter>,
+        </>,
     );
     const trail = screen.getByRole("navigation", { name: ENGLISH.breadcrumb });
     expect(
@@ -30,19 +31,19 @@ it("names the screens above this one in a trail the title ends", () => {
 
 it("folds the steps before the nearest two behind one button", async () => {
     render(
-        <MemoryRouter>
+        <>
             <TopBar
                 title="Nightly export"
                 trail={[
-                    { to: "/settings", label: "Settings" },
-                    { to: "/settings/integrations", label: "Integrations" },
+                    { href: "/settings", label: "Settings" },
+                    { href: "/settings/integrations", label: "Integrations" },
                     {
-                        to: "/settings/integrations/webhooks",
+                        href: "/settings/integrations/webhooks",
                         label: "Webhooks",
                     },
                 ]}
             />
-        </MemoryRouter>,
+        </>,
     );
     const trail = screen.getByRole("navigation", { name: ENGLISH.breadcrumb });
     const shown = within(trail)
@@ -66,18 +67,20 @@ it("closes the folded steps once one is chosen, where the screen stays", async (
             <TopBar
                 title={place}
                 trail={["a", "b", "c"].map((step) => ({
-                    to: `/${step}`,
+                    href: `/${step}`,
                     label: step.toUpperCase(),
                 }))}
             />
         );
     }
     render(
-        <MemoryRouter initialEntries={["/d"]}>
-            <Routes>
-                <Route path="/:place" element={<Place />} />
-            </Routes>
-        </MemoryRouter>,
+        <LinenProvider navigation={reactRouter}>
+            <MemoryRouter initialEntries={["/d"]}>
+                <Routes>
+                    <Route path="/:place" element={<Place />} />
+                </Routes>
+            </MemoryRouter>
+        </LinenProvider>,
     );
     const fold = screen.getByRole("button", { name: ENGLISH.foldedSteps });
     await userEvent.click(fold);
@@ -88,11 +91,11 @@ it("closes the folded steps once one is chosen, where the screen stays", async (
 
 it("keeps the lead before a title whose trail is empty", () => {
     render(
-        <MemoryRouter>
+        <>
             <TopBarLead value={<span>Acme</span>}>
                 <TopBar title="Overview" trail={[]} />
             </TopBarLead>
-        </MemoryRouter>,
+        </>,
     );
     expect(
         screen.queryByRole("navigation", { name: ENGLISH.breadcrumb }),

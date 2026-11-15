@@ -8,9 +8,9 @@ import {
     useRef,
     useState,
 } from "react";
-import { useBlocker } from "react-router";
 
 import { ConfirmDialog } from "./ConfirmDialog";
+import { useNavigation } from "./navigation";
 import { useWords } from "./words";
 
 /** Work on the page that a person keeps by pressing save. */
@@ -31,9 +31,9 @@ const DraftsContext = createContext<Drafts | null>(null);
  * Asks before the person leaves unsaved work: moving to another page of the
  * app asks in a dialog that names what is lost, and closing or reloading the
  * tab asks through the browser. Every draft below it reports itself with
- * `useUnsavedChanges`, so one page may hold several. It holds navigation
- * through React Router's `useBlocker`, so it needs a data router
- * (`createBrowserRouter`), inside which it stands once, around the pages.
+ * `useUnsavedChanges`, so one page may hold several. It stands once, around
+ * the pages, and holds moves within the app through the navigation's
+ * `useBlocker`; a navigation without one leaves only the browser's question.
  */
 export function UnsavedChangesGuard({ children }: { children: ReactNode }) {
     const words = useWords();
@@ -61,11 +61,9 @@ export function UnsavedChangesGuard({ children }: { children: ReactNode }) {
         [...drafts.current.values()].filter(
             (draft) => draft.unsaved && !draft.pending,
         );
-    const blocker = useBlocker(
-        ({ currentLocation, nextLocation }) =>
-            currentLocation.pathname !== nextLocation.pathname &&
-            holding().length > 0,
-    );
+    const { usePathname, useBlocker } = useNavigation();
+    const here = usePathname();
+    const blocker = useBlocker((next) => next !== here && holding().length > 0);
 
     // Closing the tab asks while any work is unsaved, pending or not: a save
     // under way may still fail. The listener is there only then, so the page
@@ -80,7 +78,7 @@ export function UnsavedChangesGuard({ children }: { children: ReactNode }) {
     // The dialog closes after its confirmation too, and that close must not
     // call the move off; each new question starts undecided.
     const leaving = useRef(false);
-    const blocked = blocker.state === "blocked";
+    const blocked = blocker.blocked;
     useEffect(() => {
         if (blocked) leaving.current = false;
     }, [blocked]);
@@ -95,7 +93,7 @@ export function UnsavedChangesGuard({ children }: { children: ReactNode }) {
                 open={blocked}
                 onOpenChange={(open) => {
                     if (open || leaving.current) return;
-                    blocker.reset?.();
+                    blocker.reset();
                 }}
                 title={words.leaveUnsaved}
                 detail={words.unsavedLost(names)}
@@ -103,7 +101,7 @@ export function UnsavedChangesGuard({ children }: { children: ReactNode }) {
                 destructive
                 onConfirm={() => {
                     leaving.current = true;
-                    blocker.proceed?.();
+                    blocker.proceed();
                 }}
             />
         </DraftsContext>

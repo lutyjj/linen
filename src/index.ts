@@ -57,6 +57,7 @@ export {
     useLoop,
     useStill,
 } from "./motion";
+export { type Blocker, type LinkProps, type Navigation } from "./navigation";
 export { type CardOption, OptionCards } from "./OptionCards";
 export {
     DialogRoot,

@@ -38,7 +38,7 @@ export function LayoutSection() {
             >
                 <div className="overflow-hidden rounded-card border border-border">
                     <TopBar
-                        trail={[{ to: "/layout", label: "Reports" }]}
+                        trail={[{ href: "/layout", label: "Reports" }]}
                         title={
                             <TitleField
                                 aria-label="Report name"
@@ -59,9 +59,9 @@ export function LayoutSection() {
                 <div className="overflow-hidden rounded-card border border-border">
                     <TopBar
                         trail={[
-                            { to: "/foundations", label: "Settings" },
-                            { to: "/controls", label: "Integrations" },
-                            { to: "/layout", label: "Webhooks" },
+                            { href: "/foundations", label: "Settings" },
+                            { href: "/controls", label: "Integrations" },
+                            { href: "/layout", label: "Webhooks" },
                         ]}
                         title="Nightly export"
                     />

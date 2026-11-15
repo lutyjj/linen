@@ -36,3 +36,11 @@ class ResizeObserverStub {
 }
 globalThis.ResizeObserver ??=
     ResizeObserverStub as unknown as typeof ResizeObserver;
+
+// Nor does jsdom scroll: bringing an element into view does nothing.
+if (!("scrollIntoView" in Element.prototype)) {
+    Object.defineProperty(Element.prototype, "scrollIntoView", {
+        configurable: true,
+        value: () => undefined,
+    });
+}

@@ -1,8 +1,8 @@
 import { m } from "motion/react";
 import { useEffect, useId, useRef } from "react";
-import { NavLink, useLocation } from "react-router";
 
 import { classes } from "./classes";
+import { useCurrent, useNavigation } from "./navigation";
 import {
     CHOSEN_WIDTH_CLASS,
     chosenLayerClass,
@@ -11,7 +11,8 @@ import {
 import { COLUMN_CLASS } from "./TopBar";
 
 export interface Section {
-    to: string;
+    /** A path from the root, such as `/settings/people`. */
+    href: string;
     label: string;
 }
 
@@ -37,7 +38,7 @@ export function SectionNav({
 }) {
     const marks = useId();
     const group = useRef<HTMLDivElement>(null);
-    const { pathname } = useLocation();
+    const pathname = useNavigation().usePathname();
     useEffect(() => {
         group.current
             ?.querySelector("[aria-current=page]")
@@ -62,38 +63,45 @@ export function SectionNav({
                     className="relative isolate flex min-h-[var(--height-sections)] w-max min-w-full flex-nowrap items-center gap-1 py-1.5 md:w-auto md:flex-wrap"
                 >
                     {sections.map((section) => (
-                        <NavLink
-                            key={section.to}
-                            to={section.to}
-                            data-label={section.label}
-                            className={({ isActive }) =>
-                                classes(
-                                    "relative flex shrink-0 flex-col items-center rounded-button px-2.5 py-1.5 text-sm whitespace-nowrap ",
-                                    CHOSEN_WIDTH_CLASS,
-                                    chosenLayerClass(isActive),
-                                    isActive
-                                        ? "font-medium text-accent"
-                                        : "text-text-secondary hover:bg-border hover:text-text",
-                                )
-                            }
-                        >
-                            {({ isActive }) => (
-                                <>
-                                    {isActive && (
-                                        <ChosenMark
-                                            group={marks}
-                                            radius="button"
-                                        />
-                                    )}
-                                    <span className="relative">
-                                        {section.label}
-                                    </span>
-                                </>
-                            )}
-                        </NavLink>
+                        <SectionLink
+                            key={section.href}
+                            {...section}
+                            marks={marks}
+                        />
                     ))}
                 </div>
             </m.div>
         </nav>
+    );
+}
+
+/** A section of the rail, which wears the chosen mark while it is current. */
+function SectionLink({
+    href,
+    label,
+    marks,
+}: Section & {
+    /** The rail's own id, which its chosen mark travels within. */
+    marks: string;
+}) {
+    const { Link } = useNavigation();
+    const current = useCurrent(href);
+    return (
+        <Link
+            href={href}
+            data-label={label}
+            aria-current={current ? "page" : undefined}
+            className={classes(
+                "relative flex shrink-0 flex-col items-center rounded-button px-2.5 py-1.5 text-sm whitespace-nowrap",
+                CHOSEN_WIDTH_CLASS,
+                chosenLayerClass(current),
+                current
+                    ? "font-medium text-accent"
+                    : "text-text-secondary hover:bg-border hover:text-text",
+            )}
+        >
+            {current && <ChosenMark group={marks} radius="button" />}
+            <span className="relative">{label}</span>
+        </Link>
     );
 }
