@@ -1,4 +1,3 @@
-import type { Transition } from "motion/react";
 import { useSyncExternalStore } from "react";
 
 /** Shared timing and accessibility policy for interaction animations. */
@@ -13,17 +12,6 @@ const DURATION = {
 } as const;
 export type MotionToken = keyof typeof DURATION;
 
-/**
- * The curves of motions that are not the spring. A fall is let go and
- * decelerates into its place from its first frame; a breath has no arrival
- * to settle into, so it crosses evenly; a fade leaves quickly and trails off.
- */
-export const EASE = {
-    fall: [0.2, 0, 0, 1],
-    breath: [0.42, 0, 0.58, 1],
-    fade: "easeOut",
-} as const;
-
 export const STILL = "(prefers-reduced-motion: reduce)";
 
 /** A token's length in seconds, the unit Motion reads. */
@@ -32,10 +20,13 @@ export function seconds(token: MotionToken): number {
     return DURATION[token];
 }
 
-/**
- * A spring released from rest, settling without overshoot.
- */
-export function spring(token: MotionToken): Transition {
+/** A transition as Motion reads it: a spring, or nothing at all. */
+export type Spring =
+    | { duration: 0 }
+    | { type: "spring"; visualDuration: number; bounce: number };
+
+/** A spring released from rest, settling without overshoot. */
+export function spring(token: MotionToken): Spring {
     const duration = seconds(token);
     return duration === 0
         ? { duration: 0 }

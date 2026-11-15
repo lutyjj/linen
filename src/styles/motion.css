@@ -150,6 +150,15 @@
         rotate: 180deg;
     }
 
+    /* A button gives way under the hand, and comes back on the same spring. */
+    .press {
+        transition: scale var(--motion-state);
+    }
+
+    .press:active:not(:disabled) {
+        scale: 0.98;
+    }
+
     /* A switch's thumb travels to the side it was turned to. */
     .thumb {
         transition: translate var(--motion-state);

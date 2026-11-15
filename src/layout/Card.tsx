@@ -1,5 +1,4 @@
-import { type HTMLMotionProps, m } from "motion/react";
-import type { ReactNode, Ref } from "react";
+import type { ComponentProps, ReactNode, Ref } from "react";
 
 import { Actions } from "../controls/Button";
 import { classes } from "../foundation/classes";
@@ -8,9 +7,9 @@ export function Card({
     className = "",
     children,
     ...props
-}: HTMLMotionProps<"section">) {
+}: ComponentProps<"section">) {
     return (
-        <m.section
+        <section
             {...props}
             className={classes(
                 "overflow-hidden rounded-card border border-border bg-surface",
@@ -18,7 +17,7 @@ export function Card({
             )}
         >
             {children}
-        </m.section>
+        </section>
     );
 }
 
