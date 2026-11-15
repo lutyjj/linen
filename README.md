@@ -23,15 +23,17 @@ Import the stylesheet after Tailwind:
 @import "linen/linen.css";
 ```
 
-Wrap the app once in `LinenProvider`, which holds the toasts, the words the components say, and how the app moves between its pages.
+Wrap the app once in `LinenProvider`, which holds the words the components say and how the app moves between its pages. An app that says things in toasts (`useToast`) also stands a `ToastProvider` inside it, once, around everything that calls it.
 
 ```tsx
-import { Button, LinenProvider } from "linen";
+import { Button, LinenProvider, ToastProvider } from "linen";
 
 export function App() {
     return (
         <LinenProvider>
-            <Button variant="primary">Save</Button>
+            <ToastProvider>
+                <Button variant="primary">Save</Button>
+            </ToastProvider>
         </LinenProvider>
     );
 }

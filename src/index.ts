@@ -104,7 +104,12 @@ export { ConfirmDialog } from "./overlays/ConfirmDialog";
 export { DialogCancel, DialogLayout, FormDialog } from "./overlays/Dialog";
 export { DialogRoot, DialogShell } from "./overlays/DialogRoot";
 export { PromptDialog } from "./overlays/PromptDialog";
-export { type ToastMessage, UNDO_WINDOW_MS, useToast } from "./overlays/Toast";
+export {
+    type ToastMessage,
+    ToastProvider,
+    UNDO_WINDOW_MS,
+    useToast,
+} from "./overlays/Toast";
 export {
     createThemeStore,
     THEME_PREFERENCES,

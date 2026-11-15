@@ -29,6 +29,7 @@ import {
     SegmentedControl,
     Shell,
     type ThemePreference,
+    ToastProvider,
     TopBar,
 } from "../src";
 import { reactRouter } from "../src/navigation/react-router";
@@ -180,9 +181,11 @@ if (root === null) throw new Error("no #root element");
 createRoot(root).render(
     <StrictMode>
         <LinenProvider navigation={reactRouter}>
-            <BrowserRouter>
-                <Specimen />
-            </BrowserRouter>
+            <ToastProvider>
+                <BrowserRouter>
+                    <Specimen />
+                </BrowserRouter>
+            </ToastProvider>
         </LinenProvider>
     </StrictMode>,
 );

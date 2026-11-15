@@ -70,7 +70,8 @@ function answersOf(message: ToastMessage | undefined): string {
 }
 
 /**
- * Where toasts stand; `LinenProvider` holds one for the app.
+ * Where toasts stand, for an app that says things in them: once, inside
+ * `LinenProvider`, around everything that calls `useToast`.
  *
  * Base UI's toast carries the behaviour: its region is read out even while a
  * modal dialog hides the rest of the page, F6 takes the keyboard to it from

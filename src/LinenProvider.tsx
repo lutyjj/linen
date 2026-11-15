@@ -7,12 +7,10 @@ import {
     NavigationContext,
     navigationOf,
 } from "./navigation/navigation";
-import { ToastProvider } from "./overlays/Toast";
 
 /**
  * Everything the components share above them: their words, how the app moves
- * between its pages, one clock for every animation, and the place toasts
- * stand.
+ * between its pages, and one clock for every animation.
  */
 export function LinenProvider({
     words = ENGLISH,
@@ -28,9 +26,7 @@ export function LinenProvider({
     return (
         <WordsContext value={words}>
             <NavigationContext value={moves}>
-                <MotionProvider>
-                    <ToastProvider>{children}</ToastProvider>
-                </MotionProvider>
+                <MotionProvider>{children}</MotionProvider>
             </NavigationContext>
         </WordsContext>
     );
