@@ -1,6 +1,6 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { usePresence } from "motion/react";
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useState } from "react";
 
 import { renderLeaving } from "./motion";
 
@@ -42,14 +42,12 @@ export function DialogRoot({
     onOpenChange: (open: boolean) => void;
     children: ReactNode;
 }) {
-    const [present, safeToRemove] = usePresence();
     // At rest closed: never opened, or Base UI has finished its exit. A shut
-    // dialog has nothing to wait for when the part of the page around it goes.
+    // dialog has nothing to wait for when the part of the page around it
+    // goes, so only an open one asks to be waited for.
     const [shut, setShut] = useState(!open);
     if (open && shut) setShut(false);
-    useEffect(() => {
-        if (!present && shut) safeToRemove();
-    }, [present, shut, safeToRemove]);
+    const [present, safeToRemove] = usePresence(!shut);
     return (
         <Dialog.Root
             open={open && present}

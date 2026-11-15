@@ -47,3 +47,17 @@ import { reactRouter } from "linen/react-router";
 ```
 
 Another router takes a `Navigation` of its own: a `Link` that renders an anchor and moves the way the router does, a `usePathname` hook that follows the address, and, to hold moves for unsaved work, a `useBlocker` hook.
+
+### Without Motion
+
+Motion carries what moves between states: an arrival rising in, a chosen mark sliding, rows settling, a press. An app that has no room for it, such as a console a device serves from its own flash, resolves Motion to linen's stand-in, `linen/still`. In Vite:
+
+```ts
+export default defineConfig({
+    resolve: {
+        alias: [{ find: /^motion(\/react)?$/, replacement: "linen/still" }],
+    },
+});
+```
+
+Every state stays, and so does every motion the stylesheet runs: popups, dialogs, panels, toasts, the rail's tips and fold, arrival marks, a refresh's turn and the theme's cross-fade. What Motion would carry lands where it would have ended, as it does for a reader who asks for less motion. Keep `motion` installed, as its types still describe linen's props; the alias keeps it out of the bundle.

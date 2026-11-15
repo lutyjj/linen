@@ -9,6 +9,7 @@
     "exports": {
         ".": "./src/index.ts",
         "./react-router": "./src/react-router.tsx",
+        "./still": "./src/still.tsx",
         "./package.json": "./package.json",
         "./linen.css": "./src/styles/linen.css"
     },
@@ -19,16 +20,18 @@
         "exports": {
             ".": "./dist/index.js",
             "./react-router": "./dist/react-router.js",
+            "./still": "./dist/still.js",
             "./package.json": "./package.json",
             "./linen.css": "./dist/styles/linen.css"
         }
     },
     "scripts": {
         "specimen": "vite",
+        "specimen:still": "vite --mode still",
         "build": "tsdown",
         "typecheck": "tsc --noEmit",
         "test": "vitest run",
-        "check": "pnpm run build && prettier --check . && eslint . && tsc --noEmit && vitest run && vite build",
+        "check": "pnpm run build && prettier --check . && eslint . && tsc --noEmit && vitest run && vite build && vite build --mode still",
         "format": "prettier --write ."
     },
     "dependencies": {
