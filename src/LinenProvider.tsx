@@ -15,21 +15,25 @@ import {
  *
  * Base UI draws no `<style>` of its own beneath it; linen.css holds the one
  * rule it would have drawn, so a page served under a Content Security
- * Policy that forbids inline styles needs no nonce for linen.
+ * Policy that forbids inline styles needs no nonce for linen. An app whose
+ * policy names a nonce hands it here, and Base UI's scripts carry it.
  */
 export function LinenProvider({
     words = ENGLISH,
     navigation,
+    nonce,
     children,
 }: {
     words?: Words;
     /** The app's router, which linen's links follow; plain anchors without. */
     navigation?: Navigation;
+    /** The page's Content Security Policy nonce, where it has one. */
+    nonce?: string;
     children: ReactNode;
 }) {
     const moves = useMemo(() => navigationOf(navigation), [navigation]);
     return (
-        <CSPProvider disableStyleElements>
+        <CSPProvider nonce={nonce} disableStyleElements>
             <WordsContext value={words}>
                 <NavigationContext value={moves}>
                     <MotionProvider>{children}</MotionProvider>
