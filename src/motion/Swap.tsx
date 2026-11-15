@@ -1,5 +1,5 @@
 import { AnimatePresence, m, useAnimate, useIsPresent } from "motion/react";
-import { forwardRef, type ReactNode, useLayoutEffect, useRef } from "react";
+import { type ReactNode, type Ref, useLayoutEffect, useRef } from "react";
 
 import { spring } from "./tokens";
 
@@ -73,20 +73,25 @@ export function Swap({
  * faded, so it is inert from its first frame of leaving: a tap reaches the
  * view arriving, and only one view is read out.
  */
-const SwapView = forwardRef<HTMLDivElement, { children: ReactNode }>(
-    function SwapView({ children }, ref) {
-        const present = useIsPresent();
-        return (
-            <m.div
-                ref={ref}
-                inert={!present}
-                aria-hidden={!present || undefined}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0, transition: spring("leave") }}
-            >
-                {children}
-            </m.div>
-        );
-    },
-);
+function SwapView({
+    children,
+    ref,
+}: {
+    children: ReactNode;
+    /** Motion's own, which it hands a child it pops out of the layout. */
+    ref?: Ref<HTMLDivElement>;
+}) {
+    const present = useIsPresent();
+    return (
+        <m.div
+            ref={ref}
+            inert={!present}
+            aria-hidden={!present || undefined}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: spring("leave") }}
+        >
+            {children}
+        </m.div>
+    );
+}

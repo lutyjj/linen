@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { type Ref, useEffect, useRef, useState } from "react";
 
 import { classes } from "../foundation/classes";
 import { CONTROL_CLASS } from "./Field";
@@ -16,25 +16,28 @@ const SETTLE_MS = 250;
  * cursor. What is held is replaced whenever the value arrives from elsewhere,
  * so a cleared filter or a followed link still shows in the box.
  */
-export const SearchField = forwardRef<
-    HTMLInputElement,
-    {
-        /** The control's accessible name. Search boxes carry no visible label. */
-        label: string;
-        value: string;
-        onChange: (value: string) => void;
-        /**
-         * Enter was pressed: what is typed is handed on at once, and then to
-         * this as well, for a list that can do more with a finished search.
-         */
-        onSubmit?: (value: string) => void;
-        placeholder?: string;
-        className?: string;
-    }
->(function SearchField(
-    { label, value, onChange, onSubmit, placeholder, className = "" },
+export function SearchField({
+    label,
+    value,
+    onChange,
+    onSubmit,
+    placeholder,
+    className = "",
     ref,
-) {
+}: {
+    /** The control's accessible name. Search boxes carry no visible label. */
+    label: string;
+    value: string;
+    onChange: (value: string) => void;
+    /**
+     * Enter was pressed: what is typed is handed on at once, and then to
+     * this as well, for a list that can do more with a finished search.
+     */
+    onSubmit?: (value: string) => void;
+    placeholder?: string;
+    className?: string;
+    ref?: Ref<HTMLInputElement>;
+}) {
     const [typed, setTyped] = useState(value);
     const settle = useRef(onChange);
     settle.current = onChange;
@@ -80,4 +83,4 @@ export const SearchField = forwardRef<
             }}
         />
     );
-});
+}

@@ -3,8 +3,8 @@ import { X } from "lucide-react";
 import {
     createContext,
     type ReactNode,
+    use,
     useCallback,
-    useContext,
     useMemo,
     useRef,
 } from "react";
@@ -149,7 +149,7 @@ function Toaster({ children }: { children: ReactNode }) {
     const toasting = useMemo(() => ({ show, dismiss }), [show, dismiss]);
 
     return (
-        <ToastContext.Provider value={toasting}>
+        <ToastContext value={toasting}>
             {children}
             <BaseToast.Portal>
                 {/* A press on a toast answers it where the person is, so it
@@ -174,12 +174,12 @@ function Toaster({ children }: { children: ReactNode }) {
                     ))}
                 </BaseToast.Viewport>
             </BaseToast.Portal>
-        </ToastContext.Provider>
+        </ToastContext>
     );
 }
 
 export function useToast(): Toasting {
-    const toasting = useContext(ToastContext);
+    const toasting = use(ToastContext);
     if (toasting === undefined) {
         throw new Error("useToast needs a ToastProvider above it");
     }
