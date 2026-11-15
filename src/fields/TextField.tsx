@@ -89,7 +89,7 @@ export function CellText({
     label: string;
     value: string;
     /**
-     * Text to start from instead of the held value, such as a proposal
+     * Text to start from instead of the held value, such as a suggestion
      * opened to change. The field takes the cursor, and leaving it writes.
      */
     draft?: string;

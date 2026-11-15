@@ -23,8 +23,8 @@ export function OptionCards<Value extends string>({
     label,
     options,
     value,
-    proposed,
-    proposedMark,
+    suggested,
+    suggestedMark,
     disabled = false,
     onChoose,
 }: {
@@ -33,12 +33,13 @@ export function OptionCards<Value extends string>({
     /** Undefined while the question is unanswered. */
     value: Value | undefined;
     /**
-     * The answer a model proposed, which carries the mark. Pressing it is
-     * accepting it: the proposal is the same press the manual answer is.
+     * The answer the app suggests, such as the one it recommends, which
+     * wears a tint and a mark until the question is answered. Taking it is
+     * the same press as taking any other.
      */
-    proposed?: Value;
-    /** What marks the proposal as one, before its words. */
-    proposedMark?: ReactNode;
+    suggested?: Value;
+    /** What marks the suggestion as one, before its words. */
+    suggestedMark?: ReactNode;
     disabled?: boolean;
     onChoose: (value: Value) => void;
 }) {
@@ -58,9 +59,9 @@ export function OptionCards<Value extends string>({
                         "cursor-pointer rounded-button border px-3 py-2 text-left",
                         "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-45",
                         "data-[checked]:border-accent data-[checked]:bg-accent-weak",
-                        // A proposal wears the ink's tint until it is answered,
-                        // as a proposal in a field does.
-                        option.value === proposed
+                        // A suggestion wears the ink's tint until the question
+                        // is answered.
+                        option.value === suggested
                             ? "data-[unchecked]:border-accent/40 data-[unchecked]:bg-accent-weak/60 data-[unchecked]:hover:border-accent"
                             : "data-[unchecked]:border-border-strong data-[unchecked]:bg-surface data-[unchecked]:hover:border-accent data-[unchecked]:hover:bg-accent-weak",
                     )}
@@ -71,7 +72,7 @@ export function OptionCards<Value extends string>({
                             option.value === value ? "text-accent" : "",
                         )}
                     >
-                        {option.value === proposed && proposedMark}
+                        {option.value === suggested && suggestedMark}
                         {option.label}
                     </span>
                     <span className="block text-xs text-text-secondary">

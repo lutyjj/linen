@@ -145,13 +145,10 @@
 
     /* Outer control heights include borders and padding. Composite controls
      * own their height; their children fill the available space. */
-    --height-record: 56px;
     --height-control: 32px;
     --height-control-compact: 28px;
     --height-control-inline: 24px;
 
-    --height-row: 44px;
-    --height-row-compact: 36px;
     --height-toolbar: 48px;
     --height-sections: 44px;
     --width-rail: 220px;

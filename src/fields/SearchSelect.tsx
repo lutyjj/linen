@@ -15,7 +15,7 @@ import { type Choice, PICKER_CLASS, PickerMark } from "./Select";
 export const POPUP_SEARCH_CLASS = `${CONTROL_CLASS} mb-1 w-full outline-none`;
 
 /**
- * One value out of a list nobody can scan, such as the world's currencies,
+ * One value out of a list nobody can scan, such as the world's time zones,
  * with the search box that makes it scannable. It only chooses: a picker that
  * also creates what was typed is the app's own.
  */
