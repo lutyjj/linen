@@ -96,6 +96,22 @@
         color-mix(in oklch, var(--color-ink) 24%, var(--color-surface))
     );
 
+    /* The three states' tints, the ground of a message that speaks in that
+     * state. They mix in oklab, which has no hue to interpolate: in oklch the
+     * surface's own hue, the ink's, would pull each state toward it. */
+    --color-positive-weak: light-dark(
+        color-mix(in oklab, var(--color-positive) 11%, var(--color-surface)),
+        color-mix(in oklab, var(--color-positive) 22%, var(--color-surface))
+    );
+    --color-warn-weak: light-dark(
+        color-mix(in oklab, var(--color-warn) 13%, var(--color-surface)),
+        color-mix(in oklab, var(--color-warn) 22%, var(--color-surface))
+    );
+    --color-danger-weak: light-dark(
+        color-mix(in oklab, var(--color-danger) 10%, var(--color-surface)),
+        color-mix(in oklab, var(--color-danger) 22%, var(--color-surface))
+    );
+
     /* The ink's shadow behind a dialog. */
     --color-scrim: light-dark(
         oklch(25% 0.02 var(--hue) / 0.35),

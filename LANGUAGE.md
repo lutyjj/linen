@@ -6,16 +6,17 @@ An interface in linen is paper, hairlines and one ink. The content is the loudes
 
 Every neutral takes the app's `--hue` at a chroma of 0.02 or less, so the page is one temperature. Tints are mixes of an ink into the surface, never colours picked by eye. Each colour is one `light-dark()` pair; the page follows the system scheme, and `data-theme` on the root pins either.
 
-| Token                                  | Marks                                                                                                   |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `ink`, `accent`                        | What a hand can act on or has set: the primary action, links, focus, the current place, a chosen option |
-| `accent-weak`                          | The ink mixed into the surface: hover, the current place's fill, a notice                               |
-| `warn`                                 | A state that wants attention, and nothing else                                                          |
-| `danger`                               | Removal and failure                                                                                     |
-| `positive`                             | Something gained or arrived                                                                             |
-| `bg`, `surface`, `sunken`              | The page, a card on it, a band below the page (the rail, a well, a form opened inside a card)           |
-| `border`, `border-strong`              | Hairlines between surfaces; the frame of a control                                                      |
-| `text`, `text-secondary`, `text-muted` | The thing; what it means; text about it (labels, units, times)                                          |
+| Token                                       | Marks                                                                                                   |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `ink`, `accent`                             | What a hand can act on or has set: the primary action, links, focus, the current place, a chosen option |
+| `accent-weak`                               | The ink mixed into the surface: hover, the current place's fill, a notice                               |
+| `warn`                                      | A state that wants attention, and nothing else                                                          |
+| `danger`                                    | Removal and failure                                                                                     |
+| `positive`                                  | Something gained or arrived                                                                             |
+| `positive-weak`, `warn-weak`, `danger-weak` | Each state's ink mixed into the surface, as `accent-weak` is: the ground of a message in that state     |
+| `bg`, `surface`, `sunken`                   | The page, a card on it, a band below the page (the rail, a well, a form opened inside a card)           |
+| `border`, `border-strong`                   | Hairlines between surfaces; the frame of a control                                                      |
+| `text`, `text-secondary`, `text-muted`      | The thing; what it means; text about it (labels, units, times)                                          |
 
 Depth is tone. Nothing at rest casts a shadow; `shadow-overlay` belongs to what floats over the page: popups, dialogs, toasts and the rail's tips.
 
@@ -31,15 +32,16 @@ Hierarchy comes from weight and colour before size: a step down in importance mo
 
 ## Layout
 
-| Part     | Component                                    | Holds                                                                                                                                                                                                                                                                                                                                                       |
-| -------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Shell    | `Shell`                                      | The rail on a desk (foldable to its icons) and the screen beside it. Below `md`, `phoneNav` puts the places in a tab bar along the bottom (the default) or in a bar along the top that scrolls away. The wordmark, and the mark of a folded rail, lead `home`                                                                                               |
-| Top bar  | `TopBar`, `TitleField`                       | The screen's title at the left, its actions at the right; sticky. A screen under another names the screens above it in a small `trail` over the title, each a link; past two steps the outer ones fold behind one button, so the trail stays one short line. An editable name is a `TitleField`, as wide as its words. `wide` spans an editor's whole width |
-| Sections | `SectionNav`                                 | A screen's concerns as routes, under the top bar; one row that scrolls on a phone                                                                                                                                                                                                                                                                           |
-| Column   | `Content`, `COLUMN_CLASS`                    | Every band centres its contents in `--width-content`, so a title and the card below share edges                                                                                                                                                                                                                                                             |
-| Card     | `Card`, `CardHead`, `CardBody`, `FormBand`   | One concern each. The head holds a title, a count beside it, a description and actions                                                                                                                                                                                                                                                                      |
-| Setting  | `SettingRow`, `SettingToggle`, `SettingNote` | One setting per row: name, what it does, its control at the end of the row while there is room                                                                                                                                                                                                                                                              |
-| Empty    | `EmptyState`                                 | What would be here, and the way to start                                                                                                                                                                                                                                                                                                                    |
+| Part       | Component                                    | Holds                                                                                                                                                                                                                                                                                                                                                       |
+| ---------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Shell      | `Shell`                                      | The rail on a desk (foldable to its icons) and the screen beside it. Below `md`, `phoneNav` puts the places in a tab bar along the bottom (the default) or in a bar along the top that scrolls away. The wordmark, and the mark of a folded rail, lead `home`                                                                                               |
+| Top bar    | `TopBar`, `TitleField`                       | The screen's title at the left, its actions at the right; sticky. A screen under another names the screens above it in a small `trail` over the title, each a link; past two steps the outer ones fold behind one button, so the trail stays one short line. An editable name is a `TitleField`, as wide as its words. `wide` spans an editor's whole width |
+| Sections   | `SectionNav`                                 | A screen's concerns as routes, under the top bar; one row that scrolls on a phone                                                                                                                                                                                                                                                                           |
+| Column     | `Content`, `COLUMN_CLASS`                    | Every band centres its contents in `--width-content`, so a title and the card below share edges                                                                                                                                                                                                                                                             |
+| Card       | `Card`, `CardHead`, `CardBody`, `FormBand`   | One concern each. The head holds a title, a count beside it, a description and actions                                                                                                                                                                                                                                                                      |
+| Setting    | `SettingRow`, `SettingToggle`, `SettingNote` | One setting per row: name, what it does, its control at the end of the row while there is room                                                                                                                                                                                                                                                              |
+| Empty      | `EmptyState`                                 | What would be here, and the way to start                                                                                                                                                                                                                                                                                                                    |
+| Conditions | `Conditions`, `Condition`                    | What holds for the whole app, such as lost contact or a run under way: a band at the top of every screen, stuck above its bars until the app takes it away. Two or more stand one under another, a failure first, then a warning, then what is under way or simply so, then what came good                                                                  |
 
 Anything that floats at the foot of a phone's screen, as a toast does, stands `--inset-tabbar` above the edge: the tab bar's height while one is on the page, nothing otherwise. The frame starts below `--inset-top`, the band a translucent status bar covers in an app saved to a phone's home screen: the rail and the phone's top bar reach up under it in their own colour, and everything sticky sticks below it. A screen outside the shell keeps clear of it itself.
 
@@ -62,6 +64,11 @@ Every card's contents start on `--spacing-gutter` (12px, 16px from `md`). Two se
 - A destructive act confirms in a `ConfirmDialog` that says what it does. An act that can be put back exactly takes a toast's undo instead.
 - Work a person keeps with a save button is a draft: `useUnsavedChanges` reports it to the one `UnsavedChangesGuard` around the pages, which holds the app's moves through its navigation's `useBlocker` and asks before leaving a page that holds unsaved drafts, names them, and lets the browser ask before the tab closes. A setting that takes effect as it turns is no draft.
 - A toast is Base UI's: it stands over every dialog and answers a press without closing it. F6 takes the keyboard to it and Shift+Tab back, its time rests while a pointer or the keyboard is on it, and a swipe or Escape sends it away.
+- A control that starts something asynchronous is `busy` until the answer comes: a pass of light crosses its face, it keeps its words and its width, and it takes no second press. A switch that writes as it turns holds the same way.
+- A field whose value was refused says why under the control, before its hint, in `danger`; the control is marked invalid and described by both.
+- The state something is in is a `Status`: a dot in the tone and a word or two. Words that want attention, a warning or a failure, wear the ink too, and something happening now beats.
+- A failure, warning, note or success about an act or some fields is a `Notice` beside them, on its tone's tint, with the one thing to do about it at its end. A failure is read out at once; the rest politely.
+- A value on a bounded scale is a `Gauge`: a bar that fills in the colour of each zone it reaches, marks where the value was held or a threshold is set, and the value in words. Gauges read together stand in `Gauges`. A value that changes many times a second is handed over as something it follows, so nothing around it renders.
 - A value to take whole is a `CopyValue`; a secret shown once is a `ShownOnce`.
 
 ## Motion
@@ -74,7 +81,7 @@ Motion says what changed and where it went, and never holds input.
 - `prefers-reduced-motion` makes every duration zero and leaves loops at rest, read live.
 - Motion moves between states and never holds one. A state a person reads, such as a tip, the direction of a fold, a mark, a fill or a turn, is the stylesheet's, so an app without Motion keeps every state and every motion CSS runs.
 
-Durations are springs with no bounce; a component names a purpose, never a length. `motion.css` holds the first three as `--motion-leave`, `--motion-state` and `--motion-enter`, and `mark` and `land` as `--motion-mark` and `--motion-land`; a test holds them to `src/motion/tokens.ts`.
+Durations are springs with no bounce; a component names a purpose, never a length. `motion.css` holds the first three as `--motion-leave`, `--motion-state` and `--motion-enter`, and the holds and loops as `--motion-mark`, `--motion-land`, `--motion-thinking` and `--motion-live`; a test holds them to `src/motion/tokens.ts`.
 
 | Token      | Length | For                                                     |
 | ---------- | ------ | ------------------------------------------------------- |
@@ -85,6 +92,7 @@ Durations are springs with no bounce; a component names a purpose, never a lengt
 | `mark`     | 1200ms | A new row's tint fading                                 |
 | `land`     | 1000ms | A refresh indicator's turn                              |
 | `thinking` | 1500ms | One pass of light across a control waiting on an answer |
+| `live`     | 2000ms | One beat of something happening now                     |
 
 | Pattern                | Component                                             | Motion                                                                                                                                                                 |
 | ---------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -96,6 +104,9 @@ Durations are springs with no bounce; a component names a purpose, never a lengt
 | A choice moves         | `SegmentedControl`, `SectionNav`, the phone's top bar | The chosen mark slides over `state`, beneath the options it passes; in the top bar the places make room over `state`, then the chosen one's words fade in over `enter` |
 | A toast comes and goes | `ToastProvider`, `useToast`                           | Arrives over `enter`, fades over `leave`; follows a swipe and leaves the way it was swiped                                                                             |
 | A list changes         | `SettlingRows`                                        | Rows close up over `enter`; an arrival wears `accent-weak` for `mark`. A list takes its `scope` once its rows have loaded, so none of them reads as an arrival         |
+| A control waits        | `Button` and `Switch` with `busy`                     | One pass of light across its face each `thinking`; still, the light rests across its middle                                                                            |
+| Something is live      | `Status` with `active`                                | A ring leaves its dot and fades each `live`; still, the ring stays drawn                                                                                               |
+| Something runs         | `Condition` with `active`                             | Its mark turns once each `land`                                                                                                                                        |
 | Something arrives      | `arrive()`                                            | Settles once with a 4px rise over `enter`, `stagger` apart                                                                                                             |
 | The theme changes      | `createThemeStore`                                    | One cross-fade of the whole page                                                                                                                                       |
 

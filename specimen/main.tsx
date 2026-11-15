@@ -12,6 +12,8 @@ import { createRoot } from "react-dom/client";
 
 import {
     AccountMenu,
+    Button,
+    Condition,
     Content,
     createThemeStore,
     LinenProvider,
@@ -86,6 +88,13 @@ const PHONE_NAVS: { value: PhoneNav; label: string }[] = [
     { value: "top", label: "Top" },
 ];
 
+/** How many of the app's conditions the specimen raises on every page. */
+const RAISED = [
+    { value: "0", label: "None" },
+    { value: "1", label: "One" },
+    { value: "2", label: "Two" },
+];
+
 const THEMES: { value: ThemePreference; label: string }[] = [
     { value: "system", label: "Auto" },
     { value: "light", label: "Light" },
@@ -97,6 +106,7 @@ function Specimen() {
     const { preference, setPreference } = useTheme();
     const [hue, setHue] = useState("296");
     const [phoneNav, setPhoneNav] = useState<PhoneNav>("bottom");
+    const [raised, setRaised] = useState("0");
     const screen = SCREENS.find((one) => pathname.startsWith(one.to));
     // An address the specimen has no page for opens its first page.
     useLayoutEffect(() => {
@@ -117,6 +127,27 @@ function Specimen() {
             home={{ href: "/foundations", label: "linen" }}
             phoneNav={phoneNav}
             screen={screen?.to}
+            conditions={
+                <>
+                    {raised !== "0" && (
+                        <Condition
+                            tone="danger"
+                            title="The service does not answer."
+                            action={
+                                <Button onClick={() => setRaised("0")}>
+                                    Try again
+                                </Button>
+                            }
+                        />
+                    )}
+                    {raised === "2" && (
+                        <Condition
+                            tone="warn"
+                            title="Read only while storage is nearly full."
+                        />
+                    )}
+                </>
+            }
             wordmark={
                 <span className="font-display text-md font-semibold">
                     linen
@@ -145,6 +176,14 @@ function Specimen() {
                             value={preference}
                             options={THEMES}
                             onValueChange={setPreference}
+                        />
+                    </MenuChoice>
+                    <MenuChoice label="Conditions">
+                        <SegmentedControl
+                            label="Conditions"
+                            value={raised}
+                            options={RAISED}
+                            onValueChange={setRaised}
                         />
                     </MenuChoice>
                     <MenuChoice label="Phone navigation">

@@ -56,6 +56,8 @@
         );
     --motion-mark: 1200ms;
     --motion-land: 1000ms;
+    --motion-thinking: 1500ms;
+    --motion-live: 2000ms;
 }
 
 /* Stillness outranks the springs, from the frame it is asked for. */
@@ -66,6 +68,8 @@
         --motion-enter: 0s !important;
         --motion-mark: 0s !important;
         --motion-land: 0s !important;
+        --motion-thinking: 0s !important;
+        --motion-live: 0s !important;
     }
 }
 
@@ -157,6 +161,22 @@
 
     .press:active:not(:disabled) {
         scale: 0.98;
+    }
+
+    /* A control waiting on an answer: one pass of light across its face
+     * after another. Still, the light rests across its middle. */
+    .thinking {
+        cursor: progress;
+        background-image: linear-gradient(
+            100deg,
+            transparent 35%,
+            color-mix(in oklch, currentColor 16%, transparent) 50%,
+            transparent 65%
+        );
+        background-size: 300% 100%;
+        background-position: 50% 0;
+        background-repeat: no-repeat;
+        animation: linen-thinking var(--motion-thinking) linear infinite;
     }
 
     /* A switch's thumb travels to the side it was turned to. */
@@ -286,10 +306,49 @@
         transition: scale var(--motion-enter);
     }
 
+    /* Something live wears a beating ring around its dot, which rests,
+     * still drawn, for a reader who asks for less motion. */
+    .live-mark {
+        position: relative;
+        box-shadow: 0 0 0 2px color-mix(in oklch, currentColor 25%, transparent);
+    }
+
+    .live-mark::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: currentColor;
+        opacity: 0;
+        animation: linen-live var(--motion-live) ease-out infinite;
+    }
+
     /* A row that just arrived holds the mark long enough for an eye that was
      * elsewhere to find it, then lets it go. */
     .arrival[data-arrival] {
         animation: linen-arrival var(--motion-mark) ease-out;
+    }
+}
+
+@keyframes linen-thinking {
+    from {
+        background-position: 100% 0;
+    }
+    to {
+        background-position: 0 0;
+    }
+}
+
+/* A live mark beats: a ring leaves the dot and fades (Status). */
+@keyframes linen-live {
+    0% {
+        opacity: 0.6;
+        scale: 1;
+    }
+    70%,
+    100% {
+        opacity: 0;
+        scale: 2.6;
     }
 }
 

@@ -17,7 +17,6 @@ import {
     Select,
     Switch,
     TextField,
-    WarnDot,
 } from "../src";
 import { Sample, Samples, Specimen, Stack } from "./Specimen";
 
@@ -65,6 +64,13 @@ export function ControlsSection() {
         "comfortable",
     );
     const [removal, setRemoval] = useState<"archive" | "delete">("archive");
+    const [saving, setSaving] = useState(false);
+    const [port, setPort] = useState("80800");
+
+    const save = () => {
+        setSaving(true);
+        setTimeout(() => setSaving(false), 2400);
+    };
 
     return (
         <Stack>
@@ -90,6 +96,11 @@ export function ControlsSection() {
                             Save
                         </Button>
                     </Sample>
+                    <Sample name="Busy, pressed to see">
+                        <Button variant="primary" busy={saving} onClick={save}>
+                            Save changes
+                        </Button>
+                    </Sample>
                     <Sample name="Icon">
                         <IconButton aria-label="Remove">
                             <Trash2 aria-hidden="true" className="size-4" />
@@ -100,7 +111,7 @@ export function ControlsSection() {
 
             <Specimen
                 title="Fields"
-                rule="A field wears the same frame wherever it stands, its name above it and its hint below. A picker ends in one chevron, which turns as its list opens; a list of more than one kind of thing holds each under its heading."
+                rule="A field wears the same frame wherever it stands, its name above it and its hint below. A refused value says why under the control, before the hint. A picker ends in one chevron, which turns as its list opens; a list of more than one kind of thing holds each under its heading."
             >
                 <div className="grid max-w-2xl gap-x-4 sm:grid-cols-2">
                     <TextField
@@ -108,6 +119,33 @@ export function ControlsSection() {
                         hint="Everyone in the workspace sees it."
                         value={name}
                         onChange={(event) => setName(event.target.value)}
+                    />
+                    <TextField
+                        label="Port"
+                        hint="Where the service listens."
+                        error={
+                            Number(port) > 65535 || !/^\d+$/.test(port)
+                                ? "A port is a whole number up to 65535."
+                                : undefined
+                        }
+                        inputMode="numeric"
+                        value={port}
+                        onChange={(event) => setPort(event.target.value)}
+                    />
+                    <TextField
+                        label="Region"
+                        hint="Set when the workspace was made."
+                        value="Europe"
+                        disabled
+                        onChange={() => undefined}
+                    />
+                    <Select
+                        label="Owner"
+                        placeholder="Nobody"
+                        choices={ASSIGNEES}
+                        value=""
+                        error="A project needs an owner."
+                        onValueChange={() => undefined}
                     />
                     <Select
                         label="Time zone"
@@ -226,7 +264,7 @@ export function ControlsSection() {
 
             <Specimen
                 title="Chips and values"
-                rule="A chip names a state or a scope beside a name. A value to copy whole is shown in full, with its copy control beside it."
+                rule="A chip names a scope or a value beside a name, in a tone where it means one. A value to copy whole is shown in full, with its copy control beside it."
             >
                 <Samples>
                     <Sample name="Neutral">
@@ -234,8 +272,17 @@ export function ControlsSection() {
                     </Sample>
                     <Sample name="Caution">
                         <Chip size="row" tone="warn">
-                            <WarnDot />
                             Not seen lately
+                        </Chip>
+                    </Sample>
+                    <Sample name="Positive">
+                        <Chip size="row" tone="positive">
+                            Verified
+                        </Chip>
+                    </Sample>
+                    <Sample name="Danger">
+                        <Chip size="row" tone="danger">
+                            Suspended
                         </Chip>
                     </Sample>
                     <Sample name="Accent">

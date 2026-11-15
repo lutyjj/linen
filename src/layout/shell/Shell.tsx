@@ -1,6 +1,7 @@
 import { useAnimate } from "motion/react";
 import { type ReactNode, useLayoutEffect } from "react";
 
+import { Conditions } from "../../feedback/Conditions";
 import { classes } from "../../foundation/classes";
 import { spring } from "../../motion/tokens";
 import { TopBarLead } from "../TopBar";
@@ -52,6 +53,7 @@ export function Shell({
     folded = false,
     phoneNav = "bottom",
     screen,
+    conditions,
     children,
 }: PlaceList & {
     /** Where the wordmark and the mark lead. */
@@ -76,6 +78,11 @@ export function Shell({
     phoneNav?: PhoneNav;
     /** Which screen the shell holds; a change of it fades the new one in. */
     screen?: string;
+    /**
+     * The conditions of the whole app that hold now, each a `Condition`:
+     * they stand at the top of every screen until the app takes them away.
+     */
+    conditions?: ReactNode;
     children: ReactNode;
 }) {
     const [main, animate] = useAnimate<HTMLElement>();
@@ -129,6 +136,7 @@ export function Shell({
                 ref={main}
                 className={classes("flex min-w-0 flex-col md:pb-0", room.main)}
             >
+                <Conditions>{conditions}</Conditions>
                 <TopBarLead value={lead ?? null}>{children}</TopBarLead>
             </main>
 

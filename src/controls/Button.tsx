@@ -28,6 +28,12 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
 
 export interface ButtonProps extends ComponentProps<"button"> {
     variant?: ButtonVariant;
+    /**
+     * What it started is under way: it says so with a pass of light across
+     * its face, keeps its words and so its width, and takes no second press
+     * until the answer comes.
+     */
+    busy?: boolean;
     children: ReactNode;
 }
 
@@ -69,15 +75,32 @@ export const LINK_CLASS =
 
 export function Button({
     variant = "default",
+    busy = false,
     className = "",
+    onClick,
     children,
     ...rest
 }: ButtonProps) {
     return (
         <button
             type="button"
-            className={classes(buttonClass(variant), className)}
             {...rest}
+            aria-busy={busy || undefined}
+            aria-disabled={busy || rest["aria-disabled"]}
+            onClick={(event) => {
+                // A press while it waits starts nothing, a form's submit
+                // included; the button keeps the focus it has.
+                if (busy) {
+                    event.preventDefault();
+                    return;
+                }
+                onClick?.(event);
+            }}
+            className={classes(
+                buttonClass(variant),
+                busy && "thinking",
+                className,
+            )}
         >
             {children}
         </button>

@@ -29,7 +29,12 @@ it("gives CSS the springs Motion runs, so both keep one clock", () => {
 });
 
 it("gives CSS the holds Motion's tokens name", () => {
-    for (const token of ["mark", "land"] as const satisfies MotionToken[]) {
+    for (const token of [
+        "mark",
+        "land",
+        "thinking",
+        "live",
+    ] as const satisfies MotionToken[]) {
         expect(rootValue(`motion-${token}`)).toBe(`${seconds(token) * 1000}ms`);
     }
 });

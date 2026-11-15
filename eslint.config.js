@@ -14,6 +14,7 @@ const MODULES = [
     "navigation",
     "overlays",
     "fields",
+    "feedback",
     "controls",
     "motion",
     "foundation",
