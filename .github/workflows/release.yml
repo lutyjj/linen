@@ -1,34 +1,61 @@
 name: Release
 
-# A version tag builds the package from the locked dependencies, which runs
-# every check, and attaches the tarball to the tag's release.
+# Builds the package at a release tag from the locked dependencies, which
+# runs every check, attaches the tarball to the draft release Release Please
+# opened there, and publishes it. A rerun at the same tag uploads the same
+# tarball again and leaves a published release as it is.
 on:
-    push:
-        tags: ["v*"]
+    workflow_call:
+        inputs:
+            tag:
+                required: true
+                type: string
+    workflow_dispatch:
+        inputs:
+            tag:
+                description: Release tag (vX.Y.Z)
+                required: true
+                type: string
 
 permissions: {}
+
+concurrency:
+    group: release-${{ inputs.tag }}
+    cancel-in-progress: false
 
 jobs:
     release:
         runs-on: ubuntu-latest
         permissions:
-            contents: write # creates the release and uploads the tarball to it
+            contents: write # uploads the tarball and publishes the release
+        env:
+            TAG: ${{ inputs.tag }}
+            GH_TOKEN: ${{ github.token }}
         steps:
+            - name: Check the tag
+              run: |
+                  if ! [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                    echo "::error::$TAG is not a vX.Y.Z tag"
+                    exit 1
+                  fi
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
+                  ref: refs/tags/${{ inputs.tag }}
                   persist-credentials: false
             - uses: cachix/install-nix-action@75c75c31ebece974e48ebc36b4ad125bd97bd97b # v31.11.3
             - name: Build the package
               run: nix build
             - name: Publish the release
-              env:
-                  GH_TOKEN: ${{ github.token }}
-                  TAG: ${{ github.ref_name }}
               run: |
                   tarball="result/linen-${TAG#v}.tgz"
                   if [ ! -f "$tarball" ]; then
                     echo "::error::$TAG does not name the version in package.json"
                     exit 1
                   fi
-                  gh release create "$TAG" "$tarball" --repo "$GITHUB_REPOSITORY" \
-                    --verify-tag --title "linen ${TAG#v}" --generate-notes
+                  draft="$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft)"
+                  if [ "$draft" = "true" ]; then
+                    gh release upload "$TAG" "$tarball" --repo "$GITHUB_REPOSITORY" --clobber
+                    gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false
+                  else
+                    echo "$TAG is already published"
+                  fi

@@ -1,2 +1,6 @@
 dist
 pnpm-lock.yaml
+
+# Release Please writes these.
+CHANGELOG.md
+.release-please-manifest.json

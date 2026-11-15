@@ -1,0 +1,40 @@
+name: Release Please
+
+# Keeps the release pull request up to date. Merging it tags the release
+# commit and opens a draft release, then calls release.yml directly, since
+# events from GITHUB_TOKEN start no other workflow.
+on:
+    push:
+        branches: [main]
+    # Refreshes the release pull request on demand.
+    workflow_dispatch:
+
+permissions: {}
+
+jobs:
+    release-please:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write # tags the release and writes the release branch
+            pull-requests: write # opens and updates the release pull request
+        outputs:
+            release_created: ${{ steps.release.outputs.release_created }}
+            tag_name: ${{ steps.release.outputs.tag_name }}
+        steps:
+            # With the default token, checks on the release pull request wait
+            # for "Approve and run"; a RELEASE_PLEASE_TOKEN fine-grained PAT
+            # starts them at once.
+            - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+              id: release
+              with:
+                  token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
+
+    publish:
+        name: Publish
+        needs: release-please
+        if: ${{ needs.release-please.outputs.release_created == 'true' }}
+        permissions:
+            contents: write # uploads the tarball and publishes the release
+        uses: ./.github/workflows/release.yml
+        with:
+            tag: ${{ needs.release-please.outputs.tag_name }}
