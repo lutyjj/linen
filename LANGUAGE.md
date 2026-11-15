@@ -108,6 +108,19 @@ At 120 Hz a frame has 8.3ms. An animation the compositor runs is smooth whatever
 - Layout projection (Motion's `layout` and `layoutId`) moves small things: a chosen mark, the places of the phone's top bar and the rows of a list. Scroll containers declare `layoutScroll`, so scrolling is not mistaken for a row edit, and a new list scope remounts its rows without travel or arrival marks.
 - Reduced motion also turns off row and shared-element projection, and the theme changes without its cross-fade.
 
+## One mechanism for each job
+
+A component does each of these jobs the one way linen does it, so a new component reads like the old ones and a change to a mechanism reaches all of them.
+
+| Job                                                                      | Mechanism                                                                                                                                                                                                 |
+| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| What a widget does for the hand and the keyboard: focus, keys, dismissal | Base UI's part for it, which linen styles and never re-implements                                                                                                                                         |
+| A Base UI part opening and closing                                       | CSS in `src/styles/motion.css`, on Base UI's `data-starting-style` and `data-ending-style` and the springs `motion.tsx` publishes                                                                         |
+| Anything else that moves: a mark sliding, rows settling, an arrival      | Motion, timed by `motion.tsx`: `spring()`, `seconds()`, `arrive()`                                                                                                                                        |
+| A link, and which place is current                                       | The app's `navigation`, handed to `LinenProvider`: its `Link` renders every link, and the current place, the address itself or one beneath it, wears `aria-current="page"`. No component imports a router |
+| A component's classes and the caller's `className`                       | `classes(own, className)`, so the caller's word on a property wins; an app joins its own classes with it too                                                                                              |
+| Words a person reads                                                     | `useWords()`, which an app may translate                                                                                                                                                                  |
+
 ## Every action shows its end state
 
 A control answers rest, hover, focus, active and disabled in its own body, and busy wherever it starts something asynchronous. A write lands somewhere visible, a failure names what failed and offers the retry where the fault is, and a state a person can enter but cannot see or leave is a defect.
