@@ -8,7 +8,10 @@ import { ToneIcon } from "./toneIcon";
  * A message beside the act or the fields it is about, inside the card or
  * the form: a failure, a warning, a note or a success, in one sentence,
  * with what it means under it and the one thing to do about it at its end.
- * A failure is announced as it appears; the others are said politely.
+ * A failure is an alert, read out as it appears. The others are a status,
+ * read out politely when their words change while they stand; one that only
+ * appears may go unread where a browser does not read a new region, so what
+ * a person must hear at once is a failure, or a toast.
  */
 export function Notice({
     tone = "accent",
