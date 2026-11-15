@@ -41,6 +41,9 @@ const PREACT = [
 // on Preact, whose preset resolves React to preact/compat.
 export default defineConfig(({ mode }) => ({
     root: "specimen",
+    // Each mode resolves React and Motion its own way, so each keeps its
+    // own prebundled dependencies, and the three can be served at once.
+    cacheDir: `../node_modules/.vite/${mode}`,
     plugins: [mode === "preact" ? preact() : react(), tailwindcss()],
     resolve: { alias: mode === "still" || mode === "preact" ? STILL : [] },
     // One page, loaded at once; nothing ships from it, so it builds apart from
