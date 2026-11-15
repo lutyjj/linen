@@ -2,8 +2,8 @@ import preact from "@preact/preset-vite";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 
-import { budget } from "../tools/budget.ts";
 import budgets from "./budget.json" with { type: "json" };
+import { budget } from "./budget.ts";
 
 const dist = (path: string) =>
     decodeURIComponent(new URL(`../dist/${path}`, import.meta.url).pathname);
