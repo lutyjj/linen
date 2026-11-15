@@ -67,7 +67,7 @@ Every card's contents start on `--spacing-gutter` (12px, 16px from `md`). Two se
 - A control that starts something asynchronous is `busy` until the answer comes: a pass of light crosses its face, it keeps its words and its width, and it takes no second press. A switch that writes as it turns holds the same way.
 - A field whose value was refused says why under the control, before its hint, in `danger`; the control is marked invalid and described by both.
 - The state something is in is a `Status`: a dot in the tone and a word or two. Words that want attention, a warning or a failure, wear the ink too, and something happening now beats.
-- A failure, warning, note or success about an act or some fields is a `Notice` beside them, on its tone's tint, with the one thing to do about it at its end. A failure is read out at once; the rest politely.
+- A failure, warning, note or success about an act or some fields is a `Notice` beside them, on its tone's tint, with the one thing to do about it at its end. A failure is read out at once; the others are read politely when their words change while they stand.
 - A value on a bounded scale is a `Gauge`: a bar that fills in the colour of each zone it reaches, marks where the value was held or a threshold is set, and the value in words. Gauges read together stand in `Gauges`. A value that changes many times a second is handed over as something it follows, so nothing around it renders.
 - A value to take whole is a `CopyValue`; a secret shown once is a `ShownOnce`.
 

@@ -83,9 +83,9 @@ export default defineConfig({
 });
 ```
 
-React Router needs hooks Preact does not have, so a Preact app hands `LinenProvider` a `Navigation` of its own. `specimen/navigation.tsx` is one, over the browser's history.
+pnpm and npm install `react` and `react-dom` for linen's peers, and the aliases keep them out of the bundle; aliasing them to `@preact/compat` in `package.json` instead leaves them unmet, as that package names React 18. React Router needs hooks Preact does not have, so a Preact app hands `LinenProvider` a `Navigation` of its own. `specimen/navigation.tsx` is one, over the browser's history.
 
-To test screens built with linen in Vitest on Preact, compile every dependency from its module build, so each one that imports React meets `preact/compat`. Base UI imports `use-sync-external-store`, which ships only as CommonJS, and Vitest loads CommonJS in Node, past every alias; resolve it to a module of the app's own on Preact's hook:
+To test screens built with linen in Vitest on Preact, compile every dependency from its module build, so each one that imports React meets `preact/compat`. Vitest loads CommonJS in Node, past every alias, so two packages need a hand: Testing Library, whose package points Node at its CommonJS build, takes its module build by name, and `use-sync-external-store`, which Base UI imports and which ships only as CommonJS, resolves to a module of the app's own on Preact's hook. The first goes once Testing Library's package hands Vitest its module build, the second once Base UI imports React's own `useSyncExternalStore`:
 
 ```ts
 export default defineConfig({
@@ -123,23 +123,31 @@ export function useSyncExternalStoreWithSelector<Snapshot, Selection>(
     selector: (snapshot: Snapshot) => Selection,
     isEqual?: (a: Selection, b: Selection) => boolean,
 ): Selection {
-    const last = useRef<{ snapshot: Snapshot; selection: Selection }>(null);
+    const last = useRef<{
+        snapshot: Snapshot;
+        selector: (snapshot: Snapshot) => Selection;
+        selection: Selection;
+    } | null>(null);
     const select = useCallback(() => {
         const snapshot = getSnapshot();
         const held = last.current;
-        if (held !== null && Object.is(held.snapshot, snapshot)) {
+        if (
+            held !== null &&
+            held.selector === selector &&
+            Object.is(held.snapshot, snapshot)
+        ) {
             return held.selection;
         }
         const selection = selector(snapshot);
-        if (held !== null && isEqual?.(held.selection, selection) === true) {
-            last.current = { snapshot, selection: held.selection };
-            return held.selection;
-        }
-        last.current = { snapshot, selection };
-        return selection;
+        const kept =
+            held !== null && isEqual?.(held.selection, selection) === true
+                ? held.selection
+                : selection;
+        last.current = { snapshot, selector, selection: kept };
+        return kept;
     }, [getSnapshot, selector, isEqual]);
     return useSyncExternalStore(subscribe, select);
 }
 ```
 
-jsdom has no `Element.prototype.getAnimations`, and Base UI then calls a close complete before Preact has drawn the closing state; giving it one that returns `[]` in the test setup makes jsdom behave as a browser does once its transitions end. `vite.config.ts` and `src/test/setup.ts` in this repository hold the configuration linen's own tests use.
+jsdom has no `Element.prototype.getAnimations`, and Base UI then calls a close complete before Preact has drawn the closing state; giving it one that returns `[]` in the test setup makes jsdom behave as a browser does once its transitions end, until jsdom has its own. `vite.config.ts` and `src/test/setup.ts` in this repository hold the configuration linen's own tests use.
