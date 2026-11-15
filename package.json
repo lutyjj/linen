@@ -32,9 +32,10 @@
         "specimen": "vite",
         "specimen:still": "vite --mode still",
         "build": "tsdown",
+        "generate": "node tools/generate.ts",
         "typecheck": "tsc --noEmit",
         "test": "vitest run",
-        "check": "pnpm run build && prettier --check . && eslint . && tsc --noEmit && tsc -p consumer && vitest run && vite build && vite build --mode still",
+        "check": "pnpm run build && prettier --check . && eslint . && tsc --noEmit && tsc -p tools && tsc -p consumer && vitest run && vite build && vite build --mode still",
         "format": "prettier --write ."
     },
     "dependencies": {
@@ -66,6 +67,7 @@
         "@testing-library/jest-dom": "^7.0.1",
         "@testing-library/react": "^16.3.3",
         "@testing-library/user-event": "^14.6.8",
+        "@types/node": "^24.19.2",
         "@types/react": "^19.3.0",
         "@types/react-dom": "^19.3.0",
         "@vitejs/plugin-react": "^6.1.2",

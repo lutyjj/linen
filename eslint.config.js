@@ -69,7 +69,7 @@ function moduleOrder() {
  * Prettier's, so `eslint-config-prettier` switches off everything stylistic.
  */
 export default tseslint.config(
-    { ignores: ["dist", "specimen/dist"] },
+    { ignores: ["dist", "specimen/dist", "src/foundation/merge-config.ts"] },
     js.configs.recommended,
     ...tseslint.configs.recommendedTypeChecked,
     {

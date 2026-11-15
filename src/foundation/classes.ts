@@ -1,4 +1,6 @@
-import { extendTailwindMerge } from "tailwind-merge";
+import { createTailwindMerge } from "tailwind-merge";
+
+import { mergeConfig } from "./merge-config";
 
 /**
  * Join class names so the last word on a property wins.
@@ -9,18 +11,10 @@ import { extendTailwindMerge } from "tailwind-merge";
  * was handed them, so an override lands or does nothing depending on nothing
  * the caller can see. This resolves the conflict where it is written.
  *
- * The scales it is taught are the ones linen.css adds: `text-hero` is a size
- * and not a colour, the radii are named after what they wrap, and `gutter`
- * is a step of the spacing scale, so `pl-0` given later replaces `pl-gutter`.
+ * It knows the class groups linen's components write, the groups that
+ * override them, and every group on a prefix where a colour could stand, with
+ * linen's own steps of the scales (merge-config.ts). A caller's class on any
+ * property linen sets wins over linen's; classes on properties linen never
+ * sets are joined as they are.
  */
-export const classes = extendTailwindMerge({
-    extend: {
-        theme: { spacing: ["gutter"] },
-        classGroups: {
-            "font-size": [{ text: ["hero", "2xs", "3xs"] }],
-            rounded: [
-                { rounded: ["check", "input", "button", "card", "dialog"] },
-            ],
-        },
-    },
-});
+export const classes = /* @__PURE__ */ createTailwindMerge(mergeConfig);

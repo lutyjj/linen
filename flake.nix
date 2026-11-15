@@ -65,7 +65,7 @@
               inherit (finalAttrs) pname version src;
               pnpm = pkgs.pnpm;
               fetcherVersion = 5;
-              hash = "sha256-cNFUuL5UIbOr6kV+VjNXWpId/OxB6xrSm5mjNIuyhq0=";
+              hash = "sha256-5QZaS1+AulpbgpM+gwAUMr0MrtcxBIu0p/OYsWmPJSs=";
             };
             # tsdown writes package.json's exports, and an app that uses a
             # checkout as a workspace package reads the committed ones, so the

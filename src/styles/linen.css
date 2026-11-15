@@ -17,8 +17,12 @@
  * steps are their own values), but a step and its counterpart are one
  * declaration, so neither can be revised without the other. */
 
-/* The components' own classes, so an app's Tailwind sees them. */
+/* The components' own classes, so an app's Tailwind sees them; the class
+ * groups classes() merges with, and the declarations, are words about
+ * classes rather than classes. */
 @source "../";
+@source not "../foundation/merge-config.*";
+@source not "../**/*.d.ts";
 
 @layer base {
     :root {
