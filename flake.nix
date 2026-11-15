@@ -44,6 +44,7 @@
                 (lib.fileset.maybeMissing ./node_modules)
                 (lib.fileset.maybeMissing ./dist)
                 (lib.fileset.maybeMissing ./specimen/dist)
+                (lib.fileset.maybeMissing ./consumer/dist)
                 (lib.fileset.maybeMissing ./result)
               ]
             );
@@ -65,7 +66,7 @@
               inherit (finalAttrs) pname version src;
               pnpm = pkgs.pnpm;
               fetcherVersion = 5;
-              hash = "sha256-jVNq7eyg6OccUiuI1Ni+AjJxPbxeWquMmX7gUrMdlQU=";
+              hash = "sha256-0nCwia/1KUI6ryGwIxqdg6zKe4cVoo1nj7BQ1w3hLWI=";
             };
             # tsdown writes package.json's exports, and an app that uses a
             # checkout as a workspace package reads the committed ones, so the

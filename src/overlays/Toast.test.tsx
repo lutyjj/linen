@@ -1,4 +1,4 @@
-import { act, render, screen } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
@@ -41,13 +41,20 @@ const say = (message: ToastMessage) =>
         show(message);
     });
 
-it("stands while its undo is on offer, then leaves", () => {
+it("stands while its undo is on offer, then leaves", async () => {
     say({ text: "Entry removed", onUndo: () => undefined });
     expect(screen.getAllByText("Entry removed")).not.toHaveLength(0);
     act(() => {
-        vi.advanceTimersByTime(UNDO_WINDOW_MS);
+        vi.advanceTimersByTime(UNDO_WINDOW_MS - 1);
     });
-    expect(screen.queryAllByText("Entry removed")).toHaveLength(0);
+    expect(screen.getAllByText("Entry removed")).not.toHaveLength(0);
+    act(() => {
+        vi.advanceTimersByTime(1);
+    });
+    // It goes once its leave has played, a frame later.
+    await waitFor(() =>
+        expect(screen.queryAllByText("Entry removed")).toHaveLength(0),
+    );
 });
 
 it("is announced through a live region that stays in the page", () => {

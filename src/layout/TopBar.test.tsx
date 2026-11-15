@@ -1,12 +1,11 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import { MemoryRouter, Route, Routes, useParams } from "react-router";
 import { expect, it } from "vitest";
 
 import { ENGLISH } from "../foundation/words";
 import { LinenProvider } from "../LinenProvider";
-import { reactRouter } from "../navigation/react-router";
+import { memoryNavigation } from "../test/memoryNavigation";
 import { TitleField, TopBar, TopBarLead } from "./TopBar";
 
 it("names the screens above this one in a trail the title ends", () => {
@@ -64,9 +63,10 @@ it("folds the steps before the nearest two behind one button", async () => {
 });
 
 it("closes the folded steps once one is chosen, where the screen stays", async () => {
-    // One screen for every address, so the bar stays as the route changes.
+    // One screen for every address, so the bar stays as the address changes.
+    const memory = memoryNavigation("/d");
     function Place() {
-        const { place = "" } = useParams();
+        const place = memory.usePathname().slice(1);
         return (
             <TopBar
                 title={place}
@@ -78,12 +78,8 @@ it("closes the folded steps once one is chosen, where the screen stays", async (
         );
     }
     render(
-        <LinenProvider navigation={reactRouter}>
-            <MemoryRouter initialEntries={["/d"]}>
-                <Routes>
-                    <Route path="/:place" element={<Place />} />
-                </Routes>
-            </MemoryRouter>
+        <LinenProvider navigation={memory.navigation}>
+            <Place />
         </LinenProvider>,
     );
     const fold = screen.getByRole("button", { name: ENGLISH.foldedSteps });

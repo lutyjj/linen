@@ -1,3 +1,5 @@
+import "./app.css";
+
 import { Button, LinenProvider } from "linen";
 import { createRoot } from "react-dom/client";
 

@@ -63,3 +63,13 @@ if (!("AnimationEvent" in window)) {
         value: AnimationEventStub,
     });
 }
+
+// Nor does jsdom run animations: an element has none, as a browser's has
+// none once its transitions end. Base UI then waits a frame before it calls a
+// close complete, as it does in a browser, rather than at once.
+if (!("getAnimations" in Element.prototype)) {
+    Object.defineProperty(Element.prototype, "getAnimations", {
+        configurable: true,
+        value: () => [],
+    });
+}

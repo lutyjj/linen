@@ -14,29 +14,29 @@ linen is a design language for React apps and the components that wear it, built
 
 ## Ownership and boundaries
 
-| Path                                                  | Responsibility                                                                                                   |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `LANGUAGE.md`                                         | The design rules: tokens, type, layout, controls, motion, and the one mechanism for each job                     |
-| `README.md`                                           | How an app installs, styles, wraps and configures linen                                                          |
-| `src/index.ts`                                        | The public entry: every export, listed by module                                                                 |
-| `src/LinenProvider.tsx`                               | What the components share above them: words, navigation and Motion's configuration                               |
-| `src/theme.ts`                                        | The theme preference store                                                                                       |
-| `src/foundation/`                                     | Class joining, the words components say on their own, viewport hooks, and the surface every popup wears          |
-| `src/motion/`                                         | Motion tokens and policy, and the components whose job is movement                                               |
-| `src/still/`                                          | `linen/still`, which stands in for Motion                                                                        |
-| `src/controls/`                                       | Buttons, chips, toggles, choices and copyable values                                                             |
-| `src/fields/`                                         | Fields, pickers and the frame they share                                                                         |
-| `src/overlays/`                                       | Dialogs and toasts                                                                                               |
-| `src/navigation/`                                     | The `Navigation` contract, which place is current, the unsaved-work guard, and `linen/react-router`              |
-| `src/layout/`                                         | The shell, the top bar, section navigation, the content column, cards, settings and panels                       |
-| `src/styles/`                                         | `linen.css`, the tokens and base styles an app imports; `motion.css`, every state and motion the stylesheet runs |
-| `src/test/`                                           | Test setup for each Vitest project                                                                               |
-| `specimen/`                                           | The app that draws every component in every state                                                                |
-| `consumer/`                                           | An app that type-checks against `dist` with strict library checks and no Motion                                  |
-| `tools/`                                              | What linen generates from its own sources: the class groups `classes()` merges with (`pnpm run generate`)        |
-| `tsdown.config.ts`                                    | The package build, which writes `package.json`'s `exports`                                                       |
-| `flake.nix`, `.github/`, `release-please-config.json` | The toolchain, the release build that runs every check, CI, and how Release Please versions a release            |
-| `CHANGELOG.md`, `.release-please-manifest.json`       | Written by Release Please; never edit them by hand                                                               |
+| Path                                                  | Responsibility                                                                                                                                                                       |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `LANGUAGE.md`                                         | The design rules: tokens, type, layout, controls, motion, and the one mechanism for each job                                                                                         |
+| `README.md`                                           | How an app installs, styles, wraps and configures linen                                                                                                                              |
+| `src/index.ts`                                        | The public entry: every export, listed by module                                                                                                                                     |
+| `src/LinenProvider.tsx`                               | What the components share above them: words, navigation and Motion's configuration                                                                                                   |
+| `src/theme.ts`                                        | The theme preference store                                                                                                                                                           |
+| `src/foundation/`                                     | Class joining, the words components say on their own, viewport hooks, and the surface every popup wears                                                                              |
+| `src/motion/`                                         | Motion tokens and policy, and the components whose job is movement                                                                                                                   |
+| `src/still/`                                          | `linen/still`, which stands in for Motion                                                                                                                                            |
+| `src/controls/`                                       | Buttons, chips, toggles, choices and copyable values                                                                                                                                 |
+| `src/fields/`                                         | Fields, pickers and the frame they share                                                                                                                                             |
+| `src/overlays/`                                       | Dialogs and toasts                                                                                                                                                                   |
+| `src/navigation/`                                     | The `Navigation` contract, which place is current, the unsaved-work guard, and `linen/react-router`                                                                                  |
+| `src/layout/`                                         | The shell, the top bar, section navigation, the content column, cards, settings and panels                                                                                           |
+| `src/styles/`                                         | `linen.css`, the tokens and base styles an app imports; `motion.css`, every state and motion the stylesheet runs                                                                     |
+| `src/test/`                                           | Test setup for each Vitest project                                                                                                                                                   |
+| `specimen/`                                           | The app that draws every component in every state                                                                                                                                    |
+| `consumer/`                                           | An app built from `dist` the way a lean app builds linen, on Preact without Motion: it type-checks with strict library checks, and each page stays inside its budget (`budget.json`) |
+| `tools/`                                              | What linen generates from its own sources: the class groups `classes()` merges with (`pnpm run generate`)                                                                            |
+| `tsdown.config.ts`                                    | The package build, which writes `package.json`'s `exports`                                                                                                                           |
+| `flake.nix`, `.github/`, `release-please-config.json` | The toolchain, the release build that runs every check, CI, and how Release Please versions a release                                                                                |
+| `CHANGELOG.md`, `.release-please-manifest.json`       | Written by Release Please; never edit them by hand                                                                                                                                   |
 
 A module imports only from the modules after it in this order: `layout`, `navigation`, `overlays`, `fields`, `controls`, `motion`, `foundation`. `foundation` and `still` import nothing else from linen, and the files at the root of `src/` compose the modules. A component never imports a router; links and the current place come from the app's `navigation`. Tests sit beside the code they test.
 
