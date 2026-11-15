@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import { classes } from "../foundation/classes";
+import { COLUMN_CLASS, WIDE_COLUMN_CLASS } from "../foundation/column";
 import {
     POPUP_CLASS,
     POSITIONER_CLASS,
@@ -18,7 +19,7 @@ import {
 } from "../foundation/popup";
 import { useWords } from "../foundation/words";
 import { useNavigation } from "../navigation/navigation";
-import { COLUMN_CLASS, SCREEN_TITLE_CLASS, WIDE_COLUMN_CLASS } from "./column";
+import { SCREEN_TITLE_CLASS } from "./column";
 
 /**
  * What the shell puts before every screen's title. A top bar outside a shell
@@ -192,7 +193,7 @@ export function TopBar({
     return (
         <header
             ref={bar}
-            className="sticky top-(--inset-top) z-5 border-b border-border bg-bg"
+            className="sticky top-[calc(var(--inset-top)+var(--height-conditions,0px))] z-5 border-b border-border bg-bg"
         >
             <div
                 className={classes(

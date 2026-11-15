@@ -1,9 +1,11 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 import { classes } from "../foundation/classes";
+import type { Tone } from "../foundation/tone";
 import { useWords } from "../foundation/words";
 
-export type ChipTone = "neutral" | "muted" | "accent" | "warn";
+/** A chip speaks in a tone, is plain, or steps back. */
+export type ChipTone = "neutral" | "muted" | Tone;
 export type ChipSize = "subject" | "row" | "bar";
 export type ChipFrame = "rest" | "hover";
 
@@ -33,10 +35,22 @@ const TONE: Record<ChipTone, Ink> = {
         strong: "var(--color-accent)",
         surface: "var(--color-accent-weak)",
     },
+    positive: {
+        text: "font-medium text-positive",
+        border: "var(--color-positive)",
+        strong: "var(--color-positive)",
+        surface: "transparent",
+    },
     warn: {
         text: "font-medium text-warn",
         border: "var(--color-warn)",
         strong: "var(--color-warn)",
+        surface: "transparent",
+    },
+    danger: {
+        text: "font-medium text-danger",
+        border: "var(--color-danger)",
+        strong: "var(--color-danger)",
         surface: "transparent",
     },
 };
@@ -145,17 +159,5 @@ export function ChipTrigger({
         >
             <span className="truncate">{children}</span>
         </button>
-    );
-}
-
-export function WarnDot({ className }: { className?: string }) {
-    return (
-        <span
-            aria-hidden="true"
-            className={classes(
-                "mr-1.25 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-warn align-[1px]",
-                className,
-            )}
-        />
     );
 }

@@ -54,6 +54,7 @@ export function mergeConfig() {
             "gap-y": [{ "gap-y": [isArbitraryVariable, isArbitraryValue, fromTheme("spacing")] }],
             "justify-content": [{ "justify": ["start", "end", "center", "between", "around", "evenly", "stretch", "baseline", "center-safe", "end-safe", "normal"] }],
             "align-items": [{ "items": ["start", "end", "center", "stretch", "center-safe", "end-safe", { "baseline": ["", "last"] }] }],
+            "align-self": [{ "self": ["auto", "start", "end", "center", "stretch", "center-safe", "end-safe", { "baseline": ["", "last"] }] }],
             "p": [{ "p": [isArbitraryVariable, isArbitraryValue, fromTheme("spacing")] }],
             "px": [{ "px": [isArbitraryVariable, isArbitraryValue, fromTheme("spacing")] }],
             "py": [{ "py": [isArbitraryVariable, isArbitraryValue, fromTheme("spacing")] }],

@@ -2,13 +2,13 @@ import { m } from "motion/react";
 import { useEffect, useId, useRef } from "react";
 
 import { classes } from "../foundation/classes";
+import { COLUMN_CLASS } from "../foundation/column";
 import {
     CHOSEN_WIDTH_CLASS,
     chosenLayerClass,
     ChosenMark,
 } from "../motion/ChosenMark";
 import { useCurrent, useNavigation } from "../navigation/navigation";
-import { COLUMN_CLASS } from "./column";
 
 export interface Section {
     /** A path from the root, such as `/settings/people`. */
@@ -47,7 +47,7 @@ export function SectionNav({
     return (
         <nav
             aria-label={label}
-            className="sticky top-[calc(var(--inset-top)+var(--height-topbar,var(--height-toolbar)))] z-4 border-b border-border bg-bg"
+            className="sticky top-[calc(var(--inset-top)+var(--height-conditions,0px)+var(--height-topbar,var(--height-toolbar)))] z-4 border-b border-border bg-bg"
         >
             {/* A single scrolling rail on phones; wider layouts can wrap. */}
             {/* It scrolls, so Motion is told to measure the mark inside it

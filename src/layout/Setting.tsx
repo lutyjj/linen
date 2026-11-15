@@ -60,6 +60,7 @@ export function SettingToggle({
     checked,
     onCheckedChange,
     disabled,
+    busy,
     dimmed = false,
     role,
     className,
@@ -71,6 +72,8 @@ export function SettingToggle({
     checked: boolean;
     onCheckedChange: (checked: boolean) => void;
     disabled?: boolean;
+    /** The change is being written (`Switch`). */
+    busy?: boolean;
     /** For a setting that applies only while another one is on. */
     dimmed?: boolean;
     /** `listitem`, where the rows are a list of like things. */
@@ -94,6 +97,7 @@ export function SettingToggle({
                     checked={checked}
                     onCheckedChange={onCheckedChange}
                     disabled={disabled}
+                    busy={busy}
                 />
             )}
         </SettingLayout>

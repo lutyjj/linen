@@ -24,6 +24,7 @@ linen is a design language for React apps and the components that wear it, built
 | `src/foundation/`                                     | Class joining, the words components say on their own, viewport hooks, and the surface every popup wears                                                                              |
 | `src/motion/`                                         | Motion tokens and policy, and the components whose job is movement                                                                                                                   |
 | `src/still/`                                          | `linen/still`, which stands in for Motion                                                                                                                                            |
+| `src/feedback/`                                       | What reports a state: status labels, messages, the app's standing conditions, gauges                                                                                                 |
 | `src/controls/`                                       | Buttons, chips, toggles, choices and copyable values                                                                                                                                 |
 | `src/fields/`                                         | Fields, pickers and the frame they share                                                                                                                                             |
 | `src/overlays/`                                       | Dialogs and toasts                                                                                                                                                                   |
@@ -38,7 +39,7 @@ linen is a design language for React apps and the components that wear it, built
 | `flake.nix`, `.github/`, `release-please-config.json` | The toolchain, the release build that runs every check, CI, and how Release Please versions a release                                                                                |
 | `CHANGELOG.md`, `.release-please-manifest.json`       | Written by Release Please; never edit them by hand                                                                                                                                   |
 
-A module imports only from the modules after it in this order: `layout`, `navigation`, `overlays`, `fields`, `controls`, `motion`, `foundation`. `foundation` and `still` import nothing else from linen, and the files at the root of `src/` compose the modules. A component never imports a router; links and the current place come from the app's `navigation`. Tests sit beside the code they test.
+A module imports only from the modules after it in this order: `layout`, `navigation`, `overlays`, `fields`, `feedback`, `controls`, `motion`, `foundation`. `foundation` and `still` import nothing else from linen, and the files at the root of `src/` compose the modules. A component never imports a router; links and the current place come from the app's `navigation`. Tests sit beside the code they test.
 
 `LANGUAGE.md` owns the design rules. Read it before changing a component, and change it in the same commit as the rule. This file does not restate them.
 

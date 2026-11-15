@@ -9,6 +9,7 @@ const DURATION = {
     stagger: 0.08,
     thinking: 1.5,
     land: 1,
+    live: 2,
 } as const;
 export type MotionToken = keyof typeof DURATION;
 

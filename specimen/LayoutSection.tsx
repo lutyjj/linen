@@ -26,6 +26,7 @@ import { Specimen, Stack } from "./Specimen";
 
 export function LayoutSection() {
     const [weekly, setWeekly] = useState(true);
+    const [writing, setWriting] = useState(false);
     const [theme, setTheme] = useState<"system" | "light" | "dark">("system");
     const [name, setName] = useState("Quarterly report");
 
@@ -119,10 +120,17 @@ export function LayoutSection() {
                     </SettingRow>
                     <SettingToggle
                         title="Weekly summary"
-                        description="Each project's progress, by email every Monday."
+                        description="Each project's progress, by email every Monday. It is written as it turns, and holds while it is."
                         label="Weekly summary"
                         checked={weekly}
-                        onCheckedChange={setWeekly}
+                        busy={writing}
+                        onCheckedChange={(next) => {
+                            setWriting(true);
+                            setTimeout(() => {
+                                setWeekly(next);
+                                setWriting(false);
+                            }, 1600);
+                        }}
                     />
                     <SettingRow title="Role">
                         <Chip size="row">Administrator</Chip>

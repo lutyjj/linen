@@ -11,6 +11,7 @@ export function Switch({
     checked,
     onCheckedChange,
     disabled,
+    busy = false,
     id,
     className,
     "aria-label": ariaLabel,
@@ -19,6 +20,8 @@ export function Switch({
     checked: boolean;
     onCheckedChange: (checked: boolean) => void;
     disabled?: boolean;
+    /** The change it made is being written: it holds, and takes no turn. */
+    busy?: boolean;
     id?: string;
     className?: string;
     "aria-label"?: string;
@@ -30,10 +33,13 @@ export function Switch({
             checked={checked}
             onCheckedChange={(next) => onCheckedChange(next)}
             disabled={disabled}
+            readOnly={busy}
+            aria-busy={busy || undefined}
             aria-label={ariaLabel}
             aria-describedby={describedBy}
             className={classes(
                 "inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-border-strong bg-sunken p-px hover:border-text-muted data-[checked]:border-accent data-[checked]:bg-accent data-[disabled]:cursor-default data-[disabled]:opacity-50",
+                busy && "thinking",
                 className,
             )}
         >

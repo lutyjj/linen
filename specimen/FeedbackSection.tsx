@@ -2,15 +2,27 @@ import { useState } from "react";
 
 import {
     Button,
+    Condition,
+    Conditions,
     ConfirmDialog,
+    Elapsed,
     FormDialog,
+    Gauge,
+    Gauges,
+    Notice,
     OptionCards,
     PromptDialog,
     ShownOnce,
+    Status,
     TextField,
     useToast,
 } from "../src";
+import { wandering } from "./live";
 import { Group, Sample, Samples, Specimen, Stack } from "./Specimen";
+
+const [READ, WRITE] = wandering([60, 30], 0, 200);
+const STARTED = Date.now() - 83_000;
+const mbps = (value: number) => `${Math.round(value)} MB/s`;
 
 export function FeedbackSection() {
     const toast = useToast();
@@ -23,6 +35,128 @@ export function FeedbackSection() {
 
     return (
         <Stack>
+            <Specimen
+                title="A state in a word"
+                rule="A status says what state something is in, after a dot that carries its tone. Words that want attention, a warning or a failure, wear the tone's ink too; something happening now wears a ring that beats."
+            >
+                <Samples>
+                    <Sample name="Positive, live">
+                        <Status tone="positive" active>
+                            Running
+                        </Status>
+                    </Sample>
+                    <Sample name="Accent">
+                        <Status tone="accent">Scheduled</Status>
+                    </Sample>
+                    <Sample name="Warn">
+                        <Status tone="warn">Behind by 3 runs</Status>
+                    </Sample>
+                    <Sample name="Danger">
+                        <Status tone="danger">Stopped</Status>
+                    </Sample>
+                    <Sample name="Neutral">
+                        <Status>Paused</Status>
+                    </Sample>
+                    <Sample name="Unknown">
+                        <Status tone="unknown">Not heard from yet</Status>
+                    </Sample>
+                </Samples>
+            </Specimen>
+
+            <Specimen
+                title="A message beside its cause"
+                rule="A message stands beside the act or the fields it is about, on its tone's tint: one sentence, what it means under it, and the one thing to do about it. A failure is read out at once."
+            >
+                <div className="flex max-w-2xl flex-col gap-3">
+                    <Notice
+                        tone="danger"
+                        title="The export did not finish."
+                        description="The archive was larger than the space left."
+                        action={<Button>Try again</Button>}
+                    />
+                    <Notice tone="warn" title="This token expires in 3 days." />
+                    <Notice
+                        title="Changes here apply to every project."
+                        description="A project's own settings still win."
+                    />
+                    <Notice tone="positive" title="The webhook answered." />
+                </div>
+            </Specimen>
+
+            <Specimen
+                title="Conditions of the whole app"
+                rule="A condition that concerns the whole app stands at the top of every screen until it ends, stuck there while the screen scrolls, with the screen's bars beneath it. Two or more stand a failure first. The menu at the rail's foot raises them on this page."
+                framed={false}
+            >
+                <div className="overflow-hidden rounded-card border border-border">
+                    <Conditions className="static">
+                        <Condition
+                            tone="danger"
+                            title="The service does not answer."
+                            description="Changes wait until it does."
+                            action={<Button>Try again</Button>}
+                        />
+                        <Condition
+                            tone="accent"
+                            active
+                            title="Exporting the archive"
+                            description={<Elapsed since={STARTED} />}
+                        />
+                        <Condition
+                            tone="warn"
+                            title="Read only while storage is nearly full."
+                        />
+                    </Conditions>
+                </div>
+            </Specimen>
+
+            <Specimen
+                title="Gauges"
+                rule="A gauge shows a value on a bounded scale, filling toward its end in the colour of each zone it reaches, with a mark where the value was held or a threshold is set. Gauges read together stand close, lined up. A live gauge follows its value without rendering anything around it."
+            >
+                <div className="flex max-w-md flex-col gap-5">
+                    <Gauge
+                        label="Storage"
+                        value={0.82}
+                        format={(value) => `${Math.round(value * 100)}%`}
+                        zones={[
+                            { from: 0, to: 0.7, tone: "positive" },
+                            { from: 0.7, to: 0.9, tone: "warn" },
+                            { from: 0.9, to: 1, tone: "danger" },
+                        ]}
+                        marks={[{ value: 0.9, kind: "set", label: "Limit" }]}
+                    />
+                    <Gauges label="Disk activity">
+                        <Gauge
+                            label="Read"
+                            value={READ?.level ?? 0}
+                            max={200}
+                            format={mbps}
+                            marks={[
+                                {
+                                    value: READ?.high ?? 0,
+                                    kind: "held",
+                                    label: "Highest",
+                                },
+                            ]}
+                        />
+                        <Gauge
+                            label="Write"
+                            value={WRITE?.level ?? 0}
+                            max={200}
+                            format={mbps}
+                            marks={[
+                                {
+                                    value: WRITE?.high ?? 0,
+                                    kind: "held",
+                                    label: "Highest",
+                                },
+                            ]}
+                        />
+                    </Gauges>
+                </div>
+            </Specimen>
+
             <Specimen
                 title="Dialogs"
                 rule="A dialog is modal and alone: it rises in the middle of the page with its scrim and says what the act does before it is done. Destructive acts confirm; acts that can be put back exactly take a toast's undo instead."

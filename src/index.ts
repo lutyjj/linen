@@ -15,13 +15,24 @@ export {
     type ChipStyle,
     type ChipTone,
     ChipTrigger,
-    WarnDot,
 } from "./controls/Chip";
 export { CopyValue, ShownOnce } from "./controls/CopyValue";
 export { Kbd } from "./controls/Kbd";
 export { type CardOption, OptionCards } from "./controls/OptionCards";
 export { SegmentedControl } from "./controls/SegmentedControl";
 export { Switch } from "./controls/Switch";
+export { Condition, Conditions } from "./feedback/Conditions";
+export { Elapsed } from "./feedback/Elapsed";
+export {
+    Gauge,
+    type GaugeMark,
+    Gauges,
+    type GaugeZone,
+    type Live,
+    type Readable,
+} from "./feedback/Gauge";
+export { Notice } from "./feedback/Notice";
+export { Status, type StatusTone } from "./feedback/Status";
 export { CONTROL_CLASS, Field, FieldRow } from "./fields/Field";
 export { SearchField } from "./fields/SearchField";
 export { POPUP_SEARCH_CLASS, SearchSelect } from "./fields/SearchSelect";
@@ -29,12 +40,14 @@ export { CellSelect, PICKER_CLASS, PickerMark, Select } from "./fields/Select";
 export { CellInput, CellText, TextField } from "./fields/TextField";
 export { type Choice, type ChoiceGroup } from "./foundation/choice";
 export { classes } from "./foundation/classes";
+export { COLUMN_CLASS, WIDE_COLUMN_CLASS } from "./foundation/column";
 export {
     OPTION_CLASS,
     POPUP_CLASS,
     POSITIONER_CLASS,
     renderLeaving,
 } from "./foundation/popup";
+export { type Tone } from "./foundation/tone";
 export { useNarrow, useWidth } from "./foundation/viewport";
 export { ENGLISH, useWords, type Words } from "./foundation/words";
 export {
@@ -45,12 +58,7 @@ export {
     FormBand,
     Nothing,
 } from "./layout/Card";
-export {
-    COLUMN_CLASS,
-    Content,
-    SCREEN_TITLE_CLASS,
-    WIDE_COLUMN_CLASS,
-} from "./layout/column";
+export { Content, SCREEN_TITLE_CLASS } from "./layout/column";
 export { DisclosurePanel } from "./layout/Disclosure";
 export { EmptyState } from "./layout/EmptyState";
 export { type Section, SectionNav } from "./layout/SectionNav";

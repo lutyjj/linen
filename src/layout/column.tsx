@@ -1,24 +1,7 @@
 import type { ReactNode } from "react";
 
 import { classes } from "../foundation/classes";
-
-/**
- * The one content column, centred, and the class every band of chrome aligns
- * itself to.
- *
- * A screen is a stack of full-bleed bands (the top bar, the section rail, the
- * content), and each one puts its contents in this column, so a title, a
- * toolbar button, and the table beneath them share a left and a right edge at
- * every window width.
- */
-export const COLUMN_CLASS =
-    "mx-auto w-full max-w-[var(--width-content)] px-3 md:px-5";
-
-/**
- * The column of a screen that works across the whole width, such as an editor
- * beside its preview. Its bands still share their edges.
- */
-export const WIDE_COLUMN_CLASS = "w-full px-3 md:px-5";
+import { COLUMN_CLASS } from "../foundation/column";
 
 /**
  * The voice a screen names itself in: the display face, which belongs to the
