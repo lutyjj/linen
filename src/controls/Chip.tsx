@@ -87,18 +87,20 @@ function chipStyle({ tone = "neutral", size = "bar", frame }: ChipStyle) {
 export function Chip({
     onRemove,
     removeLabel,
+    className,
     children,
     ...style
 }: ChipStyle & {
     onRemove?: () => void;
     /** What the cross takes away, where "Remove" alone says too little. */
     removeLabel?: string;
+    className?: string;
     children: ReactNode;
 }) {
     const words = useWords();
-    const { className, style: vars } = chipStyle(style);
+    const { className: chip, style: vars } = chipStyle(style);
     return (
-        <span className={className} style={vars}>
+        <span className={classes(chip, className)} style={vars}>
             <span className="truncate">{children}</span>
             {onRemove && (
                 <button
@@ -146,11 +148,14 @@ export function ChipTrigger({
     );
 }
 
-export function WarnDot() {
+export function WarnDot({ className }: { className?: string }) {
     return (
         <span
             aria-hidden="true"
-            className="mr-1.25 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-warn align-[1px]"
+            className={classes(
+                "mr-1.25 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-warn align-[1px]",
+                className,
+            )}
         />
     );
 }

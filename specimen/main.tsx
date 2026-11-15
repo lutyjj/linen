@@ -130,7 +130,7 @@ function Specimen() {
                         label="Hue"
                         value={hue}
                         options={HUES}
-                        onChange={changeHue}
+                        onValueChange={changeHue}
                     />
                 </RailChoice>
             }
@@ -146,7 +146,7 @@ function Specimen() {
                             label="Theme"
                             value={preference}
                             options={THEMES}
-                            onChange={setPreference}
+                            onValueChange={setPreference}
                         />
                     </MenuChoice>
                     <MenuChoice label="Phone navigation">
@@ -154,7 +154,7 @@ function Specimen() {
                             label="Phone navigation"
                             value={phoneNav}
                             options={PHONE_NAVS}
-                            onChange={setPhoneNav}
+                            onValueChange={setPhoneNav}
                         />
                     </MenuChoice>
                 </AccountMenu>

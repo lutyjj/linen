@@ -167,7 +167,7 @@ export function ControlsSection() {
                                 { value: "comfortable", label: "Comfortable" },
                                 { value: "compact", label: "Compact" },
                             ]}
-                            onChange={setDensity}
+                            onValueChange={setDensity}
                         />
                     </Sample>
                 </Samples>
@@ -210,15 +210,16 @@ export function ControlsSection() {
                             {
                                 value: "archive",
                                 label: "Archive",
-                                detail: "It can be restored later.",
+                                description: "It can be restored later.",
                             },
                             {
                                 value: "delete",
                                 label: "Delete",
-                                detail: "Its tasks and files are gone for good.",
+                                description:
+                                    "Its tasks and files are gone for good.",
                             },
                         ]}
-                        onChoose={setRemoval}
+                        onValueChange={setRemoval}
                     />
                 </div>
             </Specimen>

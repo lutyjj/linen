@@ -25,15 +25,9 @@ export { Switch } from "./controls/Switch";
 export { CONTROL_CLASS, Field, FieldRow } from "./fields/Field";
 export { SearchField } from "./fields/SearchField";
 export { POPUP_SEARCH_CLASS, SearchSelect } from "./fields/SearchSelect";
-export {
-    CellSelect,
-    type Choice,
-    type ChoiceGroup,
-    PICKER_CLASS,
-    PickerMark,
-    Select,
-} from "./fields/Select";
+export { CellSelect, PICKER_CLASS, PickerMark, Select } from "./fields/Select";
 export { CellInput, CellText, TextField } from "./fields/TextField";
+export { type Choice, type ChoiceGroup } from "./foundation/choice";
 export { classes } from "./foundation/classes";
 export {
     OPTION_CLASS,

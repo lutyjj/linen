@@ -1,6 +1,7 @@
 import { Combobox } from "@base-ui/react/combobox";
 import { type ReactNode, useState } from "react";
 
+import { type Choice } from "../foundation/choice";
 import { classes } from "../foundation/classes";
 import {
     OPTION_CLASS,
@@ -9,7 +10,7 @@ import {
     renderLeaving,
 } from "../foundation/popup";
 import { CONTROL_CLASS, Field } from "./Field";
-import { type Choice, PICKER_CLASS, PickerMark } from "./Select";
+import { PICKER_CLASS, PickerMark } from "./Select";
 
 /** The search box at the top of a picker's list. */
 export const POPUP_SEARCH_CLASS = `${CONTROL_CLASS} mb-1 w-full outline-none`;
@@ -27,6 +28,9 @@ export function SearchSelect({
     choices,
     value,
     onValueChange,
+    disabled,
+    width,
+    className,
     id,
 }: {
     label: string;
@@ -36,19 +40,24 @@ export function SearchSelect({
     choices: readonly Choice[];
     value: string;
     onValueChange: (value: string) => void;
+    disabled?: boolean;
+    width?: number;
+    /** The trigger's classes, as a select's. */
+    className?: string;
     id?: string;
 }) {
     const [open, setOpen] = useState(false);
     const chosen = choices.find((choice) => choice.value === value);
 
     return (
-        <Field label={label} hint={hint} id={id}>
+        <Field label={label} hint={hint} width={width} id={id}>
             {(named) => (
                 <Combobox.Root
                     items={choices}
                     autoHighlight
                     open={open}
                     onOpenChange={setOpen}
+                    disabled={disabled}
                     value={chosen ?? null}
                     onValueChange={(next: Choice | null) => {
                         if (next === null) return;
@@ -60,8 +69,9 @@ export function SearchSelect({
                         id={named}
                         className={classes(
                             PICKER_CLASS,
-                            "flex w-full",
+                            "flex w-full data-[disabled]:cursor-default data-[disabled]:opacity-50",
                             chosen === undefined ? "text-text-secondary" : "",
+                            className,
                         )}
                         onClick={() => setOpen(true)}
                     >
@@ -95,6 +105,7 @@ export function SearchSelect({
                                         <Combobox.Item
                                             key={choice.value}
                                             value={choice}
+                                            disabled={choice.disabled}
                                             className={OPTION_CLASS}
                                         >
                                             {choice.label}

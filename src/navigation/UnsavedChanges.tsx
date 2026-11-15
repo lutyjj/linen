@@ -96,7 +96,7 @@ export function UnsavedChangesGuard({ children }: { children: ReactNode }) {
                     blocker.reset();
                 }}
                 title={words.leaveUnsaved}
-                detail={words.unsavedLost(names)}
+                description={words.unsavedLost(names)}
                 confirmLabel={words.leave}
                 destructive
                 onConfirm={() => {

@@ -19,7 +19,7 @@ describe("a search box", () => {
             <SearchField
                 label="Search"
                 value={value}
-                onChange={onChange}
+                onValueChange={onChange}
                 onSubmit={onSubmit}
             />,
         );
@@ -51,7 +51,11 @@ describe("a search box", () => {
         });
         await user.type(box, "tl");
         view.rerender(
-            <SearchField label="Search" value="a" onChange={() => undefined} />,
+            <SearchField
+                label="Search"
+                value="a"
+                onValueChange={() => undefined}
+            />,
         );
         expect(box).toHaveValue("atl");
     });
@@ -67,11 +71,15 @@ describe("a search box", () => {
             <SearchField
                 label="Search"
                 value="atl"
-                onChange={() => undefined}
+                onValueChange={() => undefined}
             />,
         );
         view.rerender(
-            <SearchField label="Search" value="" onChange={() => undefined} />,
+            <SearchField
+                label="Search"
+                value=""
+                onValueChange={() => undefined}
+            />,
         );
         expect(box).toHaveValue("");
     });

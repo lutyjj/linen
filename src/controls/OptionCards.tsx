@@ -2,12 +2,14 @@ import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import type { ReactNode } from "react";
 
+import { type Choice } from "../foundation/choice";
 import { classes } from "../foundation/classes";
 
-export interface CardOption<Value extends string> {
-    value: Value;
-    label: string;
-    detail: string;
+/** An answer and the line that says what it means. */
+export interface CardOption<
+    Value extends string = string,
+> extends Choice<Value> {
+    description: ReactNode;
 }
 
 /**
@@ -26,7 +28,8 @@ export function OptionCards<Value extends string>({
     suggested,
     suggestedMark,
     disabled = false,
-    onChoose,
+    onValueChange,
+    className,
 }: {
     label: string;
     options: readonly CardOption<Value>[];
@@ -41,20 +44,22 @@ export function OptionCards<Value extends string>({
     /** What marks the suggestion as one, before its words. */
     suggestedMark?: ReactNode;
     disabled?: boolean;
-    onChoose: (value: Value) => void;
+    onValueChange: (value: Value) => void;
+    className?: string;
 }) {
     return (
         <RadioGroup
             aria-label={label}
             value={value ?? null}
             disabled={disabled}
-            onValueChange={(next) => onChoose(next as Value)}
-            className="grid gap-2 sm:grid-cols-2"
+            onValueChange={(next) => onValueChange(next as Value)}
+            className={classes("grid gap-2 sm:grid-cols-2", className)}
         >
             {options.map((option) => (
                 <Radio.Root
                     key={option.value}
                     value={option.value}
+                    disabled={option.disabled}
                     className={classes(
                         "cursor-pointer rounded-button border px-3 py-2 text-left",
                         "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-45",
@@ -76,7 +81,7 @@ export function OptionCards<Value extends string>({
                         {option.label}
                     </span>
                     <span className="block text-xs text-text-secondary">
-                        {option.detail}
+                        {option.description}
                     </span>
                 </Radio.Root>
             ))}

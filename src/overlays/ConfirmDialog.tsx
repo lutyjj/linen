@@ -16,7 +16,7 @@ export function ConfirmDialog({
     open,
     onOpenChange,
     title,
-    detail,
+    description,
     children,
     confirmLabel,
     destructive = false,
@@ -26,8 +26,8 @@ export function ConfirmDialog({
 }: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    title: string;
-    detail?: ReactNode;
+    title: ReactNode;
+    description?: ReactNode;
     /** The one question an act needs answered before it can be confirmed. */
     children?: ReactNode;
     confirmLabel: string;
@@ -43,7 +43,7 @@ export function ConfirmDialog({
             <DialogShell open={open} width={width}>
                 <DialogLayout
                     title={title}
-                    description={detail}
+                    description={description}
                     actions={
                         <>
                             <DialogCancel />

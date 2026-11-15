@@ -52,9 +52,9 @@ export function FormDialog({
     onOpenChange,
     title,
     description,
-    submitLabel,
+    confirmLabel,
     disabled = false,
-    onSubmit,
+    onConfirm,
     width,
     children,
 }: {
@@ -62,16 +62,17 @@ export function FormDialog({
     onOpenChange: (open: boolean) => void;
     title: ReactNode;
     description?: ReactNode;
-    submitLabel: string;
+    confirmLabel: string;
     disabled?: boolean;
-    onSubmit: () => void;
+    /** The answers are given; the dialog does its one thing with them. */
+    onConfirm: () => void;
     width?: string;
     /** The fields, and what went wrong with the last submit. */
     children: ReactNode;
 }) {
     const submit = (event: FormEvent) => {
         event.preventDefault();
-        if (!disabled) onSubmit();
+        if (!disabled) onConfirm();
     };
     return (
         <DialogRoot open={open} onOpenChange={onOpenChange}>
@@ -88,7 +89,7 @@ export function FormDialog({
                                     variant="primary"
                                     disabled={disabled}
                                 >
-                                    {submitLabel}
+                                    {confirmLabel}
                                 </Button>
                             </>
                         }

@@ -34,7 +34,7 @@ export function MotionSection() {
                             { value: "image", label: "Image" },
                             { value: "facts", label: "Facts" },
                         ]}
-                        onChange={setView}
+                        onValueChange={setView}
                     />
                 </Group>
                 <Group name="A view swaps">

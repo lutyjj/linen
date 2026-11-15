@@ -16,7 +16,7 @@ function harness(value: "grid" | "list" | undefined) {
             label="Layout"
             value={value}
             options={OPTIONS}
-            onChange={onChange}
+            onValueChange={onChange}
         />,
     );
     return onChange;

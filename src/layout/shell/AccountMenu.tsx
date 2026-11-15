@@ -113,13 +113,20 @@ export function AccountMenu({
 /** A choice inside the account menu, under the word for what it chooses. */
 export function MenuChoice({
     label,
+    className,
     children,
 }: {
     label: string;
+    className?: string;
     children: ReactNode;
 }) {
     return (
-        <div className="flex flex-col gap-1.5 [&_[role=radio]]:flex-1 [&>[role=radiogroup]]:flex">
+        <div
+            className={classes(
+                "flex flex-col gap-1.5 [&_[role=radio]]:flex-1 [&>[role=radiogroup]]:flex",
+                className,
+            )}
+        >
             <span aria-hidden="true" className="text-xs text-text-secondary">
                 {label}
             </span>
