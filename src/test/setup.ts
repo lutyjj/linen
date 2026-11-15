@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 
 import { MotionGlobalConfig } from "motion/react";
+import { afterEach, vi } from "vitest";
 
 /**
  * jsdom draws no frames, so an animation would never finish and an exit
@@ -66,10 +67,33 @@ if (!("AnimationEvent" in window)) {
 
 // Nor does jsdom run animations: an element has none, as a browser's has
 // none once its transitions end. Base UI then waits a frame before it calls a
-// close complete, as it does in a browser, rather than at once.
+// close complete, as it does in a browser, rather than at once, which Preact
+// needs to draw the closing state. This goes once jsdom has its own.
 if (!("getAnimations" in Element.prototype)) {
     Object.defineProperty(Element.prototype, "getAnimations", {
         configurable: true,
         value: () => [],
     });
 }
+
+/*
+ * What React only warns about is a defect here: two children with one key,
+ * which it may duplicate or drop, and a prop that reaches an element it does
+ * not belong on. Either fails the test it happens in.
+ */
+const WARNINGS =
+    /same key|unique "key"|does not recognize the .* prop|Unknown event handler property|non-boolean attribute/;
+const warned: string[] = [];
+const report = console.error;
+vi.spyOn(console, "error").mockImplementation((...args: unknown[]) => {
+    const text = args.map(String).join(" ");
+    if (WARNINGS.test(text)) warned.push(text.slice(0, 300));
+    report(...args);
+});
+
+afterEach(() => {
+    const found = warned.splice(0);
+    if (found.length > 0) {
+        throw new Error(`React warned:\n${[...new Set(found)].join("\n")}`);
+    }
+});

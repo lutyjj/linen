@@ -1,10 +1,10 @@
-import { afterEach, vi } from "vitest";
+import { afterEach } from "vitest";
 
 /*
  * Without Motion, a prop the stand-in does not know reaches the element:
- * React warns about some, and writes others, such as `layout="position"`,
- * onto the element unremarked. Either is a gap in src/still/still.tsx, so it fails
- * the test.
+ * React warns about some, which setup.ts fails on in every project, and
+ * writes others, such as `layout="position"`, onto the element unremarked.
+ * Either is a gap in src/still/still.tsx, so this fails the test too.
  */
 const MOTION_ATTRIBUTES = new Set(
     [
@@ -51,19 +51,6 @@ new MutationObserver((records) => {
         }
     }
 }).observe(document, { subtree: true, childList: true, attributes: true });
-
-const warn = console.error;
-vi.spyOn(console, "error").mockImplementation((...args: unknown[]) => {
-    const text = args.map(String).join(" ");
-    if (
-        /does not recognize the .* prop|Unknown event handler property|non-boolean attribute/.test(
-            text,
-        )
-    ) {
-        reported.push(text);
-    }
-    warn(...args);
-});
 
 afterEach(() => {
     const found = reported.splice(0);
