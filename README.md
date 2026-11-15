@@ -50,7 +50,7 @@ Another router takes a `Navigation` of its own: a `Link` that renders an anchor 
 
 ### Without Motion
 
-Motion carries what moves between states: an arrival rising in, a chosen mark sliding, rows settling, a press. An app that has no room for it, such as a console a device serves from its own flash, resolves Motion to linen's stand-in, `linen/still`. In Vite:
+Motion is an optional peer. It carries what moves between states: an arrival rising in, a chosen mark sliding, rows settling. An app that has no room for it resolves `motion` to linen's stand-in, `linen/still`, and does not install Motion. In Vite:
 
 ```ts
 export default defineConfig({
@@ -60,4 +60,4 @@ export default defineConfig({
 });
 ```
 
-Every state stays, and so does every motion the stylesheet runs: popups, dialogs, panels, toasts, the rail's tips and fold, arrival marks, a refresh's turn and the theme's cross-fade. What Motion would carry lands where it would have ended, as it does for a reader who asks for less motion. Keep `motion` installed, as its types still describe linen's props; the alias keeps it out of the bundle.
+Every state stays, and so does every motion the stylesheet runs: popups, dialogs, panels, toasts, a press, the rail's tips and fold, arrival marks, a refresh's turn and the theme's cross-fade. What Motion would carry lands where it would have ended, as it does for a reader who asks for less motion. linen's types do not name Motion, so the app type-checks without it. linen's code imports `motion/react`, so an app does one or the other: installs `motion`, or resolves it to `linen/still`.

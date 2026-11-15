@@ -1,8 +1,6 @@
-import { type HTMLMotionProps, m } from "motion/react";
-import type { ReactNode, Ref } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 import { classes } from "../foundation/classes";
-import { spring } from "../motion/tokens";
 
 /**
  * Every button is visibly a button: a frame and a fill, never words alone.
@@ -28,8 +26,7 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
     inverted: "border-bg/25 bg-transparent text-bg hover:bg-bg/12",
 };
 
-export interface ButtonProps extends HTMLMotionProps<"button"> {
-    ref?: Ref<HTMLButtonElement>;
+export interface ButtonProps extends ComponentProps<"button"> {
     variant?: ButtonVariant;
     children: ReactNode;
 }
@@ -51,8 +48,9 @@ export function Actions({
     );
 }
 
+/** `press` gives way under the hand (motion.css). */
 const BUTTON_CLASS =
-    "inline-flex h-(--height-control) shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-button border px-3 text-sm font-medium whitespace-nowrap select-none disabled:cursor-not-allowed disabled:opacity-45";
+    "press inline-flex h-(--height-control) shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-button border px-3 text-sm font-medium whitespace-nowrap select-none disabled:cursor-not-allowed disabled:opacity-45";
 
 /**
  * A button's look for something that is not a button element: a link that
@@ -76,15 +74,13 @@ export function Button({
     ...rest
 }: ButtonProps) {
     return (
-        <m.button
-            whileTap={rest.disabled ? undefined : { scale: 0.98 }}
-            transition={spring("state")}
+        <button
             type="button"
             className={classes(buttonClass(variant), className)}
             {...rest}
         >
             {children}
-        </m.button>
+        </button>
     );
 }
 

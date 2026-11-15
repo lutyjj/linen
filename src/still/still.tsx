@@ -18,10 +18,10 @@ import {
 /*
  * linen without Motion. An app that leaves Motion out resolves `motion` and
  * `motion/react` to this module (README, "Without Motion"), and linen moves
- * only where its stylesheet moves it: popups, dialogs, panels, toasts, the
- * rail's tips and fold, arrival marks, a refresh's turn and the theme's
- * cross-fade all stay. What Motion would carry, an arrival rising in, a
- * chosen mark sliding, rows settling, a press, lands where it would have
+ * only where its stylesheet moves it: popups, dialogs, panels, toasts, a
+ * press, the rail's tips and fold, arrival marks, a refresh's turn and the
+ * theme's cross-fade all stay. What Motion would carry, an arrival rising
+ * in, a chosen mark sliding, rows settling, lands where it would have
  * ended, as it does for a reader who asks for less motion. It stands in
  * for what linen uses of Motion and no more; the still test project runs
  * every component on it.

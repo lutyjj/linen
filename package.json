@@ -31,7 +31,7 @@
         "build": "tsdown",
         "typecheck": "tsc --noEmit",
         "test": "vitest run",
-        "check": "pnpm run build && prettier --check . && eslint . && tsc --noEmit && vitest run && vite build && vite build --mode still",
+        "check": "pnpm run build && prettier --check . && eslint . && tsc --noEmit && tsc -p consumer && vitest run && vite build && vite build --mode still",
         "format": "prettier --write ."
     },
     "dependencies": {
@@ -47,6 +47,9 @@
         "tailwindcss": "^4.3.4"
     },
     "peerDependenciesMeta": {
+        "motion": {
+            "optional": true
+        },
         "react-router": {
             "optional": true
         }

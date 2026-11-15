@@ -73,7 +73,7 @@ export {
 export { Shell } from "./layout/shell/Shell";
 export { type Crumb, TitleField, TopBar, TopBarLead } from "./layout/TopBar";
 export { LinenProvider } from "./LinenProvider";
-export { arrive, series } from "./motion/arrive";
+export { type Arrival, arrive } from "./motion/arrive";
 export {
     CHOSEN_WIDTH_CLASS,
     chosenLayerClass,
@@ -84,9 +84,9 @@ export { RefreshMotion } from "./motion/RefreshMotion";
 export { SettlingItem, SettlingRows, SettlingTr } from "./motion/SettlingRows";
 export { Swap } from "./motion/Swap";
 export {
-    EASE,
     type MotionToken,
     seconds,
+    type Spring,
     spring,
     useLoop,
     useStill,

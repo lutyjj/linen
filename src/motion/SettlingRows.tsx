@@ -2,6 +2,7 @@ import { type HTMLMotionProps, m, type MotionProps } from "motion/react";
 import {
     type AnimationEvent,
     Children,
+    type ComponentProps,
     createContext,
     isValidElement,
     type ReactNode,
@@ -155,11 +156,11 @@ export function SettlingTr({
     className,
     onAnimationEnd,
     ...props
-}: HTMLMotionProps<"tr">) {
+}: ComponentProps<"tr">) {
     const settling = useSettlingRow();
     return (
         <m.tr
-            {...props}
+            {...(props as HTMLMotionProps<"tr">)}
             {...settling}
             className={classes(className, settling.className)}
             onAnimationEnd={(event) => {
@@ -175,11 +176,11 @@ export function SettlingItem({
     className,
     onAnimationEnd,
     ...props
-}: HTMLMotionProps<"div">) {
+}: ComponentProps<"div">) {
     const settling = useSettlingRow();
     return (
         <m.div
-            {...props}
+            {...(props as HTMLMotionProps<"div">)}
             {...settling}
             className={classes(className, settling.className)}
             onAnimationEnd={(event) => {
