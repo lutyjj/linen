@@ -1,3 +1,4 @@
+import { CSPProvider } from "@base-ui/react/csp-provider";
 import { type ReactNode, useMemo } from "react";
 
 import { ENGLISH, type Words, WordsContext } from "./foundation/words";
@@ -11,6 +12,10 @@ import {
 /**
  * Everything the components share above them: their words, how the app moves
  * between its pages, and one clock for every animation.
+ *
+ * Base UI draws no `<style>` of its own beneath it; linen.css holds the one
+ * rule it would have drawn, so a page served under a Content Security
+ * Policy that forbids inline styles needs no nonce for linen.
  */
 export function LinenProvider({
     words = ENGLISH,
@@ -24,10 +29,12 @@ export function LinenProvider({
 }) {
     const moves = useMemo(() => navigationOf(navigation), [navigation]);
     return (
-        <WordsContext value={words}>
-            <NavigationContext value={moves}>
-                <MotionProvider>{children}</MotionProvider>
-            </NavigationContext>
-        </WordsContext>
+        <CSPProvider disableStyleElements>
+            <WordsContext value={words}>
+                <NavigationContext value={moves}>
+                    <MotionProvider>{children}</MotionProvider>
+                </NavigationContext>
+            </WordsContext>
+        </CSPProvider>
     );
 }
