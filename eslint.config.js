@@ -6,9 +6,67 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 /**
+ * The modules of src/, each importing only from those after it (AGENTS.md).
+ * The files at the root of src/ compose them, and `still` stands alone.
+ */
+const MODULES = [
+    "layout",
+    "navigation",
+    "overlays",
+    "fields",
+    "controls",
+    "motion",
+    "foundation",
+];
+
+function moduleOrder() {
+    const above = (at) => [...MODULES.slice(0, at), "still"];
+    const rule = (forbidden) => [
+        "error",
+        {
+            patterns: [
+                {
+                    regex: `^(\\.\\./)+(${forbidden.join("|")})(/|$)`,
+                    message: "A module imports only from the modules after it.",
+                },
+                {
+                    regex: "^(\\.\\./)+(index|LinenProvider|theme)$",
+                    message: "The root of src/ composes the modules.",
+                },
+            ],
+        },
+    ];
+    return [
+        ...MODULES.slice(0, -1).map((name, at) => ({
+            files: [`src/${name}/**/*.{ts,tsx}`],
+            ignores: ["**/*.test.{ts,tsx}"],
+            rules: { "no-restricted-imports": rule(above(at)) },
+        })),
+        {
+            files: ["src/foundation/**/*.{ts,tsx}", "src/still/**/*.{ts,tsx}"],
+            ignores: ["**/*.test.{ts,tsx}"],
+            rules: {
+                "no-restricted-imports": [
+                    "error",
+                    {
+                        patterns: [
+                            {
+                                regex: "^\\.\\./",
+                                message:
+                                    "foundation and still import nothing else from linen.",
+                            },
+                        ],
+                    },
+                ],
+            },
+        },
+    ];
+}
+
+/**
  * Rules that a type check cannot make: stale hook dependencies, floating
- * promises, and import order. Formatting is Prettier's, so
- * `eslint-config-prettier` switches off everything stylistic.
+ * promises, import order and the order modules depend in. Formatting is
+ * Prettier's, so `eslint-config-prettier` switches off everything stylistic.
  */
 export default tseslint.config(
     { ignores: ["dist", "specimen/dist"] },
@@ -38,6 +96,7 @@ export default tseslint.config(
             ],
         },
     },
+    ...moduleOrder(),
     {
         files: ["eslint.config.js"],
         ...tseslint.configs.disableTypeChecked,

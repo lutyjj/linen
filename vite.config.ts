@@ -7,7 +7,7 @@ const STILL = [
     {
         find: /^motion(\/react)?$/,
         replacement: decodeURIComponent(
-            new URL("src/still.tsx", import.meta.url).pathname,
+            new URL("src/still/still.tsx", import.meta.url).pathname,
         ),
     },
 ];
@@ -44,7 +44,7 @@ export default defineConfig(({ mode }) => ({
                     name: "still",
                     setupFiles: ["src/test/still.ts"],
                     // Motion's own springs are what this test compares to.
-                    exclude: ["src/motion.test.ts"],
+                    exclude: ["src/motion/springs.test.ts"],
                 },
             },
         ],

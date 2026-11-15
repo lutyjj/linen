@@ -1,6 +1,6 @@
 # The language
 
-An interface in linen is paper, hairlines and one ink. The content is the loudest thing on a page; the chrome around it steps back. `src/styles/linen.css` holds every token below, and `src/motion.tsx` every duration. A component that states a colour, type size, radius or duration instead of naming a token is wrong; spacing comes from the 4px scale. The specimen (`pnpm specimen`) draws all of it with the components themselves.
+An interface in linen is paper, hairlines and one ink. The content is the loudest thing on a page; the chrome around it steps back. `src/styles/linen.css` holds every token below, and `src/motion/tokens.ts` every duration. A component that states a colour, type size, radius or duration instead of naming a token is wrong; spacing comes from the 4px scale. The specimen (`pnpm specimen`) draws all of it with the components themselves.
 
 ## Colour
 
@@ -73,7 +73,7 @@ Motion says what changed and where it went, and never holds input.
 - `prefers-reduced-motion` makes every duration zero and leaves loops at rest, read live.
 - Motion moves between states and never holds one. A state a person reads, such as a tip, the direction of a fold, a mark, a fill or a turn, is the stylesheet's, so an app without Motion keeps every state and every motion CSS runs.
 
-Durations are springs with no bounce; a component names a purpose, never a length. `motion.css` holds the first three as `--motion-leave`, `--motion-state` and `--motion-enter`, and `mark` and `land` as `--motion-mark` and `--motion-land`; a test holds them to `motion.tsx`.
+Durations are springs with no bounce; a component names a purpose, never a length. `motion.css` holds the first three as `--motion-leave`, `--motion-state` and `--motion-enter`, and `mark` and `land` as `--motion-mark` and `--motion-land`; a test holds them to `src/motion/tokens.ts`.
 
 | Token      | Length | For                                                     |
 | ---------- | ------ | ------------------------------------------------------- |
@@ -118,7 +118,7 @@ A component does each of these jobs the one way linen does it, so a new componen
 | What a widget does for the hand and the keyboard: focus, keys, dismissal | Base UI's part for it, which linen styles and never re-implements                                                                                                                                         |
 | A Base UI part opening and closing                                       | CSS in `src/styles/motion.css`, on Base UI's `data-starting-style` and `data-ending-style` and its springs                                                                                                |
 | A state that shows or turns: a tip, a fold, a fill, a mark, a loop       | CSS in `src/styles/motion.css`, on the same springs                                                                                                                                                       |
-| Movement between states: a mark sliding, rows settling, an arrival       | Motion, timed by `motion.tsx`: `spring()`, `seconds()`, `arrive()`; without Motion, it lands where it would have ended                                                                                    |
+| Movement between states: a mark sliding, rows settling, an arrival       | Motion, timed by `src/motion/tokens.ts`: `spring()`, `seconds()`, `arrive()`; without Motion, it lands where it would have ended                                                                          |
 | A link, and which place is current                                       | The app's `navigation`, handed to `LinenProvider`: its `Link` renders every link, and the current place, the address itself or one beneath it, wears `aria-current="page"`. No component imports a router |
 | A component's classes and the caller's `className`                       | `classes(own, className)`, so the caller's word on a property wins; an app joins its own classes with it too                                                                                              |
 | Words a person reads                                                     | `useWords()`, which an app may translate                                                                                                                                                                  |

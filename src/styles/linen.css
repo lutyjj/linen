@@ -236,7 +236,7 @@
 
 /* The mark on a row that just arrived, layered over whatever the row is
  * painted with so its hover and selection colours stay its own. motion.css
- * carries `--arrival` from 1 to 0 on a row that arrived (SettlingRows.tsx). */
+ * carries `--arrival` from 1 to 0 on a row that arrived (src/motion/SettlingRows.tsx). */
 @property --arrival {
     syntax: "<number>";
     inherits: false;

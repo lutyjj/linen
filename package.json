@@ -8,8 +8,8 @@
     "packageManager": "pnpm@12.9.0",
     "exports": {
         ".": "./src/index.ts",
-        "./react-router": "./src/react-router.tsx",
-        "./still": "./src/still.tsx",
+        "./react-router": "./src/navigation/react-router.tsx",
+        "./still": "./src/still/still.tsx",
         "./package.json": "./package.json",
         "./linen.css": "./src/styles/linen.css"
     },

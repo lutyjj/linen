@@ -10,10 +10,10 @@
  * Only opacity and transforms move, so the compositor runs these at the
  * display's own rate. A panel's height is the exception: it is the change. */
 
-/* The springs of motion.tsx's leave, state and enter, each its settling time
- * and its curve, and the arrival mark's hold. motion.test.ts holds them to
- * the springs Motion runs, so what CSS moves and what Motion moves keep one
- * clock, and they need no script to arrive. */
+/* The springs of leave, state and enter in src/motion/tokens.ts, each its
+ * settling time and its curve, and the arrival mark's hold. springs.test.ts
+ * holds them to the springs Motion runs, so what CSS moves and what Motion
+ * moves keep one clock, and they need no script to arrive. */
 :root {
     --motion-leave: 250ms
         linear(0, 0.4615, 0.8176, 0.9471, 0.9858, 0.9964, 0.9991, 1);
@@ -72,7 +72,7 @@
 @layer components {
     /* A popup grows out of the middle of the control's edge it opened from,
      * and leaves toward it faster. Leaving, it is inert (renderLeaving in
-     * motion.tsx), so the next control a hand reaches for
+     * src/foundation/popup.tsx), so the next control a hand reaches for
      * answers at once. */
     .popup {
         transform-origin: var(--transform-origin);
@@ -300,7 +300,7 @@
     }
 }
 
-/* A change the whole page wears fades over enter (crossFade in motion.tsx). */
+/* A change the whole page wears fades over enter (src/motion/crossFade.ts). */
 .cross-fade::view-transition-old(root) {
     animation: linen-cross-fade-out var(--motion-enter) both;
 }
