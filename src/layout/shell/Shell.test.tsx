@@ -1,12 +1,11 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Folder, Users } from "lucide-react";
-import { MemoryRouter } from "react-router";
 import { afterEach, expect, it, vi } from "vitest";
 
 import { ENGLISH } from "../../foundation/words";
 import { LinenProvider } from "../../LinenProvider";
-import { reactRouter } from "../../navigation/react-router";
+import { memoryNavigation } from "../../test/memoryNavigation";
 import { Shell } from "./Shell";
 
 afterEach(() => vi.restoreAllMocks());
@@ -15,18 +14,16 @@ const HOME = { href: "/", label: "linen" };
 
 function frame() {
     return render(
-        <LinenProvider navigation={reactRouter}>
-            <MemoryRouter>
-                <Shell
-                    label="Places"
-                    places={[{ href: "/", label: "Projects", icon: Folder }]}
-                    home={HOME}
-                    wordmark="linen"
-                    storageKey="test:rail"
-                >
-                    <p>The screen</p>
-                </Shell>
-            </MemoryRouter>
+        <LinenProvider navigation={memoryNavigation().navigation}>
+            <Shell
+                label="Places"
+                places={[{ href: "/", label: "Projects", icon: Folder }]}
+                home={HOME}
+                wordmark="linen"
+                storageKey="test:rail"
+            >
+                <p>The screen</p>
+            </Shell>
         </LinenProvider>,
     );
 }
@@ -52,27 +49,25 @@ it("keeps the fold for the page where the browser refuses storage", async () => 
 
 it("shows a phone's places along the top, each still named, and no tab bar", () => {
     render(
-        <LinenProvider navigation={reactRouter}>
-            <MemoryRouter initialEntries={["/people"]}>
-                <Shell
-                    label="Places"
-                    places={[
-                        {
-                            href: "/",
-                            label: "Projects",
-                            icon: Folder,
-                            exact: true,
-                        },
-                        { href: "/people", label: "People", icon: Users },
-                    ]}
-                    home={HOME}
-                    wordmark="linen"
-                    storageKey="test:rail"
-                    phoneNav="top"
-                >
-                    <p>The screen</p>
-                </Shell>
-            </MemoryRouter>
+        <LinenProvider navigation={memoryNavigation("/people").navigation}>
+            <Shell
+                label="Places"
+                places={[
+                    {
+                        href: "/",
+                        label: "Projects",
+                        icon: Folder,
+                        exact: true,
+                    },
+                    { href: "/people", label: "People", icon: Users },
+                ]}
+                home={HOME}
+                wordmark="linen"
+                storageKey="test:rail"
+                phoneNav="top"
+            >
+                <p>The screen</p>
+            </Shell>
         </LinenProvider>,
     );
 
@@ -116,21 +111,19 @@ it("leads home from the wordmark, and from the mark of a rail the screen folded"
         { href: "/people", label: "People", icon: Users },
     ];
     const at = (folded: boolean) => (
-        <LinenProvider navigation={reactRouter}>
-            <MemoryRouter initialEntries={["/people/7"]}>
-                <Shell
-                    label="Places"
-                    places={places}
-                    home={HOME}
-                    wordmark="linen"
-                    mark={<svg aria-hidden="true" />}
-                    storageKey="test:rail"
-                    phoneNav="top"
-                    folded={folded}
-                >
-                    <p>The screen</p>
-                </Shell>
-            </MemoryRouter>
+        <LinenProvider navigation={memoryNavigation("/people/7").navigation}>
+            <Shell
+                label="Places"
+                places={places}
+                home={HOME}
+                wordmark="linen"
+                mark={<svg aria-hidden="true" />}
+                storageKey="test:rail"
+                phoneNav="top"
+                folded={folded}
+            >
+                <p>The screen</p>
+            </Shell>
         </LinenProvider>
     );
     const view = render(at(false));

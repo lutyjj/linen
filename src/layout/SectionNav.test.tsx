@@ -1,9 +1,8 @@
 import { render, screen, within } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
 import { expect, it } from "vitest";
 
 import { LinenProvider } from "../LinenProvider";
-import { reactRouter } from "../navigation/react-router";
+import { memoryNavigation } from "../test/memoryNavigation";
 import { SectionNav } from "./SectionNav";
 
 const SECTIONS = [
@@ -17,10 +16,10 @@ function sections() {
 
 it("marks the section the router is on", () => {
     render(
-        <LinenProvider navigation={reactRouter}>
-            <MemoryRouter initialEntries={["/settings/people/7"]}>
-                <SectionNav label="Settings" sections={SECTIONS} />
-            </MemoryRouter>
+        <LinenProvider
+            navigation={memoryNavigation("/settings/people/7").navigation}
+        >
+            <SectionNav label="Settings" sections={SECTIONS} />
         </LinenProvider>,
     );
     const people = sections().getByRole("link", { name: "People" });

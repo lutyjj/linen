@@ -1,66 +1,34 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { useState } from "react";
-import {
-    createMemoryRouter,
-    Link,
-    MemoryRouter,
-    Outlet,
-    RouterProvider,
-} from "react-router";
+import type { ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 
 import { LinenProvider } from "../LinenProvider";
-import { reactRouter } from "./react-router";
-import { UnsavedChangesGuard, useUnsavedChanges } from "./UnsavedChanges";
+import { Draft } from "../test/Draft";
+import { memoryNavigation } from "../test/memoryNavigation";
+import { UnsavedChangesGuard } from "./UnsavedChanges";
 
-/** A card of work kept with a save button, which a test types into. */
-function Draft({ name, pending = false }: { name: string; pending?: boolean }) {
-    const [value, setValue] = useState("");
-    const [saved, setSaved] = useState("");
-    useUnsavedChanges(value !== saved, { name, pending });
-    return (
-        <div>
-            <label>
-                {name}
-                <input
-                    value={value}
-                    onChange={(event) => setValue(event.target.value)}
-                />
-            </label>
-            <button type="button" onClick={() => setSaved(value)}>
-                Save {name}
-            </button>
-        </div>
-    );
-}
-
-function setup(page: React.ReactNode) {
-    const router = createMemoryRouter(
-        [
-            {
-                element: (
-                    <UnsavedChangesGuard>
-                        <Link to="/elsewhere">Elsewhere</Link>
-                        <Link to="/">Back</Link>
-                        <Link to="/?sort=name">Sorted</Link>
-                        <Outlet />
-                    </UnsavedChangesGuard>
-                ),
-                children: [
-                    { path: "/", element: page },
-                    { path: "/elsewhere", element: <p>Another page</p> },
-                ],
-            },
-        ],
-        { initialEntries: ["/"] },
-    );
+function setup(page: ReactNode) {
+    const memory = memoryNavigation("/");
+    const { Link } = memory.navigation;
+    function Pages() {
+        return memory.usePathname() === "/elsewhere" ? (
+            <p>Another page</p>
+        ) : (
+            page
+        );
+    }
     render(
-        <LinenProvider navigation={reactRouter}>
-            <RouterProvider router={router} />
+        <LinenProvider navigation={memory.navigation}>
+            <UnsavedChangesGuard>
+                <Link href="/elsewhere">Elsewhere</Link>
+                <Link href="/">Back</Link>
+                <Link href="/?sort=name">Sorted</Link>
+                <Pages />
+            </UnsavedChangesGuard>
         </LinenProvider>,
     );
-    return { user: userEvent.setup(), router };
+    return { user: userEvent.setup(), memory };
 }
 
 const question = () =>
@@ -68,14 +36,14 @@ const question = () =>
 
 describe("leaving unsaved work", () => {
     it("moves on at once while every draft is saved", async () => {
-        const { user, router } = setup(<Draft name="the profile" />);
+        const { user, memory } = setup(<Draft name="the profile" />);
         await user.click(screen.getByRole("link", { name: "Elsewhere" }));
-        expect(router.state.location.pathname).toBe("/elsewhere");
+        expect(memory.address()).toBe("/elsewhere");
         expect(question()).toBeNull();
     });
 
     it("asks, names the unsaved drafts, and stays until told to leave", async () => {
-        const { user, router } = setup(
+        const { user, memory } = setup(
             <>
                 <Draft name="the profile" />
                 <Draft name="notifications" />
@@ -97,7 +65,7 @@ describe("leaving unsaved work", () => {
 
         await user.click(screen.getByRole("button", { name: "Cancel" }));
         await waitFor(() => expect(question()).toBeNull());
-        expect(router.state.location.pathname).toBe("/");
+        expect(memory.address()).toBe("/");
         expect(
             screen.getByRole("textbox", { name: "notifications" }),
         ).toHaveValue("b");
@@ -105,11 +73,11 @@ describe("leaving unsaved work", () => {
         // Asked again after staying, and this time left.
         await user.click(screen.getByRole("link", { name: "Elsewhere" }));
         await user.click(await screen.findByRole("button", { name: "Leave" }));
-        expect(router.state.location.pathname).toBe("/elsewhere");
+        expect(memory.address()).toBe("/elsewhere");
     });
 
     it("asks again on the next unsaved page after leaving one", async () => {
-        const { user, router } = setup(<Draft name="the profile" />);
+        const { user, memory } = setup(<Draft name="the profile" />);
         await user.type(
             screen.getByRole("textbox", { name: "the profile" }),
             "a",
@@ -124,30 +92,31 @@ describe("leaving unsaved work", () => {
         await user.click(screen.getByRole("link", { name: "Elsewhere" }));
         await user.click(await screen.findByRole("button", { name: "Cancel" }));
         await waitFor(() => expect(question()).toBeNull());
-        expect(router.state.location.pathname).toBe("/");
+        expect(memory.address()).toBe("/");
     });
 
     it("stays on the page without asking when only the query changes", async () => {
-        const { user, router } = setup(<Draft name="the profile" />);
+        const { user, memory } = setup(<Draft name="the profile" />);
         await user.type(
             screen.getByRole("textbox", { name: "the profile" }),
             "a",
         );
         await user.click(screen.getByRole("link", { name: "Sorted" }));
         expect(question()).toBeNull();
-        expect(router.state.location.search).toBe("?sort=name");
+        expect(memory.address()).toBe("/?sort=name");
     });
 
     it("lets a navigation that holds nothing go on, with no blocker at all", () => {
         render(
             <LinenProvider
-                navigation={{ ...reactRouter, useBlocker: undefined }}
+                navigation={{
+                    ...memoryNavigation().navigation,
+                    useBlocker: undefined,
+                }}
             >
-                <MemoryRouter>
-                    <UnsavedChangesGuard>
-                        <Draft name="the profile" />
-                    </UnsavedChangesGuard>
-                </MemoryRouter>
+                <UnsavedChangesGuard>
+                    <Draft name="the profile" />
+                </UnsavedChangesGuard>
             </LinenProvider>,
         );
         expect(
@@ -156,7 +125,7 @@ describe("leaving unsaved work", () => {
     });
 
     it("forgets a draft once it is saved", async () => {
-        const { user, router } = setup(<Draft name="the profile" />);
+        const { user, memory } = setup(<Draft name="the profile" />);
         await user.type(
             screen.getByRole("textbox", { name: "the profile" }),
             "a",
@@ -165,11 +134,11 @@ describe("leaving unsaved work", () => {
             screen.getByRole("button", { name: "Save the profile" }),
         );
         await user.click(screen.getByRole("link", { name: "Elsewhere" }));
-        expect(router.state.location.pathname).toBe("/elsewhere");
+        expect(memory.address()).toBe("/elsewhere");
     });
 
     it("lets a draft whose save is under way move on, but not close the tab", async () => {
-        const { user, router } = setup(<Draft name="the screen" pending />);
+        const { user, memory } = setup(<Draft name="the screen" pending />);
         await user.type(
             screen.getByRole("textbox", { name: "the screen" }),
             "a",
@@ -180,7 +149,7 @@ describe("leaving unsaved work", () => {
         });
         expect(closing.defaultPrevented).toBe(true);
         await user.click(screen.getByRole("link", { name: "Elsewhere" }));
-        expect(router.state.location.pathname).toBe("/elsewhere");
+        expect(memory.address()).toBe("/elsewhere");
     });
 
     it("lets the tab close when nothing is unsaved", () => {

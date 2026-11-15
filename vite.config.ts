@@ -1,3 +1,4 @@
+import preact from "@preact/preset-vite";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
@@ -12,13 +13,36 @@ const STILL = [
     },
 ];
 
+/** React resolved to Preact's compatibility layer, as a Preact app has it. */
+const PREACT = [
+    // Testing Library's own build requires react-dom, which no alias reaches;
+    // its module build imports it.
+    {
+        find: /^@testing-library\/react$/,
+        replacement:
+            "@testing-library/react/dist/@testing-library/react.esm.js",
+    },
+    { find: /^react-dom\/client$/, replacement: "preact/compat/client" },
+    { find: /^react-dom\/test-utils$/, replacement: "preact/test-utils" },
+    { find: /^react\/jsx-(dev-)?runtime$/, replacement: "preact/jsx-runtime" },
+    { find: /^react(-dom)?$/, replacement: "preact/compat" },
+    {
+        find: /^use-sync-external-store\/shim(\/with-selector)?(\/index)?(\.js)?$/,
+        replacement: decodeURIComponent(
+            new URL("src/test/use-sync-external-store.ts", import.meta.url)
+                .pathname,
+        ),
+    },
+];
+
 // The specimen draws the whole language with the components themselves; its
 // build compiles every component through Tailwind as an app does.
-// `--mode still` draws it without Motion.
+// `--mode still` draws it without Motion, and `--mode preact` without Motion
+// on Preact, whose preset resolves React to preact/compat.
 export default defineConfig(({ mode }) => ({
     root: "specimen",
-    plugins: [react(), tailwindcss()],
-    resolve: { alias: mode === "still" ? STILL : [] },
+    plugins: [mode === "preact" ? preact() : react(), tailwindcss()],
+    resolve: { alias: mode === "still" || mode === "preact" ? STILL : [] },
     // One page, loaded at once; nothing ships from it, so it builds apart from
     // the package's dist.
     build: {
@@ -43,8 +67,32 @@ export default defineConfig(({ mode }) => ({
                 test: {
                     name: "still",
                     setupFiles: ["src/test/still.ts"],
-                    // Motion's own springs are what this test compares to.
-                    exclude: ["src/motion/springs.test.ts"],
+                    // Motion's own springs are what this test compares to,
+                    // and the merge configuration has nothing to do with it.
+                    exclude: [
+                        "src/motion/springs.test.ts",
+                        "src/foundation/merge-config.test.ts",
+                    ],
+                },
+            },
+            {
+                extends: true,
+                // Every dependency is compiled, from its module build, so each
+                // one that imports React meets Preact.
+                resolve: {
+                    alias: [...STILL, ...PREACT],
+                    conditions: ["module", "browser", "development", "import"],
+                    noExternal: true,
+                },
+                test: {
+                    name: "preact",
+                    setupFiles: ["src/test/still.ts"],
+                    exclude: [
+                        "src/motion/springs.test.ts",
+                        "src/foundation/merge-config.test.ts",
+                        // React Router needs hooks Preact does not have.
+                        "src/navigation/react-router.test.tsx",
+                    ],
                 },
             },
         ],

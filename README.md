@@ -63,3 +63,81 @@ export default defineConfig({
 ```
 
 Every state stays, and so does every motion the stylesheet runs: popups, dialogs, panels, toasts, a press, the rail's tips and fold, arrival marks, a refresh's turn and the theme's cross-fade. What Motion would carry lands where it would have ended, as it does for a reader who asks for less motion. linen's types do not name Motion, so the app type-checks without it. linen's code imports `motion/react`, so an app does one or the other: installs `motion`, or resolves it to `linen/still`.
+
+### On Preact
+
+linen runs on Preact through `preact/compat`, without Motion. Its own tests run every component that way, on Preact 11, and `pnpm specimen:preact` draws them. With Vite, `@preact/preset-vite` resolves React to `preact/compat`, and the app resolves Motion to `linen/still`:
+
+```ts
+import preact from "@preact/preset-vite";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "vite";
+
+export default defineConfig({
+    plugins: [preact(), tailwindcss()],
+    resolve: {
+        alias: [{ find: /^motion(\/react)?$/, replacement: "linen/still" }],
+    },
+});
+```
+
+React Router needs hooks Preact does not have, so a Preact app hands `LinenProvider` a `Navigation` of its own. `specimen/navigation.tsx` is one, over the browser's history.
+
+To test screens built with linen in Vitest on Preact, compile every dependency from its module build, so each one that imports React meets `preact/compat`. Base UI imports `use-sync-external-store`, which ships only as CommonJS, and Vitest loads CommonJS in Node, past every alias; resolve it to a module of the app's own on Preact's hook:
+
+```ts
+export default defineConfig({
+    plugins: [preact()],
+    resolve: {
+        alias: [
+            { find: /^motion(\/react)?$/, replacement: "linen/still" },
+            {
+                find: /^@testing-library\/react$/,
+                replacement:
+                    "@testing-library/react/dist/@testing-library/react.esm.js",
+            },
+            {
+                find: /^use-sync-external-store\/shim(\/with-selector)?(\/index)?(\.js)?$/,
+                replacement: "/src/test/use-sync-external-store.ts",
+            },
+        ],
+        conditions: ["module", "browser", "development", "import"],
+        noExternal: true,
+    },
+    test: { environment: "jsdom" },
+});
+```
+
+```ts
+// src/test/use-sync-external-store.ts
+import { useCallback, useRef, useSyncExternalStore } from "preact/compat";
+
+export { useSyncExternalStore };
+
+export function useSyncExternalStoreWithSelector<Snapshot, Selection>(
+    subscribe: (onChange: () => void) => () => void,
+    getSnapshot: () => Snapshot,
+    _getServerSnapshot: unknown,
+    selector: (snapshot: Snapshot) => Selection,
+    isEqual?: (a: Selection, b: Selection) => boolean,
+): Selection {
+    const last = useRef<{ snapshot: Snapshot; selection: Selection }>(null);
+    const select = useCallback(() => {
+        const snapshot = getSnapshot();
+        const held = last.current;
+        if (held !== null && Object.is(held.snapshot, snapshot)) {
+            return held.selection;
+        }
+        const selection = selector(snapshot);
+        if (held !== null && isEqual?.(held.selection, selection) === true) {
+            last.current = { snapshot, selection: held.selection };
+            return held.selection;
+        }
+        last.current = { snapshot, selection };
+        return selection;
+    }, [getSnapshot, selector, isEqual]);
+    return useSyncExternalStore(subscribe, select);
+}
+```
+
+jsdom has no `Element.prototype.getAnimations`, and Base UI then calls a close complete before Preact has drawn the closing state; giving it one that returns `[]` in the test setup makes jsdom behave as a browser does once its transitions end. `vite.config.ts` and `src/test/setup.ts` in this repository hold the configuration linen's own tests use.
