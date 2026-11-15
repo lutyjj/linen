@@ -1,3 +1,4 @@
+import { CircleAlert } from "lucide-react";
 import { type ReactNode, useId } from "react";
 
 import { classes } from "../foundation/classes";
@@ -10,19 +11,32 @@ import { classes } from "../foundation/classes";
  * opened it, so the open state firms the frame too.
  */
 export const CONTROL_CLASS =
-    "h-(--height-control) rounded-button border border-border-strong bg-surface px-2.5 text-sm text-text placeholder:text-text-muted hover:border-text-muted data-[popup-open]:border-text-muted";
+    "h-(--height-control) rounded-button border border-border-strong bg-surface px-2.5 text-sm text-text placeholder:text-text-muted hover:border-text-muted data-[popup-open]:border-text-muted aria-[invalid=true]:border-danger disabled:cursor-not-allowed disabled:opacity-50";
+
+/** What a field hands the one control its name labels, to spread on it. */
+export interface FieldControl {
+    id: string;
+    /** The field's error and hint, which say more about the control. */
+    "aria-describedby": string | undefined;
+    /** Set while the field holds an error. */
+    "aria-invalid": true | undefined;
+}
 
 /**
- * A control under its name, with the hint that explains it.
+ * A control under its name, with the hint that explains it and, once its
+ * value is refused, the error that says why.
  *
- * A child given as a function is one control, which the name labels. A child
- * given as itself is a group or a popup's own control, and the name is a span:
- * a `label` element forwards clicks inside it to the control it names, which
- * reopens a popup rendered in place rather than choosing from it.
+ * A child given as a function is one control, which the name labels: it is
+ * handed the control's id, what describes it and whether it is invalid, to
+ * spread on the control. A child given as itself is a group or a popup's own
+ * control, and the name is a span: a `label` element forwards clicks inside
+ * it to the control it names, which reopens a popup rendered in place rather
+ * than choosing from it.
  */
 export function Field({
     label,
     hint,
+    error,
     compact = false,
     width,
     className = "",
@@ -31,6 +45,8 @@ export function Field({
 }: {
     label: string;
     hint?: ReactNode;
+    /** Why the value was refused, said under the control in its own words. */
+    error?: ReactNode;
     /** For a tight place, such as inside another popup. */
     compact?: boolean;
     /**
@@ -45,11 +61,18 @@ export function Field({
      */
     width?: number;
     className?: string;
-    children: ReactNode | ((id: string) => ReactNode);
+    children: ReactNode | ((control: FieldControl) => ReactNode);
 }) {
     const generated = useId();
     const id = named ?? generated;
     const labels = typeof children === "function";
+    const refused = error !== undefined && error !== null && error !== false;
+    const errorId = `${id}-error`;
+    const hintId = `${id}-hint`;
+    const describedBy =
+        [refused ? errorId : "", hint !== undefined ? hintId : ""]
+            .filter((part) => part !== "")
+            .join(" ") || undefined;
     const Name = labels ? "label" : "span";
     return (
         <div
@@ -79,9 +102,29 @@ export function Field({
             >
                 {label}
             </Name>
-            {labels ? children(id) : children}
+            {labels
+                ? children({
+                      id,
+                      "aria-describedby": describedBy,
+                      "aria-invalid": refused || undefined,
+                  })
+                : children}
+            {refused && (
+                <p
+                    id={errorId}
+                    className="mt-1 flex items-start gap-1 text-xs text-danger"
+                >
+                    <CircleAlert
+                        aria-hidden="true"
+                        className="mt-px size-3.5 shrink-0"
+                    />
+                    <span className="min-w-0">{error}</span>
+                </p>
+            )}
             {hint !== undefined && (
-                <p className="mt-1 text-xs text-text-secondary">{hint}</p>
+                <p id={hintId} className="mt-1 text-xs text-text-secondary">
+                    {hint}
+                </p>
             )}
         </div>
     );

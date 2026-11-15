@@ -8,9 +8,11 @@ import {
 import { classes } from "../foundation/classes";
 import { CONTROL_CLASS, Field } from "./Field";
 
+/** A text box under its name, with its hint and, once refused, its error. */
 export function TextField({
     label,
     hint,
+    error,
     width,
     className = "",
     id: named,
@@ -18,15 +20,26 @@ export function TextField({
 }: {
     label: string;
     hint?: ReactNode;
+    error?: ReactNode;
     width?: number;
 } & Parameters<typeof CellInput>[0]) {
     return (
-        <Field label={label} hint={hint} width={width} id={named}>
-            {(id) => (
+        <Field label={label} hint={hint} error={error} width={width} id={named}>
+            {(control) => (
                 <CellInput
-                    id={id}
-                    className={classes("w-full", className)}
                     {...rest}
+                    {...control}
+                    // What the caller says about the control stays, beside
+                    // what the field says.
+                    aria-describedby={
+                        [control["aria-describedby"], rest["aria-describedby"]]
+                            .filter((part) => part !== undefined)
+                            .join(" ") || undefined
+                    }
+                    aria-invalid={
+                        control["aria-invalid"] ?? rest["aria-invalid"]
+                    }
+                    className={classes("w-full", className)}
                 />
             )}
         </Field>
@@ -54,7 +67,7 @@ export function CellInput({
         <span
             className={classes(
                 CONTROL_CLASS,
-                "inline-flex cursor-text items-center gap-1.5 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-1 has-[:focus-visible]:outline-accent",
+                "inline-flex cursor-text items-center gap-1.5 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-1 has-[:focus-visible]:outline-accent has-[[aria-invalid=true]]:border-danger has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50",
                 className,
             )}
         >
