@@ -24,7 +24,7 @@ export function PromptDialog({
     label: string;
     placeholder: string;
     confirmLabel: string;
-    /** What the box holds when it opens, such as a name a proposal gave. */
+    /** What the box holds when it opens, such as a suggested name. */
     initial?: string;
     onOpenChange: (open: boolean) => void;
     onConfirm: (value: string) => void;

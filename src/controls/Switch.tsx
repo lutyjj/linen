@@ -1,9 +1,9 @@
 import { Switch as BaseSwitch } from "@base-ui/react/switch";
 
 /**
- * A setting that takes effect the moment it is turned: AI on, a model that
- * thinks. A checkbox is a choice a form submits later; a switch is a change
- * already made, and its thumb travels to say so.
+ * A setting that takes effect the moment it is turned, such as notifications
+ * on or a sync that runs. A checkbox is a choice a form submits later; a
+ * switch is a change already made, and its thumb travels to say so.
  */
 export function Switch({
     checked,
