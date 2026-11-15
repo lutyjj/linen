@@ -14,6 +14,9 @@ export default defineConfig({
         "react-router": "src/navigation/react-router.tsx",
         still: "src/still/still.tsx",
     },
+    // One file for each module, as in src/, so linen.css can leave out the
+    // ones whose words are no classes.
+    unbundle: true,
     platform: "neutral",
     dts: true,
     copy: { from: "src/styles/*.css", to: "dist/styles" },

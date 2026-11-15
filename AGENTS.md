@@ -33,6 +33,7 @@ linen is a design language for React apps and the components that wear it, built
 | `src/test/`                                           | Test setup for each Vitest project                                                                               |
 | `specimen/`                                           | The app that draws every component in every state                                                                |
 | `consumer/`                                           | An app that type-checks against `dist` with strict library checks and no Motion                                  |
+| `tools/`                                              | What linen generates from its own sources: the class groups `classes()` merges with (`pnpm run generate`)        |
 | `tsdown.config.ts`                                    | The package build, which writes `package.json`'s `exports`                                                       |
 | `flake.nix`, `.github/`, `release-please-config.json` | The toolchain, the release build that runs every check, CI, and how Release Please versions a release            |
 | `CHANGELOG.md`, `.release-please-manifest.json`       | Written by Release Please; never edit them by hand                                                               |
@@ -53,6 +54,7 @@ The flake provides Node and pnpm; do not install tools on the host. Run scripts 
 | `pnpm run build`      | The package in `dist/`, checked by publint and attw, and the `exports` it writes into `package.json`                  |
 | `pnpm run check`      | The full gate: build, Prettier, ESLint, types, tests, and both specimen builds                                        |
 | `pnpm format`         | Format every file Prettier owns                                                                                       |
+| `pnpm run generate`   | Rewrite what `tools/` generates, after a component writes a class of a new kind                                       |
 | `nix flake check`     | The release build: `pnpm run check` from the locked dependencies, `exports` parity, the packed tarball, a Node import |
 
 After changing `pnpm-lock.yaml`, update the `pnpmDeps` hash in `flake.nix` as its comment says.
