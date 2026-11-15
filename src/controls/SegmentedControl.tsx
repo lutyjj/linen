@@ -2,6 +2,7 @@ import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { useId } from "react";
 
+import { type Choice } from "../foundation/choice";
 import { classes } from "../foundation/classes";
 import {
     CHOSEN_WIDTH_CLASS,
@@ -18,23 +19,31 @@ export function SegmentedControl<Value extends string>({
     label,
     value,
     options,
-    onChange,
+    onValueChange,
+    disabled = false,
+    className,
 }: {
     label: string;
     /** Undefined where nothing is chosen yet, which no option answers to. */
     value: Value | undefined;
-    options: readonly { value: Value; label: string }[];
-    onChange: (value: Value) => void;
+    options: readonly Choice<Value>[];
+    onValueChange: (value: Value) => void;
+    disabled?: boolean;
+    className?: string;
 }) {
     const group = useId();
     return (
         <RadioGroup
             aria-label={label}
             value={value ?? null}
+            disabled={disabled}
             onValueChange={(next) => {
-                if (next !== value) onChange(next as Value);
+                if (next !== value) onValueChange(next as Value);
             }}
-            className="relative isolate inline-flex h-(--height-control) shrink-0 items-stretch rounded-button border border-border-strong bg-surface p-0.5"
+            className={classes(
+                "relative isolate inline-flex h-(--height-control) shrink-0 items-stretch rounded-button border border-border-strong bg-surface p-0.5 data-[disabled]:opacity-45",
+                className,
+            )}
         >
             {options.map((option) => {
                 const active = option.value === value;
@@ -42,9 +51,11 @@ export function SegmentedControl<Value extends string>({
                     <Radio.Root
                         key={option.value}
                         value={option.value}
+                        disabled={option.disabled}
                         data-label={option.label}
                         className={classes(
-                            "relative flex cursor-pointer flex-col items-center justify-center rounded-input px-2 text-sm",
+                            "relative flex cursor-pointer flex-col items-center justify-center rounded-input px-2 text-sm data-[disabled]:cursor-not-allowed",
+                            option.disabled && "opacity-45",
                             CHOSEN_WIDTH_CLASS,
                             chosenLayerClass(active),
                             active

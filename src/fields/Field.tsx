@@ -94,11 +94,22 @@ export function Field({
  * field, a control, and the button that submits them share a bottom edge
  * instead of each solving alignment alone.
  */
-export function FieldRow({ children }: { children: ReactNode }) {
+export function FieldRow({
+    className,
+    children,
+}: {
+    className?: string;
+    children: ReactNode;
+}) {
     return (
         // Its fields give way to the column it stands in rather than hold
         // the column open, so a row of fields fits a phone.
-        <div className="flex min-w-0 flex-wrap items-end gap-3 [&_[data-field]]:mb-0">
+        <div
+            className={classes(
+                "flex min-w-0 flex-wrap items-end gap-3 [&_[data-field]]:mb-0",
+                className,
+            )}
+        >
             {children}
         </div>
     );

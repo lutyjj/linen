@@ -101,14 +101,15 @@ export function SelectToggle({
     checked,
     indeterminate = false,
     disabled = false,
-    onToggle,
+    onCheckedChange,
 }: {
     label: string;
     checked: boolean;
     indeterminate?: boolean;
     disabled?: boolean;
-    /** Told whether the press asked for a range, with Shift held. */
-    onToggle: (extend: boolean) => void;
+    /** The state a press asks for, and whether it asked for a range, with
+     * Shift held. */
+    onCheckedChange: (checked: boolean, range: boolean) => void;
 }) {
     return (
         <button
@@ -117,7 +118,7 @@ export function SelectToggle({
             aria-checked={checked ? true : indeterminate ? "mixed" : false}
             aria-label={label}
             disabled={disabled}
-            onClick={(event) => onToggle(event.shiftKey)}
+            onClick={(event) => onCheckedChange(!checked, event.shiftKey)}
             className="-m-2 cursor-pointer p-2 disabled:cursor-default disabled:opacity-45"
         >
             <CheckGlyph checked={checked} indeterminate={indeterminate} />

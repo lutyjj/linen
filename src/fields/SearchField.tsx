@@ -19,7 +19,7 @@ const SETTLE_MS = 250;
 export function SearchField({
     label,
     value,
-    onChange,
+    onValueChange,
     onSubmit,
     placeholder,
     className = "",
@@ -28,7 +28,7 @@ export function SearchField({
     /** The control's accessible name. Search boxes carry no visible label. */
     label: string;
     value: string;
-    onChange: (value: string) => void;
+    onValueChange: (value: string) => void;
     /**
      * Enter was pressed: what is typed is handed on at once, and then to
      * this as well, for a list that can do more with a finished search.
@@ -39,8 +39,8 @@ export function SearchField({
     ref?: Ref<HTMLInputElement>;
 }) {
     const [typed, setTyped] = useState(value);
-    const settle = useRef(onChange);
-    settle.current = onChange;
+    const settle = useRef(onValueChange);
+    settle.current = onValueChange;
     // What this box last handed on. The value comes back through the props a
     // render later, and taking that echo as news would put it back in the box
     // over whatever has been typed since.

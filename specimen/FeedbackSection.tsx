@@ -60,7 +60,7 @@ export function FeedbackSection() {
                     open={confirming}
                     onOpenChange={setConfirming}
                     title="Revoke the nightly export's token?"
-                    detail="Whatever uses it stops working at once."
+                    description="Whatever uses it stops working at once."
                     confirmLabel="Revoke"
                     destructive
                     onConfirm={() => toast.show({ text: "Token revoked" })}
@@ -69,7 +69,7 @@ export function FeedbackSection() {
                     open={removing}
                     onOpenChange={setRemoving}
                     title="Remove Atlas?"
-                    detail="Its members keep their accounts either way."
+                    description="Its members keep their accounts either way."
                     confirmLabel={removal === "delete" ? "Delete" : "Archive"}
                     destructive
                     onConfirm={() => toast.show({ text: "Atlas removed" })}
@@ -81,15 +81,16 @@ export function FeedbackSection() {
                             {
                                 value: "archive",
                                 label: "Archive",
-                                detail: "It can be restored later.",
+                                description: "It can be restored later.",
                             },
                             {
                                 value: "delete",
                                 label: "Delete",
-                                detail: "Its tasks and files are gone for good.",
+                                description:
+                                    "Its tasks and files are gone for good.",
                             },
                         ]}
-                        onChoose={setRemoval}
+                        onValueChange={setRemoval}
                     />
                 </ConfirmDialog>
                 <FormDialog
@@ -97,9 +98,9 @@ export function FeedbackSection() {
                     onOpenChange={setMaking}
                     title="New access token"
                     description="It acts as you until you revoke it."
-                    submitLabel="Create token"
+                    confirmLabel="Create token"
                     disabled={name.trim() === ""}
-                    onSubmit={() => {
+                    onConfirm={() => {
                         setMaking(false);
                         toast.show({ text: `${name} created` });
                     }}

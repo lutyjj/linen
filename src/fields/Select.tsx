@@ -2,6 +2,7 @@ import { Select as BaseSelect } from "@base-ui/react/select";
 import { ChevronDown } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { type Choice, type ChoiceGroup } from "../foundation/choice";
 import { classes } from "../foundation/classes";
 import {
     POPUP_CLASS,
@@ -26,20 +27,6 @@ export function PickerMark() {
 
 /** A picker's trigger: its value at the start, its mark at the end. */
 export const PICKER_CLASS = `${CONTROL_CLASS} group/picker inline-flex cursor-pointer items-center justify-between gap-1.5 text-left select-none`;
-
-export interface Choice {
-    value: string;
-    label: string;
-}
-
-/**
- * Choices under a heading, where a list holds things of more than one kind,
- * such as teams and people.
- */
-export interface ChoiceGroup {
-    label: string;
-    choices: readonly Choice[];
-}
 
 function isGroup(entry: Choice | ChoiceGroup): entry is ChoiceGroup {
     return "choices" in entry;
@@ -92,8 +79,9 @@ export function CellSelect({
         <BaseSelect.Item
             key={item.value}
             value={item.value}
+            disabled={item.disabled}
             className={classes(
-                "cursor-pointer rounded-input px-2 py-1.5 data-[highlighted]:bg-accent-weak data-[highlighted]:text-accent data-[selected]:font-medium",
+                "cursor-pointer rounded-input px-2 py-1.5 data-[highlighted]:bg-accent-weak data-[highlighted]:text-accent data-[selected]:font-medium data-[disabled]:cursor-default data-[disabled]:opacity-50",
                 item.value === "" ? "text-text-secondary" : "",
             )}
         >

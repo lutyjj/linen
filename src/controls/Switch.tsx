@@ -1,5 +1,7 @@
 import { Switch as BaseSwitch } from "@base-ui/react/switch";
 
+import { classes } from "../foundation/classes";
+
 /**
  * A setting that takes effect the moment it is turned, such as notifications
  * on or a sync that runs. A checkbox is a choice a form submits later; a
@@ -10,6 +12,7 @@ export function Switch({
     onCheckedChange,
     disabled,
     id,
+    className,
     "aria-label": ariaLabel,
     "aria-describedby": describedBy,
 }: {
@@ -17,6 +20,7 @@ export function Switch({
     onCheckedChange: (checked: boolean) => void;
     disabled?: boolean;
     id?: string;
+    className?: string;
     "aria-label"?: string;
     "aria-describedby"?: string;
 }) {
@@ -28,7 +32,10 @@ export function Switch({
             disabled={disabled}
             aria-label={ariaLabel}
             aria-describedby={describedBy}
-            className="inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-border-strong bg-sunken p-px hover:border-text-muted data-[checked]:border-accent data-[checked]:bg-accent data-[disabled]:cursor-default data-[disabled]:opacity-50"
+            className={classes(
+                "inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-border-strong bg-sunken p-px hover:border-text-muted data-[checked]:border-accent data-[checked]:bg-accent data-[disabled]:cursor-default data-[disabled]:opacity-50",
+                className,
+            )}
         >
             {/* Off, the thumb is a muted mark on the sunken track; on, it
                 is the page's own colour on the ink, as a primary button's

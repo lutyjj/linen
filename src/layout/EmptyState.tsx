@@ -1,23 +1,27 @@
 import type { ReactNode } from "react";
 
 import { Actions } from "../controls/Button";
+import { classes } from "../foundation/classes";
 import { Card } from "./Card";
 
 export function EmptyState({
     title,
-    detail,
+    description,
+    className,
     children,
 }: {
-    title: string;
-    detail?: string;
+    title: ReactNode;
+    description?: ReactNode;
+    className?: string;
+    /** The way to start. */
     children?: ReactNode;
 }) {
     return (
-        <Card className="px-6 py-12 text-center">
+        <Card className={classes("px-6 py-12 text-center", className)}>
             <h2 className="text-md font-semibold">{title}</h2>
-            {detail !== undefined && (
+            {description !== undefined && (
                 <p className="mx-auto mt-1 max-w-[65ch] text-sm text-text-secondary">
-                    {detail}
+                    {description}
                 </p>
             )}
             {children !== undefined && (

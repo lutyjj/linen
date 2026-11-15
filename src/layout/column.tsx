@@ -28,8 +28,17 @@ export const WIDE_COLUMN_CLASS = "w-full px-3 md:px-5";
 export const SCREEN_TITLE_CLASS =
     "font-display text-lg font-semibold tracking-[-0.01em]";
 
-export function Content({ children }: { children: ReactNode }) {
+/** A screen's content, in the column, under its bars. */
+export function Content({
+    className,
+    children,
+}: {
+    className?: string;
+    children: ReactNode;
+}) {
     return (
-        <div className={classes(COLUMN_CLASS, "py-3 md:py-5")}>{children}</div>
+        <div className={classes(COLUMN_CLASS, "py-3 md:py-5", className)}>
+            {children}
+        </div>
     );
 }

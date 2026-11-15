@@ -21,6 +21,7 @@ export function SettingRow({
     description,
     dimmed = false,
     role,
+    className,
     children,
 }: {
     title: ReactNode;
@@ -29,6 +30,7 @@ export function SettingRow({
     dimmed?: boolean;
     /** `listitem`, where the rows are a list of like things. */
     role?: "listitem";
+    className?: string;
     children?: ReactNode | ((describedBy: string | undefined) => ReactNode);
 }) {
     return (
@@ -37,6 +39,7 @@ export function SettingRow({
             description={description}
             dimmed={dimmed}
             role={role}
+            className={className}
             columns="grid-cols-1 @min-[34rem]:grid-cols-[minmax(0,1fr)_auto]"
             place="@min-[34rem]:justify-end"
         >
@@ -59,6 +62,7 @@ export function SettingToggle({
     disabled,
     dimmed = false,
     role,
+    className,
 }: {
     title: ReactNode;
     description?: ReactNode;
@@ -71,6 +75,7 @@ export function SettingToggle({
     dimmed?: boolean;
     /** `listitem`, where the rows are a list of like things. */
     role?: "listitem";
+    className?: string;
 }) {
     return (
         <SettingLayout
@@ -78,6 +83,7 @@ export function SettingToggle({
             description={description}
             dimmed={dimmed}
             role={role}
+            className={className}
             columns="grid-cols-[minmax(0,1fr)_auto]"
             place="justify-end"
         >
@@ -107,12 +113,14 @@ function SettingLayout({
     role,
     columns,
     place,
+    className,
     children,
 }: {
     title: ReactNode;
     description?: ReactNode;
     dimmed?: boolean;
     role?: "listitem";
+    className: string | undefined;
     columns: string;
     place: string;
     children?: ReactNode | ((describedBy: string | undefined) => ReactNode);
@@ -122,7 +130,10 @@ function SettingLayout({
     return (
         <SettlingItem
             role={role}
-            className="@container border-t border-border [header+&]:border-t-0"
+            className={classes(
+                "@container border-t border-border [header+&]:border-t-0",
+                className,
+            )}
         >
             <div
                 className={classes(
@@ -162,9 +173,20 @@ function SettingLayout({
 }
 
 /** A note under a card's settings: what holds for all of them. */
-export function SettingNote({ children }: { children: ReactNode }) {
+export function SettingNote({
+    className,
+    children,
+}: {
+    className?: string;
+    children: ReactNode;
+}) {
     return (
-        <p className="border-t border-border px-gutter py-3 text-xs text-text-muted">
+        <p
+            className={classes(
+                "border-t border-border px-gutter py-3 text-xs text-text-muted",
+                className,
+            )}
+        >
             {children}
         </p>
     );

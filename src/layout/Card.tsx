@@ -25,9 +25,10 @@ export function CardHead({
     title,
     aside,
     description,
+    className,
     children,
 }: {
-    title: string;
+    title: ReactNode;
     /**
      * A count or timestamp about the card, which reads next to its name.
      *
@@ -38,10 +39,17 @@ export function CardHead({
      */
     aside?: ReactNode;
     description?: ReactNode;
+    className?: string;
+    /** The card's actions. */
     children?: ReactNode;
 }) {
     return (
-        <header className="@container border-b border-border bg-surface px-gutter py-2.5 md:py-3">
+        <header
+            className={classes(
+                "@container border-b border-border bg-surface px-gutter py-2.5 md:py-3",
+                className,
+            )}
+        >
             <div className="grid grid-cols-1 items-center gap-x-4 gap-y-1.5 md:gap-y-2 @min-[36rem]:grid-cols-[minmax(0,1fr)_auto]">
                 <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-1">
                     <h2 className="text-md font-semibold">{title}</h2>
@@ -64,24 +72,37 @@ export function CardHead({
 
 export function FormBand({
     ref,
+    className,
     children,
 }: {
     ref?: Ref<HTMLDivElement>;
+    className?: string;
     children: ReactNode;
 }) {
     return (
         <div
             ref={ref}
-            className="border-b border-border bg-sunken px-gutter py-3"
+            className={classes(
+                "border-b border-border bg-sunken px-gutter py-3",
+                className,
+            )}
         >
             {children}
         </div>
     );
 }
 
-export function Nothing({ children }: { children: ReactNode }) {
+export function Nothing({
+    className,
+    children,
+}: {
+    className?: string;
+    children: ReactNode;
+}) {
     return (
-        <CardBody className="text-sm text-text-secondary">{children}</CardBody>
+        <CardBody className={classes("text-sm text-text-secondary", className)}>
+            {children}
+        </CardBody>
     );
 }
 
@@ -103,9 +124,22 @@ export function CardBody({
  * A count of zero says nothing the body's empty state does not, so it
  * renders as nothing rather than as a stray digit beside a button.
  */
-export function Count({ children }: { children: ReactNode }) {
+export function Count({
+    className,
+    children,
+}: {
+    className?: string;
+    children: ReactNode;
+}) {
     if (children === 0) return null;
     return (
-        <span className="text-xs tabular-nums text-text-muted">{children}</span>
+        <span
+            className={classes(
+                "text-xs tabular-nums text-text-muted",
+                className,
+            )}
+        >
+            {children}
+        </span>
     );
 }

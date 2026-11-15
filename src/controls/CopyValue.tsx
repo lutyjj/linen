@@ -1,6 +1,7 @@
 import { Check, Copy } from "lucide-react";
 import { type ReactNode, useState } from "react";
 
+import { classes } from "../foundation/classes";
 import { useWords } from "../foundation/words";
 import { Button, IconButton } from "./Button";
 
@@ -43,15 +44,17 @@ function Refused() {
 export function CopyValue({
     value,
     label,
+    className,
 }: {
     value: string;
     /** What the value is, for the copy control's name. */
     label: string;
+    className?: string;
 }) {
     const words = useWords();
     const { copying, copy } = useCopy(value);
     return (
-        <span className="grid min-w-0 gap-1">
+        <span className={classes("grid min-w-0 gap-1", className)}>
             <span className="flex min-w-0 items-start gap-2">
                 <code
                     aria-label={label}
@@ -90,6 +93,7 @@ export function ShownOnce({
     secret,
     copies,
     copyLabel,
+    className,
     children,
 }: {
     /** What was made, named as the section names it. */
@@ -101,6 +105,7 @@ export function ShownOnce({
     copies?: string;
     /** What the control says it takes, which is what it takes. */
     copyLabel: string;
+    className?: string;
     /** What to say about it, above the secret. */
     children: ReactNode;
 }) {
@@ -108,7 +113,7 @@ export function ShownOnce({
     const { copying, copy } = useCopy(copies ?? secret);
 
     return (
-        <div>
+        <div className={className}>
             <p className="mb-2 text-xs text-text-secondary">
                 {children} {words.shownOnce}
             </p>

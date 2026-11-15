@@ -64,7 +64,7 @@ function App() {
                             label="Size"
                             value={size}
                             options={SIZES}
-                            onChange={setSize}
+                            onValueChange={setSize}
                         />
                     </CardBody>
                     <SettingToggle

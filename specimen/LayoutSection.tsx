@@ -114,7 +114,7 @@ export function LayoutSection() {
                                 { value: "light", label: "Light" },
                                 { value: "dark", label: "Dark" },
                             ]}
-                            onChange={setTheme}
+                            onValueChange={setTheme}
                         />
                     </SettingRow>
                     <SettingToggle
@@ -157,7 +157,7 @@ export function LayoutSection() {
             >
                 <EmptyState
                     title="No projects yet"
-                    detail="A project keeps its tasks, files and people in one place."
+                    description="A project keeps its tasks, files and people in one place."
                 >
                     <Button variant="primary">New project</Button>
                 </EmptyState>

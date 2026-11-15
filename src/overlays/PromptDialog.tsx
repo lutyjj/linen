@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 
 import { Field } from "../fields/Field";
 import { CellInput } from "../fields/TextField";
@@ -15,24 +15,24 @@ export function PromptDialog({
     label,
     placeholder,
     confirmLabel,
-    initial = "",
+    defaultValue = "",
     onOpenChange,
     onConfirm,
 }: {
     open: boolean;
-    title: string;
+    title: ReactNode;
     label: string;
     placeholder: string;
     confirmLabel: string;
     /** What the box holds when it opens, such as a suggested name. */
-    initial?: string;
+    defaultValue?: string;
     onOpenChange: (open: boolean) => void;
     onConfirm: (value: string) => void;
 }) {
     const [value, setValue] = useState("");
     useEffect(() => {
-        if (open) setValue(initial);
-    }, [open, initial]);
+        if (open) setValue(defaultValue);
+    }, [open, defaultValue]);
 
     return (
         <FormDialog
@@ -42,10 +42,10 @@ export function PromptDialog({
                 onOpenChange(next);
             }}
             title={title}
-            submitLabel={confirmLabel}
+            confirmLabel={confirmLabel}
             disabled={value.trim() === ""}
             width="26rem"
-            onSubmit={() => {
+            onConfirm={() => {
                 onConfirm(value.trim());
                 setValue("");
                 onOpenChange(false);
