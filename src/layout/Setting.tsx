@@ -107,9 +107,10 @@ export function SettingToggle({
 
 /**
  * The row both share. A row draws the hairline above itself, except straight
- * under a card's head, which has drawn one already. Inside `SettlingRows` it
- * settles with its list: the rows after one that leaves close up, and one
- * that arrives wears the arrival mark.
+ * under a card's head, alone or first of a list there, which has drawn one
+ * already, and first in its card, whose edge stands there. Inside
+ * `SettlingRows` it settles with its list: the rows after one that leaves
+ * close up, and one that arrives wears the arrival mark.
  */
 function SettingLayout({
     title,
@@ -139,7 +140,7 @@ function SettingLayout({
         <SettlingItem
             role={role}
             className={classes(
-                "border-t border-border [header+&]:border-t-0",
+                "border-t border-border [header+&]:border-t-0 [header+*>&:first-child]:border-t-0",
                 className,
             )}
         >
@@ -189,7 +190,7 @@ export function SettingNote({
     return (
         <p
             className={classes(
-                "border-t border-border px-gutter py-3 text-xs text-text-muted",
+                "border-t border-border px-gutter py-3 text-xs text-text-muted [header+&]:border-t-0",
                 className,
             )}
         >

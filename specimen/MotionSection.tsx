@@ -91,7 +91,7 @@ export function MotionSection() {
                         {rows.map((name) => (
                             <SettlingItem
                                 key={name}
-                                className="flex items-center justify-between border-t border-border px-gutter py-2.5 text-sm first:border-t-0"
+                                className="flex items-center justify-between border-t border-border px-gutter py-2.5 text-sm [header+&]:border-t-0"
                             >
                                 {name}
                                 <Button

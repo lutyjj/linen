@@ -3,6 +3,12 @@ import type { ComponentProps, ReactNode, Ref } from "react";
 import { Actions } from "../controls/Button";
 import { classes } from "../foundation/classes";
 
+/**
+ * One concern on the page. Its own edge stands above its first part and
+ * below its last, so a part that draws a hairline there, a row above it or
+ * a head below it, draws none, nor does the first row of a list
+ * (`role="list"`) that is the card's first part.
+ */
 export function Card({
     className = "",
     children,
@@ -12,7 +18,7 @@ export function Card({
         <section
             {...props}
             className={classes(
-                "overflow-hidden rounded-card border border-border bg-surface",
+                "overflow-hidden rounded-card border border-border bg-surface [&>:first-child]:border-t-0 [&>[role=list]:first-child>:first-child]:border-t-0 [&>:last-child]:border-b-0",
                 className,
             )}
         >

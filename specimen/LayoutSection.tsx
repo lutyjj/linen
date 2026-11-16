@@ -29,6 +29,7 @@ export function LayoutSection() {
     const [weekly, setWeekly] = useState(true);
     const [writing, setWriting] = useState(false);
     const [density, setDensity] = useState("comfortable");
+    const [format, setFormat] = useState("csv");
     const [name, setName] = useState("Quarterly report");
 
     return (
@@ -147,6 +148,22 @@ export function LayoutSection() {
                     <SettingNote>
                         The deployment sets these; change them there.
                     </SettingNote>
+                </Card>
+                <Card>
+                    <SettingRow
+                        title="Export format"
+                        description="A card of one setting needs no head; its edge draws the row's line."
+                    >
+                        <SegmentedControl
+                            label="Export format"
+                            value={format}
+                            options={[
+                                { value: "csv", label: "CSV" },
+                                { value: "json", label: "JSON" },
+                            ]}
+                            onValueChange={setFormat}
+                        />
+                    </SettingRow>
                 </Card>
             </Specimen>
 
