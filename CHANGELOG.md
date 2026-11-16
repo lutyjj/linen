@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.7.0](https://github.com/lutyjj/linen/compare/v0.6.0...v0.7.0) (2026-11-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Shell no longer draws its foot at the end of a phone's bar. An app that relied on it there, for a theme choice or the account menu, offers the same choice on a screen a phone reaches, such as a settings screen, and keeps the foot for the rail.
+
+### Features
+
+* a fact's value ends its line, where a setting's control stands ([6d1c813](https://github.com/lutyjj/linen/commit/6d1c81349dbb62160ccacd639e8597bad9817dea))
+
+
+### Bug Fixes
+
+* a card draws one line at its edges ([9174a09](https://github.com/lutyjj/linen/commit/9174a09d479bde78ecd0a00986dc29ae30273268))
+* a phone's bar holds the places alone ([010c846](https://github.com/lutyjj/linen/commit/010c846c33839e9701b54c0e1f2c5ea752d17557))
+* a setting's control moves under its words once it does not fit beside them ([e398a5f](https://github.com/lutyjj/linen/commit/e398a5fdc611d87b3510e396956de3ef3f7dd28c))
+
 ## [0.6.0](https://github.com/lutyjj/linen/compare/v0.5.0...v0.6.0) (2026-11-16)
 
 
