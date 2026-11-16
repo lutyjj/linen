@@ -33,7 +33,7 @@ export { type Live, type Readable } from "./feedback/live";
 export { LogView } from "./feedback/LogView";
 export { Notice } from "./feedback/Notice";
 export { Progress } from "./feedback/Progress";
-export { Status, type StatusTone } from "./feedback/Status";
+export { ExplainedStatus, Status, type StatusTone } from "./feedback/Status";
 export { type Step, Steps } from "./feedback/Steps";
 export { CONTROL_CLASS, Field, FieldRow } from "./fields/Field";
 export { Form, type FormErrors } from "./fields/Form";

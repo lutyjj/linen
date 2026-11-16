@@ -6,6 +6,7 @@ import {
     Conditions,
     ConfirmDialog,
     Elapsed,
+    ExplainedStatus,
     FormDialog,
     type FormErrors,
     Gauge,
@@ -56,7 +57,7 @@ export function FeedbackSection() {
         <Stack>
             <Specimen
                 title="A state in a word"
-                rule="A status says what state something is in, after a dot that carries its tone. Words that want attention, a warning or a failure, wear the tone's ink too; something happening now wears a ring that beats."
+                rule="A status says what state something is in, after a dot that carries its tone. Words that want attention, a warning or a failure, wear the tone's ink too; something happening now wears a ring that beats. A state the person cannot change says why, under a resting pointer, a press or a key."
             >
                 <Samples>
                     <Sample name="Positive, live">
@@ -78,6 +79,11 @@ export function FeedbackSection() {
                     </Sample>
                     <Sample name="Unknown">
                         <Status tone="unknown">Not heard from yet</Status>
+                    </Sample>
+                    <Sample name="Explained">
+                        <ExplainedStatus description="Viewers see a project's settings but cannot change them. An owner can make you an editor.">
+                            Read only
+                        </ExplainedStatus>
                     </Sample>
                 </Samples>
             </Specimen>
