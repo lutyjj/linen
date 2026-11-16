@@ -1,8 +1,9 @@
-import { type ReactNode, useLayoutEffect, useRef } from "react";
+import type { ReactNode } from "react";
 
 import { classes } from "../foundation/classes";
 import { COLUMN_CLASS } from "../foundation/column";
 import { type Tone, TONE_TINT } from "../foundation/tone";
+import { usePublishedHeight } from "../foundation/viewport";
 import { ToneIcon } from "./toneIcon";
 
 /**
@@ -51,25 +52,8 @@ export function Conditions({
     conditions: readonly Condition[];
     className?: string;
 }) {
-    const place = useRef<HTMLDivElement>(null);
-    // Its height, for the bars that stick beneath it on the same screen, set
-    // on the screen it heads so it leaves with it.
-    useLayoutEffect(() => {
-        const element = place.current;
-        const screen = element?.parentElement;
-        if (element == null || screen == null) return;
-        const observer = new ResizeObserver(() => {
-            screen.style.setProperty(
-                "--height-conditions",
-                `${element.offsetHeight}px`,
-            );
-        });
-        observer.observe(element);
-        return () => {
-            observer.disconnect();
-            screen.style.removeProperty("--height-conditions");
-        };
-    }, []);
+    // Its height, for the bars stuck beneath it.
+    const place = usePublishedHeight<HTMLDivElement>("--height-conditions");
     const standing = conditions.toSorted(
         (one, other) =>
             ORDER[one.tone ?? "accent"] - ORDER[other.tone ?? "accent"],

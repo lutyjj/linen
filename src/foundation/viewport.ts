@@ -1,4 +1,10 @@
-import { useCallback, useRef, useState, useSyncExternalStore } from "react";
+import {
+    useCallback,
+    useLayoutEffect,
+    useRef,
+    useState,
+    useSyncExternalStore,
+} from "react";
 
 // The stylesheet's source scan skips this file, whose event names, such as
 // "resize", read as classes: it holds no classes.
@@ -104,4 +110,28 @@ export function useVisibleViewport(): (element: HTMLElement | null) => void {
             visible.removeEventListener("scroll", follow);
         };
     }, []);
+}
+
+/**
+ * Sets the custom property `name` to the height of the element the returned
+ * ref is on, on the element it stands in, for the chrome that sticks beneath
+ * it on the same screen. A bar whose contents wrap grows, so it follows the
+ * height, and it goes with the element.
+ */
+export function usePublishedHeight<Measured extends HTMLElement>(name: string) {
+    const measured = useRef<Measured>(null);
+    useLayoutEffect(() => {
+        const element = measured.current;
+        const screen = element?.parentElement;
+        if (element == null || screen == null) return;
+        const observer = new ResizeObserver(() => {
+            screen.style.setProperty(name, `${element.offsetHeight}px`);
+        });
+        observer.observe(element);
+        return () => {
+            observer.disconnect();
+            screen.style.removeProperty(name);
+        };
+    }, [name]);
+    return measured;
 }
