@@ -1,7 +1,8 @@
 import { act, render, screen } from "@testing-library/react";
 import { expect, it } from "vitest";
 
-import { Gauge, Gauges, type Readable } from "./Gauge";
+import { Gauge, Gauges } from "./Gauge";
+import type { Readable } from "./live";
 
 /** A value that changes on its own, as a signal or a store's does. */
 function source(first: number) {

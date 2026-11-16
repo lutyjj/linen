@@ -16,11 +16,20 @@ export interface Words {
     copied: string;
     /** The browser refused the clipboard, so the text has to be taken by hand. */
     copyRefused: string;
-    /** Under a secret the server shows once and keeps only a hash of. */
+    /** Under a secret shown once, where the app says nothing of its own. */
     shownOnce: string;
     expandRail: string;
     collapseRail: string;
     remove: string;
+    /** Said after a step of a task that is done. */
+    done: string;
+    /** Saves a block of text as a file. */
+    download: string;
+    /** Brings a block of text that grows back to its newest lines. */
+    latestLines: string;
+    /** A number field's step up and step down. */
+    increase: string;
+    decrease: string;
     /** The trail of screens above the one shown, over its title. */
     breadcrumb: string;
     /** The button a deep trail folds its outer steps behind. */
@@ -44,10 +53,15 @@ export const ENGLISH: Words = {
     copyRefused:
         "This browser blocked the copy. Select the text and copy it yourself.",
     shownOnce:
-        "It is shown once and is not stored, so create another if it is lost.",
+        "It is shown once and is not kept, so make another if it is lost.",
     expandRail: "Expand sidebar",
     collapseRail: "Collapse sidebar",
     remove: "Remove",
+    done: "done",
+    download: "Download",
+    latestLines: "Latest lines",
+    increase: "Increase",
+    decrease: "Decrease",
     breadcrumb: "Breadcrumb",
     foldedSteps: "More screens above",
     leaveUnsaved: "Leave without saving?",

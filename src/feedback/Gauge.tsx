@@ -4,32 +4,12 @@ import {
     type ReactNode,
     use,
     useId,
-    useLayoutEffect,
     useRef,
 } from "react";
 
 import { classes } from "../foundation/classes";
 import type { Tone } from "../foundation/tone";
-
-/**
- * A value that changes on its own: anything with a `subscribe` that hands
- * its listener the value at once and then each new one, and returns how to
- * stop, as a Preact signal does.
- */
-export interface Readable<Value> {
-    subscribe: (listener: (value: Value) => void) => () => void;
-}
-
-/** A value given once, or one that changes on its own. */
-export type Live<Value> = Value | Readable<Value>;
-
-function isReadable<Value>(value: Live<Value>): value is Readable<Value> {
-    return (
-        typeof value === "object" &&
-        value !== null &&
-        typeof (value as Readable<Value>).subscribe === "function"
-    );
-}
+import { isReadable, type Live, useFollow } from "./live";
 
 /** A stretch of the scale that means something, such as too loud. */
 export interface GaugeZone {
@@ -86,32 +66,6 @@ function stripes(
     }
     if (reached < 100) stops.push(`${rest} ${reached}% 100%`);
     return `linear-gradient(to right, ${stops.join(", ")})`;
-}
-
-/**
- * Follows a live value without rendering: each new value is written where
- * it shows, so a value that changes many times a second costs no render of
- * the gauge or of anything around it. A render, such as one that changes
- * the scale, writes the last value again the new way.
- */
-function useFollow(value: Live<number>, write: (value: number) => void) {
-    const writer = useRef(write);
-    writer.current = write;
-    const last = useRef<number | undefined>(undefined);
-    useLayoutEffect(() => {
-        if (last.current !== undefined) writer.current(last.current);
-    });
-    useLayoutEffect(() => {
-        const follow = (next: number) => {
-            last.current = next;
-            writer.current(next);
-        };
-        if (!isReadable(value)) {
-            follow(value);
-            return;
-        }
-        return value.subscribe(follow);
-    }, [value]);
 }
 
 function Mark({

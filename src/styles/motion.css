@@ -179,6 +179,26 @@
         animation: linen-thinking var(--motion-thinking) linear infinite;
     }
 
+    /* A bar that fills as something goes moves to each new length over
+     * state. One that cannot say how far sends a stretch along it, one pass
+     * each thinking; still, it fills the bar faintly, which no length it
+     * could tell would look like. */
+    .progress-known {
+        transition: scale var(--motion-state);
+    }
+
+    .progress-unknown {
+        width: 40%;
+        animation: linen-travel var(--motion-thinking) linear infinite;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .progress-unknown {
+            width: 100%;
+            opacity: 0.3;
+        }
+    }
+
     /* A switch's thumb travels to the side it was turned to. */
     .thumb {
         transition: translate var(--motion-state);
@@ -327,6 +347,15 @@
      * elsewhere to find it, then lets it go. */
     .arrival[data-arrival] {
         animation: linen-arrival var(--motion-mark) ease-out;
+    }
+}
+
+@keyframes linen-travel {
+    from {
+        translate: -100% 0;
+    }
+    to {
+        translate: 250% 0;
     }
 }
 

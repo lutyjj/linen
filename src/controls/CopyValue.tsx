@@ -27,12 +27,48 @@ function useCopy(text: string): { copying: Copying; copy: () => void } {
     return { copying, copy: () => void copy() };
 }
 
-function Refused() {
+function Refused({ className }: { className?: string }) {
     const words = useWords();
     return (
-        <span role="alert" className="text-xs text-warn">
+        <span role="alert" className={classes("text-xs text-warn", className)}>
             {words.copyRefused}
         </span>
+    );
+}
+
+/**
+ * The control that puts a value on the clipboard, named for what it takes,
+ * and the words that ask for the value by hand where the browser refuses.
+ * They stand in a row that wraps: the words take a line of their own.
+ */
+export function CopyButton({
+    value,
+    label,
+    className,
+}: {
+    value: string;
+    /** What the value is, for the control's name. */
+    label: string;
+    className?: string;
+}) {
+    const words = useWords();
+    const { copying, copy } = useCopy(value);
+    return (
+        <>
+            <IconButton
+                aria-label={`${words.copy}: ${label}`}
+                title={copying === "copied" ? words.copied : words.copy}
+                onClick={copy}
+                className={className}
+            >
+                {copying === "copied" ? (
+                    <Check aria-hidden="true" className="size-4" />
+                ) : (
+                    <Copy aria-hidden="true" className="size-4" />
+                )}
+            </IconButton>
+            {copying === "by hand" && <Refused className="basis-full" />}
+        </>
     );
 }
 
@@ -51,41 +87,30 @@ export function CopyValue({
     label: string;
     className?: string;
 }) {
-    const words = useWords();
-    const { copying, copy } = useCopy(value);
     return (
-        <span className={classes("grid min-w-0 gap-1", className)}>
-            <span className="flex min-w-0 items-start gap-2">
-                <code
-                    aria-label={label}
-                    className="min-h-(--height-control) min-w-0 flex-1 rounded-input bg-sunken px-2.5 py-1.5 font-mono text-xs/5 break-words select-all"
-                >
-                    {value}
-                </code>
-                <IconButton
-                    aria-label={`${words.copy}: ${label}`}
-                    title={copying === "copied" ? words.copied : words.copy}
-                    onClick={copy}
-                >
-                    {copying === "copied" ? (
-                        <Check aria-hidden="true" className="size-4" />
-                    ) : (
-                        <Copy aria-hidden="true" className="size-4" />
-                    )}
-                </IconButton>
-            </span>
-            {copying === "by hand" && <Refused />}
+        <span
+            className={classes(
+                "flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1",
+                className,
+            )}
+        >
+            <code
+                aria-label={label}
+                className="min-h-(--height-control) min-w-0 flex-1 rounded-input bg-sunken px-2.5 py-1.5 font-mono text-xs/5 break-words select-all"
+            >
+                {value}
+            </code>
+            <CopyButton value={value} label={label} />
         </span>
     );
 }
 
 /**
- * A secret the server showed once and cannot show again, with the words that
- * carry it and the one control that takes them.
- *
- * The invitation code and the access token are the same moment: the server
- * keeps only a hash, so what is on screen is the only copy there will ever be,
- * and a person who navigates away without taking it has to make another.
+ * A secret shown once and never again, with the words that carry it and the
+ * one control that takes them: a key or a code the other side keeps only a
+ * hash of, so what is on screen is the only copy there will ever be. What
+ * losing it means is said under the words above it, in the app's words
+ * where the default does not fit.
  */
 export function ShownOnce({
     what,
@@ -93,6 +118,7 @@ export function ShownOnce({
     secret,
     copies,
     copyLabel,
+    lost,
     className,
     children,
 }: {
@@ -105,6 +131,11 @@ export function ShownOnce({
     copies?: string;
     /** What the control says it takes, which is what it takes. */
     copyLabel: string;
+    /**
+     * What losing it means, such as how another is made, in place of the
+     * words' own sentence (`shownOnce`).
+     */
+    lost?: ReactNode;
     className?: string;
     /** What to say about it, above the secret. */
     children: ReactNode;
@@ -115,7 +146,7 @@ export function ShownOnce({
     return (
         <div className={className}>
             <p className="mb-2 text-xs text-text-secondary">
-                {children} {words.shownOnce}
+                {children} {lost ?? words.shownOnce}
             </p>
             {copies !== undefined && (
                 <p className="mb-3 text-sm break-words select-all">{copies}</p>
