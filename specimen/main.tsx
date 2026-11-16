@@ -14,7 +14,6 @@ import { createRoot } from "react-dom/client";
 import {
     AccountMenu,
     Button,
-    Condition,
     Content,
     createThemeStore,
     LinenProvider,
@@ -135,27 +134,23 @@ function Specimen() {
             home={{ href: "/foundations", label: "linen" }}
             phoneNav={phoneNav}
             screen={screen?.to}
-            conditions={
-                <>
-                    {raised !== "0" && (
-                        <Condition
-                            tone="danger"
-                            title="The service does not answer."
-                            action={
-                                <Button onClick={() => setRaised("0")}>
-                                    Try again
-                                </Button>
-                            }
-                        />
-                    )}
-                    {raised === "2" && (
-                        <Condition
-                            tone="warn"
-                            title="Read only while storage is nearly full."
-                        />
-                    )}
-                </>
-            }
+            conditions={[
+                {
+                    id: "service",
+                    tone: "danger" as const,
+                    title: "The service does not answer.",
+                    action: (
+                        <Button onClick={() => setRaised("0")}>
+                            Try again
+                        </Button>
+                    ),
+                },
+                {
+                    id: "storage",
+                    tone: "warn" as const,
+                    title: "Read only while storage is nearly full.",
+                },
+            ].slice(0, Number(raised))}
             wordmark={
                 <span className="font-display text-md font-semibold">
                     linen

@@ -21,7 +21,7 @@ export { Kbd } from "./controls/Kbd";
 export { type CardOption, OptionCards } from "./controls/OptionCards";
 export { SegmentedControl } from "./controls/SegmentedControl";
 export { Switch } from "./controls/Switch";
-export { Condition, Conditions } from "./feedback/Conditions";
+export { type Condition, Conditions } from "./feedback/Conditions";
 export { Elapsed } from "./feedback/Elapsed";
 export {
     Gauge,
