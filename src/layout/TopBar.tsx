@@ -5,8 +5,6 @@ import {
     createContext,
     type ReactNode,
     use,
-    useLayoutEffect,
-    useRef,
     useState,
 } from "react";
 
@@ -17,6 +15,7 @@ import {
     POSITIONER_CLASS,
     renderLeaving,
 } from "../foundation/popup";
+import { usePublishedHeight } from "../foundation/viewport";
 import { useWords } from "../foundation/words";
 import { useNavigation } from "../navigation/navigation";
 import { SCREEN_TITLE_CLASS } from "./column";
@@ -169,27 +168,8 @@ export function TopBar({
     children?: ReactNode;
 }) {
     const lead = use(TopBarLead);
-    const bar = useRef<HTMLElement>(null);
-    // Its height, for the chrome that sticks beneath it on the same screen: a
-    // bar whose actions wrap grows, and a section rail stuck at the toolbar's
-    // height would slide under it. It is set on the screen the bar heads, so
-    // it leaves with the bar.
-    useLayoutEffect(() => {
-        const element = bar.current;
-        const screen = element?.parentElement;
-        if (element === null || screen == null) return;
-        const observer = new ResizeObserver(() => {
-            screen.style.setProperty(
-                "--height-topbar",
-                `${element.offsetHeight}px`,
-            );
-        });
-        observer.observe(element);
-        return () => {
-            observer.disconnect();
-            screen.style.removeProperty("--height-topbar");
-        };
-    }, []);
+    // Its height, for the section rail stuck beneath it.
+    const bar = usePublishedHeight<HTMLElement>("--height-topbar");
     return (
         <header
             ref={bar}
