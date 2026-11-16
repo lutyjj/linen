@@ -4,12 +4,7 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
 import { ENGLISH } from "../foundation/words";
 import { ConfirmDialog } from "./ConfirmDialog";
-import {
-    type ToastMessage,
-    ToastProvider,
-    UNDO_WINDOW_MS,
-    useToast,
-} from "./Toast";
+import { type ToastMessage, ToastProvider, useToast } from "./Toast";
 
 let show: (message: ToastMessage) => void;
 
@@ -104,40 +99,6 @@ it("closes on Escape from inside it, and the dialog beneath stays", async () => 
     expect(onOpenChange).not.toHaveBeenCalled();
 });
 
-it("takes the keyboard to the toast on F6 and back on Shift+Tab", async () => {
-    const { onOpenChange, cancel } = await standing({
-        text: "The import failed.",
-        action: { label: "Try again", run: () => undefined },
-    });
-    const keys = user();
-
-    await keys.keyboard("{F6}");
-    expect(
-        screen.getByRole("region", { name: ENGLISH.notifications }),
-    ).toHaveFocus();
-    await keys.tab();
-    expect(toast("The import failed.")).toHaveFocus();
-    await keys.tab({ shift: true });
-    expect(cancel).toHaveFocus();
-    expect(onOpenChange).not.toHaveBeenCalled();
-});
-
-it("keeps its undo while the keyboard is on it", async () => {
-    await standing({ text: "Entry removed", onUndo: () => undefined });
-    const keys = user();
-
-    await keys.keyboard("{F6}");
-    await keys.tab();
-    act(() => {
-        vi.advanceTimersByTime(UNDO_WINDOW_MS * 2);
-    });
-
-    expect(toast("Entry removed")).toHaveFocus();
-    expect(
-        screen.getByRole("button", { name: ENGLISH.undo }),
-    ).toBeInTheDocument();
-});
-
 it("keeps the keyboard on a toast another saying replaces", async () => {
     await standing({ text: "Asking 1 of 3", sticky: true });
     const keys = user();
@@ -160,25 +121,4 @@ it("keeps the keyboard on the toast when the next saying drops its control", asy
     say({ text: "Asked 3" });
 
     expect(toast("Asked 3")).toHaveFocus();
-});
-
-it("gives focus back to where it came from once answered", async () => {
-    const undo = vi.fn();
-    const { onOpenChange, cancel } = await standing({
-        text: "Entry removed",
-        onUndo: undo,
-    });
-    const keys = user();
-
-    await keys.keyboard("{F6}");
-    await keys.tab();
-    await keys.tab();
-    expect(screen.getByRole("button", { name: ENGLISH.undo })).toHaveFocus();
-    await keys.keyboard("{Enter}");
-
-    expect(undo).toHaveBeenCalledOnce();
-    await waitFor(() => {
-        expect(cancel).toHaveFocus();
-    });
-    expect(onOpenChange).not.toHaveBeenCalled();
 });

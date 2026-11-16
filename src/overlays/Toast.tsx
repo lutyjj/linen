@@ -14,11 +14,12 @@ import { useWords } from "../foundation/words";
 /** How long a toast stands, which is also how long undo is on offer. */
 export const UNDO_WINDOW_MS = 8000;
 
-export interface ToastMessage {
+/**
+ * What a toast says, and the one answer it offers beside the text: undo, or
+ * a named action for a toast that offers more than undo.
+ */
+export type ToastMessage = {
     text: string;
-    onUndo?: () => void;
-    /** A named action beside the text, for toasts that offer more than undo. */
-    action?: { label: string; run: () => void };
     /** Stays until dismissed or replaced. For failures that need an answer. */
     sticky?: boolean;
     /**
@@ -32,7 +33,10 @@ export interface ToastMessage {
     lead?: ReactNode;
     /** How far a run has come, from 0 to 1, drawn as a hairline beneath. */
     progress?: number;
-}
+} & (
+    | { onUndo?: () => void; action?: never }
+    | { action?: { label: string; run: () => void }; onUndo?: never }
+);
 
 interface Toasting {
     show: (message: ToastMessage) => void;
@@ -57,14 +61,12 @@ interface Saying {
 const ID = "toast";
 
 /**
- * Which answers a toast offers, in the order it draws them: a new saying
- * that offers others draws other controls, and the one the keyboard was on
- * may go with the old saying.
+ * Which controls a toast draws: a new saying that draws others may take
+ * away the one the keyboard was on.
  */
 function answersOf(message: ToastMessage | undefined): string {
     return [
-        message?.onUndo !== undefined,
-        message?.action !== undefined,
+        message?.onUndo !== undefined || message?.action !== undefined,
         message?.sticky === true,
     ].join();
 }
@@ -91,6 +93,7 @@ function Toaster({ children }: { children: ReactNode }) {
     const toasts = BaseToast.useToastManager<Saying>();
     const words = useWords();
     const { add, close } = toasts;
+    const undoLabel = words.undo;
     // What stands, for deciding what may take its place.
     const standing = useRef<Saying | undefined>(undefined);
 
@@ -125,10 +128,25 @@ function Toaster({ children }: { children: ReactNode }) {
             }
             const saying: Saying = { message, settled: { current: false } };
             standing.current = saying;
+            const answer =
+                message.action ??
+                (message.onUndo && { label: undoLabel, run: message.onUndo });
             add({
                 id: ID,
                 timeout: message.sticky ? 0 : UNDO_WINDOW_MS,
                 data: saying,
+                // A toast is answered once; one on its way out answers
+                // nothing more. It closes before the answer runs, so an
+                // answer that says something new is not closed with it.
+                actionProps: answer && {
+                    children: answer.label,
+                    onClick: () => {
+                        if (saying.settled.current) return;
+                        saying.settled.current = true;
+                        close(ID);
+                        answer.run();
+                    },
+                },
                 onClose: () => {
                     if (standing.current === saying)
                         standing.current = undefined;
@@ -136,7 +154,7 @@ function Toaster({ children }: { children: ReactNode }) {
                 },
             });
         },
-        [add],
+        [add, close, undoLabel],
     );
 
     const dismiss = useCallback(() => {
@@ -166,11 +184,7 @@ function Toaster({ children }: { children: ReactNode }) {
                     className="fixed bottom-[calc(var(--inset-tabbar,0px)_+_env(safe-area-inset-bottom)_+_--spacing(3))] left-1/2 z-60 w-max max-w-[calc(100vw_-_--spacing(6))] -translate-x-1/2 outline-none md:bottom-5 md:max-w-none"
                 >
                     {toasts.toasts.map((toast) => (
-                        <ToastSurface
-                            key={toast.id}
-                            toast={toast}
-                            onClose={() => close(toast.id)}
-                        />
+                        <ToastSurface key={toast.id} toast={toast} />
                     ))}
                 </BaseToast.Viewport>
             </BaseToast.Portal>
@@ -193,24 +207,12 @@ export function useToast(): Toasting {
  */
 function ToastSurface({
     toast,
-    onClose,
 }: {
     toast: BaseToast.Root.ToastObject<Saying>;
-    onClose: () => void;
 }) {
     const words = useWords();
-    const saying = toast.data;
-    if (saying === undefined) return null;
-    const { message, settled } = saying;
-    // A toast is answered once; one on its way out answers nothing more.
-    // It closes before the answer runs, so an answer that says something new
-    // is not closed with it.
-    const answer = (run: () => void) => {
-        if (settled.current) return;
-        settled.current = true;
-        onClose();
-        run();
-    };
+    const message = toast.data?.message;
+    if (message === undefined) return null;
     return (
         <BaseToast.Root
             toast={toast}
@@ -223,30 +225,7 @@ function ToastSurface({
             <BaseToast.Title key={toast.updateKey} render={<span />}>
                 {message.text}
             </BaseToast.Title>
-            {message.onUndo && (
-                <button
-                    type="button"
-                    className="cursor-pointer font-medium underline underline-offset-2"
-                    onClick={() => {
-                        const undo = message.onUndo;
-                        if (undo !== undefined) answer(undo);
-                    }}
-                >
-                    {words.undo}
-                </button>
-            )}
-            {message.action && (
-                <button
-                    type="button"
-                    className="cursor-pointer font-medium underline underline-offset-2"
-                    onClick={() => {
-                        const action = message.action;
-                        if (action !== undefined) answer(action.run);
-                    }}
-                >
-                    {message.action.label}
-                </button>
-            )}
+            <BaseToast.Action className="cursor-pointer font-medium underline underline-offset-2" />
             {message.sticky && (
                 <BaseToast.Close
                     aria-label={words.dismiss}
