@@ -52,6 +52,10 @@ import { reactRouter } from "linen/react-router";
 
 Another router takes a `Navigation` of its own: a `Link` that renders an anchor and moves the way the router does, a `usePathname` hook that follows the address, and, to hold moves for unsaved work, a `useBlocker` hook.
 
+### Browsers
+
+linen targets [Baseline Widely Available](https://web.dev/baseline): what every major browser has shipped for at least 30 months. A newer feature serves only as progressive enhancement, so a browser without it keeps every state and loses only polish: `@starting-style` (the entrance of a popup or dialog that opens as it mounts), `@property` (the fade of a new row's mark, which otherwise holds and then ends), scroll-driven animations (the hairlines at a dialog's scrolling edges), view transitions (the theme's cross-fade), and `scrollbar-width` and `scrollbar-color`.
+
 ### Without Motion
 
 Motion is an optional peer. It carries what moves between states: an arrival rising in, a chosen mark sliding, rows settling. An app that has no room for it resolves `motion` to linen's stand-in, `linen/still`, and does not install Motion. In Vite:
