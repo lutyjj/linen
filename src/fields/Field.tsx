@@ -47,7 +47,8 @@ export function Field({
     /**
      * How much room the control needs, in the spacing scale's own steps. A
      * field that states its own width does not need a box drawn around it to
-     * hold one, and a row of them lines up because they were asked to.
+     * hold one, and a row of them lines up because they were asked to. The
+     * name and the messages are not held to it.
      */
     width?: number;
     className?: string;
@@ -58,14 +59,6 @@ export function Field({
             name={name}
             validate={validate}
             data-field
-            // A stated width is what the field asks for, up to the width it is
-            // given. Held against that width, it is not the least room the
-            // field needs, so a grid that holds it can be as narrow as a phone.
-            style={
-                width === undefined
-                    ? undefined
-                    : { width: `min(calc(var(--spacing) * ${width}), 100%)` }
-            }
             className={classes(
                 "min-w-0 max-w-full",
                 compact ? "" : "mb-4",
@@ -84,11 +77,23 @@ export function Field({
             >
                 {label}
             </BaseField.Label>
-            {children}
+            {width === undefined ? (
+                children
+            ) : (
+                // A stated width is the control's, up to the width the field
+                // is given. Its name and its messages take the room the field
+                // stands in, so a narrow control's error reads in a line.
+                <div
+                    className="max-w-full"
+                    style={{ width: `calc(var(--spacing) * ${width})` }}
+                >
+                    {children}
+                </div>
+            )}
             <BaseField.Error
                 className="mt-1 flex items-start gap-1 text-xs text-danger"
                 render={({ children: error, ...props }) => (
-                    <div {...props}>
+                    <div {...props} data-message>
                         <CircleAlert
                             aria-hidden="true"
                             className="mt-px size-3.5 shrink-0"
@@ -105,6 +110,7 @@ export function Field({
                     {({ validity }) => (
                         <BaseField.Description
                             key={String(validity.valid === false)}
+                            data-message
                             className="mt-1 text-xs text-text-secondary"
                         >
                             {hint}
@@ -117,11 +123,16 @@ export function Field({
 }
 
 /**
- * Fields and their action side by side on one baseline.
+ * Fields and their action side by side, their controls on one line.
  *
- * The row owns the vertical rhythm its fields normally carry, so a labelled
- * field, a control, and the button that submits them share a bottom edge
- * instead of each solving alignment alone.
+ * The row owns the vertical rhythm its fields normally carry. While its
+ * fields hold a name and a control alone, everything in it stands on the
+ * foot of the line. While any field says something under its control, the
+ * row stands on the top instead, and what is not a field stands a name's
+ * room down, so the controls keep one line and the message hangs below it.
+ * A field widens to hold its message, which moves what follows it along the
+ * row. A field may stand in an element of its own; its name is a full one,
+ * not `compact`, whose room the row does not keep.
  */
 export function FieldRow({
     className,
@@ -135,7 +146,7 @@ export function FieldRow({
         // the column open, so a row of fields fits a phone.
         <div
             className={classes(
-                "flex min-w-0 flex-wrap items-end gap-3 [&_[data-field]]:mb-0",
+                "flex min-w-0 flex-wrap items-end gap-3 has-data-message:items-start [&_[data-field]]:mb-0 has-data-message:*:not-data-field:not-has-data-field:mt-6",
                 className,
             )}
         >

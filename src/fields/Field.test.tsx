@@ -142,3 +142,31 @@ it("names and describes a native control given through Base UI's Input", () => {
         "A note is needed. Sent with each export.",
     );
 });
+
+it("holds only its control to a stated width, never its name or its messages", () => {
+    render(
+        <Form
+            errors={{ port: "A port is a whole number up to 65535." }}
+            onSubmit={() => undefined}
+        >
+            <TextField
+                label="Port"
+                name="port"
+                hint="Where the service listens."
+                width={20}
+                value="80800"
+                onChange={() => undefined}
+            />
+        </Form>,
+    );
+    const port = screen.getByRole("textbox", { name: "Port" });
+    const held = port.parentElement;
+    expect(held).toHaveStyle({ width: "calc(var(--spacing) * 20)" });
+    expect(held).not.toContainElement(
+        screen.getByText("A port is a whole number up to 65535."),
+    );
+    expect(held).not.toContainElement(
+        screen.getByText("Where the service listens."),
+    );
+    expect(held).not.toContainElement(screen.getByText("Port"));
+});

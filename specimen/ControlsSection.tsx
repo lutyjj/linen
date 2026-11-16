@@ -160,6 +160,7 @@ export function ControlsSection() {
                     <TextField
                         label="Port"
                         name="port"
+                        width={20}
                         hint="Where the service listens."
                         inputMode="numeric"
                         value={port}
@@ -298,9 +299,30 @@ export function ControlsSection() {
 
             <Specimen
                 title="Fields on a phone"
-                rule="A field's stated width is what it asks for, up to the width it is given, and a row of fields gives way to its column. A picker's list is never wider than the screen; a long choice wraps. Narrow the window to a phone's width: every chevron stays inside the card."
+                rule="A field's stated width is its control's, up to the width it is given; its name and its messages take the room the field stands in. A row of fields gives way to its column. A picker's list is never wider than the screen; a long choice wraps. Narrow the window to a phone's width: every chevron stays inside the card."
             >
                 <div className="grid max-w-2xl gap-2">
+                    <Form errors={REFUSED} onSubmit={() => undefined}>
+                        <FieldRow>
+                            <TextField
+                                label="Host"
+                                width={48}
+                                value="db.example.com"
+                                onChange={() => undefined}
+                            />
+                            <TextField
+                                label="Port"
+                                name="port"
+                                width={20}
+                                inputMode="numeric"
+                                value={port}
+                                onChange={(event) =>
+                                    setPort(event.target.value)
+                                }
+                            />
+                            <Button>Connect</Button>
+                        </FieldRow>
+                    </Form>
                     <FieldRow>
                         <Select
                             label="In a row, beside its action"
