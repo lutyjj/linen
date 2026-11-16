@@ -318,6 +318,7 @@ export function FeedbackSection() {
                         label="Access token"
                         secret="tok_example_000000000000000000000000"
                         copyLabel="Copy token"
+                        lost="If it is lost, revoke it and make another."
                     >
                         Give it to the script that will use it.
                     </ShownOnce>

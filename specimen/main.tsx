@@ -2,6 +2,7 @@ import "./specimen.css";
 
 import {
     Blocks,
+    ListChecks,
     MousePointerClick,
     Palette,
     Sparkles,
@@ -33,6 +34,7 @@ import { FoundationsSection } from "./FoundationsSection";
 import { LayoutSection } from "./LayoutSection";
 import { MotionSection } from "./MotionSection";
 import { historyNavigation, navigate } from "./navigation";
+import { TasksSection } from "./TasksSection";
 
 const { useTheme } = createThemeStore({ key: "linen:theme" });
 
@@ -60,6 +62,12 @@ const SCREENS = [
         label: "Feedback",
         icon: Sparkles,
         element: <FeedbackSection />,
+    },
+    {
+        to: "/tasks",
+        label: "Tasks",
+        icon: ListChecks,
+        element: <TasksSection />,
     },
     {
         to: "/motion",

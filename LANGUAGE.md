@@ -69,7 +69,11 @@ Every card's contents start on `--spacing-gutter` (12px, 16px from `md`). Two se
 - The state something is in is a `Status`: a dot in the tone and a word or two. Words that want attention, a warning or a failure, wear the ink too, and something happening now beats.
 - A failure, warning, note or success about an act or some fields is a `Notice` beside them, on its tone's tint, with the one thing to do about it at its end. A failure is read out at once; the others are read politely when their words change while they stand.
 - A value on a bounded scale is a `Gauge`: a bar that fills in the colour of each zone it reaches, marks where the value was held or a threshold is set, and the value in words. Gauges read together stand in `Gauges`. A value that changes many times a second is handed over as something it follows, so nothing around it renders.
-- A value to take whole is a `CopyValue`; a secret shown once is a `ShownOnce`.
+- A value to take whole is a `CopyValue`; a secret shown once is a `ShownOnce`, which says what losing it means in the app's words where the default does not fit. Names and values read at a glance are `Facts`; a value typed exactly is set in mono and taken whole.
+- A number set within a range is a `NumberField`: it moves in steps, ten at a time with Shift or Page Up and Page Down, and to either end with Home and End, its unit inside the frame after it.
+- Something under way in place is a `Progress`: its phase in words over a bar that fills, or, where it cannot tell how far, a stretch that travels along the bar.
+- A task of known steps shows them with `Steps`: each done, the one under way and the ones to come. Back, Cancel and the next step are its buttons, and it may open at any step, the ones before it done.
+- Text a machine writes is a `LogView`: monospace in a bounded box that follows new lines until the reader scrolls up, copied or saved whole.
 
 ## Motion
 
@@ -83,16 +87,16 @@ Motion says what changed and where it went, and never holds input.
 
 Durations are springs with no bounce; a component names a purpose, never a length. `motion.css` holds the first three as `--motion-leave`, `--motion-state` and `--motion-enter`, and the holds and loops as `--motion-mark`, `--motion-land`, `--motion-thinking` and `--motion-live`; a test holds them to `src/motion/tokens.ts`.
 
-| Token      | Length | For                                                     |
-| ---------- | ------ | ------------------------------------------------------- |
-| `leave`    | 120ms  | Something on its way out                                |
-| `state`    | 180ms  | A mark sliding, a control changing, a panel folding     |
-| `enter`    | 280ms  | An arrival, or travel to a new place                    |
-| `stagger`  | 80ms   | The step between related arrivals                       |
-| `mark`     | 1200ms | A new row's tint fading                                 |
-| `land`     | 1000ms | A refresh indicator's turn                              |
-| `thinking` | 1500ms | One pass of light across a control waiting on an answer |
-| `live`     | 2000ms | One beat of something happening now                     |
+| Token      | Length | For                                                                                              |
+| ---------- | ------ | ------------------------------------------------------------------------------------------------ |
+| `leave`    | 120ms  | Something on its way out                                                                         |
+| `state`    | 180ms  | A mark sliding, a control changing, a panel folding                                              |
+| `enter`    | 280ms  | An arrival, or travel to a new place                                                             |
+| `stagger`  | 80ms   | The step between related arrivals                                                                |
+| `mark`     | 1200ms | A new row's tint fading                                                                          |
+| `land`     | 1000ms | A refresh indicator's turn                                                                       |
+| `thinking` | 1500ms | One pass of light across a control waiting on an answer, or along a bar that cannot tell how far |
+| `live`     | 2000ms | One beat of something happening now                                                              |
 
 | Pattern                | Component                                             | Motion                                                                                                                                                                 |
 | ---------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -107,6 +111,7 @@ Durations are springs with no bounce; a component names a purpose, never a lengt
 | A control waits        | `Button` and `Switch` with `busy`                     | One pass of light across its face each `thinking`; still, the light rests across its middle                                                                            |
 | Something is live      | `Status` with `active`                                | A ring leaves its dot and fades each `live`; still, the ring stays drawn                                                                                               |
 | Something runs         | `Condition` with `active`                             | Its mark turns once each `land`                                                                                                                                        |
+| How far is not known   | `Progress` without a value                            | A stretch travels along the bar each `thinking`; still, the bar fills faintly                                                                                          |
 | Something arrives      | `arrive()`                                            | Settles once with a 4px rise over `enter`, `stagger` apart                                                                                                             |
 | The theme changes      | `createThemeStore`                                    | One cross-fade of the whole page                                                                                                                                       |
 
