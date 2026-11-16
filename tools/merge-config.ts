@@ -25,11 +25,15 @@ export const LINEN_THEME = {
     shadow: ["overlay"],
 };
 
-/** The files whose words are no classes: tests, the stand-in, this output. */
+/**
+ * The files whose words are no classes: tests, the stand-in, the viewport
+ * hooks (whose event names, such as "resize", read as classes), this output.
+ */
 export function holdsClasses(path: string): boolean {
     return !(
         /\.test\.tsx?$/.test(path) ||
         path.includes("/still/") ||
+        path.endsWith("/foundation/viewport.ts") ||
         path.endsWith("/foundation/merge-config.ts")
     );
 }

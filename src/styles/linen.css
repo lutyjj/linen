@@ -19,9 +19,11 @@
 
 /* The components' own classes, so an app's Tailwind sees them; the class
  * groups classes() merges with, and the declarations, are words about
- * classes rather than classes. */
+ * classes rather than classes, and the viewport hooks hold none but the
+ * names of the events they follow, such as "resize". */
 @source "../";
 @source not "../foundation/merge-config.*";
+@source not "../foundation/viewport.*";
 @source not "../**/*.d.ts";
 
 @layer base {

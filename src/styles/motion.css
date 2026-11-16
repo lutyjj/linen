@@ -251,6 +251,17 @@
             scale var(--motion-leave);
     }
 
+    /* A dialog's body that scrolls draws a hairline at each edge something
+     * lies past, under the title or over the actions. Its own scroll is the
+     * timeline, so a body that fits draws neither; a browser without scroll
+     * timelines draws none, rather than holding the last frame. */
+    @supports (animation-timeline: scroll()) {
+        .dialog-body {
+            animation: linen-edges linear both;
+            animation-timeline: scroll(self block);
+        }
+    }
+
     /* A panel unfolds from the control above it to its own height and folds
      * back faster, inert as it goes. It holds its content's margins, so the
      * height it travels to is the height it rests at, and the clip margin
@@ -347,6 +358,23 @@
      * elsewhere to find it, then lets it go. */
     .arrival[data-arrival] {
         animation: linen-arrival var(--motion-mark) ease-out;
+    }
+}
+
+@keyframes linen-edges {
+    0% {
+        border-top-color: transparent;
+        border-bottom-color: var(--color-border);
+    }
+    1% {
+        border-top-color: var(--color-border);
+    }
+    99% {
+        border-bottom-color: var(--color-border);
+    }
+    100% {
+        border-top-color: var(--color-border);
+        border-bottom-color: transparent;
     }
 }
 
