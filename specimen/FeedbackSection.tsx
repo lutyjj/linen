@@ -23,6 +23,9 @@ import { Group, Sample, Samples, Specimen, Stack } from "./Specimen";
 const [READ, WRITE] = wandering([60, 30], 0, 200);
 const STARTED = Date.now() - 83_000;
 const mbps = (value: number) => `${Math.round(value)} MB/s`;
+/** A write that takes a moment. */
+const pause = (ms: number) =>
+    new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 export function FeedbackSection() {
     const toast = useToast();
@@ -31,6 +34,7 @@ export function FeedbackSection() {
     const [making, setMaking] = useState(false);
     const [name, setName] = useState("");
     const [removing, setRemoving] = useState(false);
+    const [refused, setRefused] = useState<string | undefined>();
     const [removal, setRemoval] = useState<"archive" | "delete">("archive");
 
     return (
@@ -197,7 +201,11 @@ export function FeedbackSection() {
                     description="Whatever uses it stops working at once."
                     confirmLabel="Revoke"
                     destructive
-                    onConfirm={() => toast.show({ text: "Token revoked" })}
+                    onConfirm={async () => {
+                        await pause(1500);
+                        setConfirming(false);
+                        toast.show({ text: "Token revoked" });
+                    }}
                 />
                 <ConfirmDialog
                     open={removing}
@@ -206,7 +214,10 @@ export function FeedbackSection() {
                     description="Its members keep their accounts either way."
                     confirmLabel={removal === "delete" ? "Delete" : "Archive"}
                     destructive
-                    onConfirm={() => toast.show({ text: "Atlas removed" })}
+                    onConfirm={() => {
+                        setRemoving(false);
+                        toast.show({ text: "Atlas removed" });
+                    }}
                 >
                     <OptionCards
                         label="How to remove it"
@@ -229,21 +240,34 @@ export function FeedbackSection() {
                 </ConfirmDialog>
                 <FormDialog
                     open={making}
-                    onOpenChange={setMaking}
+                    onOpenChange={(open) => {
+                        setMaking(open);
+                        setRefused(undefined);
+                    }}
                     title="New access token"
                     description="It acts as you until you revoke it."
                     confirmLabel="Create token"
                     disabled={name.trim() === ""}
-                    onConfirm={() => {
+                    onConfirm={async () => {
+                        // A check that refuses a name in use.
+                        await pause(1200);
+                        if (name.trim() === "Nightly export") {
+                            setRefused("A token already has this name.");
+                            return;
+                        }
                         setMaking(false);
                         toast.show({ text: `${name} created` });
                     }}
                 >
                     <TextField
                         label="Name"
-                        hint="What will hold it, so you know which to revoke."
+                        hint="What will hold it, so you know which to revoke. Nightly export is taken."
+                        error={refused}
                         value={name}
-                        onChange={(event) => setName(event.target.value)}
+                        onChange={(event) => {
+                            setName(event.target.value);
+                            setRefused(undefined);
+                        }}
                     />
                 </FormDialog>
                 <PromptDialog
@@ -253,9 +277,10 @@ export function FeedbackSection() {
                     label="Name"
                     placeholder="Atlas"
                     confirmLabel="Rename"
-                    onConfirm={(name) =>
-                        toast.show({ text: `Renamed ${name}` })
-                    }
+                    onConfirm={(name) => {
+                        setAsking(false);
+                        toast.show({ text: `Renamed ${name}` });
+                    }}
                 />
             </Specimen>
 

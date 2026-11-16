@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { Button } from "../controls/Button";
+import { useWaiting } from "../foundation/waiting";
 import { DialogCancel, DialogLayout } from "./Dialog";
 import { DialogRoot, DialogShell } from "./DialogRoot";
 
@@ -36,26 +37,30 @@ export function ConfirmDialog({
     disabled?: boolean;
     /** Wider than the default, for a question with long answers. */
     width?: string;
-    onConfirm: () => void;
+    /**
+     * The act is confirmed. An act that takes a moment is the promise
+     * returned: until it settles the confirm waits and the dialog cannot be
+     * left. The app closes the dialog once the act is done.
+     */
+    onConfirm: () => void | Promise<unknown>;
 }) {
+    const [busy, wait] = useWaiting();
     return (
-        <DialogRoot open={open} onOpenChange={onOpenChange}>
+        <DialogRoot open={open} onOpenChange={onOpenChange} busy={busy}>
             <DialogShell open={open} width={width}>
                 <DialogLayout
                     title={title}
                     description={description}
                     actions={
                         <>
-                            <DialogCancel />
+                            <DialogCancel disabled={busy} />
                             <Button
                                 variant={
                                     destructive ? "destructive" : "primary"
                                 }
                                 disabled={disabled}
-                                onClick={() => {
-                                    onConfirm();
-                                    onOpenChange(false);
-                                }}
+                                busy={busy}
+                                onClick={() => void wait(onConfirm())}
                             >
                                 {confirmLabel}
                             </Button>

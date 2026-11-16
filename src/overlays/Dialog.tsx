@@ -1,7 +1,9 @@
 import { Dialog } from "@base-ui/react/dialog";
-import type { FormEvent, ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import { Actions, Button } from "../controls/Button";
+import { Form } from "../fields/Form";
+import { useWaiting } from "../foundation/waiting";
 import { useWords } from "../foundation/words";
 import { DialogRoot, DialogShell } from "./DialogRoot";
 
@@ -37,9 +39,21 @@ export function DialogLayout({
 }
 
 /** The way out of a dialog, which changes nothing. */
-export function DialogCancel({ label }: { label?: string }) {
+export function DialogCancel({
+    label,
+    disabled = false,
+}: {
+    label?: string;
+    /** While the dialog's confirm is busy, there is no way out yet. */
+    disabled?: boolean;
+}) {
     const words = useWords();
-    return <Dialog.Close render={<Button>{label ?? words.cancel}</Button>} />;
+    return (
+        <Dialog.Close
+            disabled={disabled}
+            render={<Button>{label ?? words.cancel}</Button>}
+        />
+    );
 }
 
 /**
@@ -64,30 +78,38 @@ export function FormDialog({
     description?: ReactNode;
     confirmLabel: string;
     disabled?: boolean;
-    /** The answers are given; the dialog does its one thing with them. */
-    onConfirm: () => void;
+    /**
+     * The answers are given; the dialog does its one thing with them. A thing
+     * that takes a moment is the promise returned: until it settles the
+     * confirm waits and the dialog cannot be left, and then a refused answer
+     * takes the focus (`Form`). The app closes the dialog when the thing is
+     * done.
+     */
+    onConfirm: () => void | Promise<unknown>;
     width?: string;
     /** The fields, and what went wrong with the last submit. */
     children: ReactNode;
 }) {
-    const submit = (event: FormEvent) => {
-        event.preventDefault();
-        if (!disabled) onConfirm();
-    };
+    const [busy, wait] = useWaiting();
     return (
-        <DialogRoot open={open} onOpenChange={onOpenChange}>
+        <DialogRoot open={open} onOpenChange={onOpenChange} busy={busy}>
             <DialogShell open={open} width={width}>
-                <form onSubmit={submit}>
+                <Form
+                    onSubmit={() => {
+                        if (!disabled) return wait(onConfirm());
+                    }}
+                >
                     <DialogLayout
                         title={title}
                         description={description}
                         actions={
                             <>
-                                <DialogCancel />
+                                <DialogCancel disabled={busy} />
                                 <Button
                                     type="submit"
                                     variant="primary"
                                     disabled={disabled}
+                                    busy={busy}
                                 >
                                     {confirmLabel}
                                 </Button>
@@ -96,7 +118,7 @@ export function FormDialog({
                     >
                         {children}
                     </DialogLayout>
-                </form>
+                </Form>
             </DialogShell>
         </DialogRoot>
     );
