@@ -7,7 +7,7 @@ export {
     IconButton,
     LINK_CLASS,
 } from "./controls/Button";
-export { Checkbox, CheckGlyph, SelectToggle } from "./controls/Checkbox";
+export { Checkbox, SelectToggle } from "./controls/Checkbox";
 export {
     Chip,
     type ChipFrame,
@@ -39,7 +39,7 @@ export { CONTROL_CLASS, Field, FieldRow } from "./fields/Field";
 export { Form, type FormErrors } from "./fields/Form";
 export { NumberField } from "./fields/NumberField";
 export { SearchField } from "./fields/SearchField";
-export { POPUP_SEARCH_CLASS, SearchSelect } from "./fields/SearchSelect";
+export { SearchSelect } from "./fields/SearchSelect";
 export { CellSelect, PICKER_CLASS, PickerMark, Select } from "./fields/Select";
 export { CellInput, CellText, TextField } from "./fields/TextField";
 export { type Choice, type ChoiceGroup } from "./foundation/choice";
