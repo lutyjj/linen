@@ -1,5 +1,8 @@
 import { useCallback, useRef, useState, useSyncExternalStore } from "react";
 
+// The stylesheet's source scan and the generated class groups skip this file,
+// whose event names, such as "resize", read as classes: it holds no classes.
+
 /**
  * The one breakpoint the interface has, matching Tailwind's `md`. Below it
  * the shell is a phone: the rail gives way to the phone's navigation, tables
@@ -47,4 +50,58 @@ export function useWidth(): [
         watching.current.observe(element);
     }, []);
     return [measure, width];
+}
+
+/**
+ * Holds an element to the part of the window a person can see: the visual
+ * viewport, which an on-screen keyboard shortens while the layout viewport
+ * stays as it was. The element reads its top and height as `--visible-top`
+ * and `--visible-height`, written as the visual viewport moves, without a
+ * render, and once it shortens, the field being typed in is scrolled back
+ * into view within it. While the page is zoomed, or where there is no visual
+ * viewport, it keeps its own fallbacks.
+ */
+export function useVisibleViewport(): (element: HTMLElement | null) => void {
+    const stop = useRef<() => void>(null);
+    return useCallback((element: HTMLElement | null) => {
+        stop.current?.();
+        stop.current = null;
+        const visible = window.visualViewport;
+        if (element === null || !visible) return;
+        const follow = () => {
+            if (visible.scale !== 1) {
+                element.style.removeProperty("--visible-top");
+                element.style.removeProperty("--visible-height");
+                return;
+            }
+            element.style.setProperty(
+                "--visible-top",
+                `${visible.offsetTop}px`,
+            );
+            element.style.setProperty(
+                "--visible-height",
+                `${visible.height}px`,
+            );
+        };
+        // A keyboard opens over the field that took the focus. A pinch, or a
+        // view that grows, leaves the focus where the person put it.
+        let last = visible.height;
+        const resize = () => {
+            follow();
+            const shorter = visible.height < last;
+            last = visible.height;
+            if (!shorter || visible.scale !== 1) return;
+            const focused = document.activeElement;
+            if (focused instanceof HTMLElement && element.contains(focused)) {
+                focused.scrollIntoView({ block: "nearest" });
+            }
+        };
+        follow();
+        visible.addEventListener("resize", resize);
+        visible.addEventListener("scroll", follow);
+        stop.current = () => {
+            visible.removeEventListener("resize", resize);
+            visible.removeEventListener("scroll", follow);
+        };
+    }, []);
 }

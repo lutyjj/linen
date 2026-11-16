@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import {
     Button,
+    Checkbox,
     Condition,
     Conditions,
     ConfirmDialog,
@@ -10,6 +11,7 @@ import {
     Gauge,
     Gauges,
     Notice,
+    NumberField,
     OptionCards,
     PromptDialog,
     ShownOnce,
@@ -21,6 +23,16 @@ import { wandering } from "./live";
 import { Group, Sample, Samples, Specimen, Stack } from "./Specimen";
 
 const [READ, WRITE] = wandering([60, 30], 0, 200);
+const PARTS = [
+    "Tasks",
+    "Comments",
+    "Files",
+    "Members",
+    "Time entries",
+    "Labels",
+    "Archived tasks",
+    "The audit log",
+];
 const STARTED = Date.now() - 83_000;
 const mbps = (value: number) => `${Math.round(value)} MB/s`;
 /** A write that takes a moment. */
@@ -36,6 +48,9 @@ export function FeedbackSection() {
     const [removing, setRemoving] = useState(false);
     const [refused, setRefused] = useState<string | undefined>();
     const [removal, setRemoval] = useState<"archive" | "delete">("archive");
+    const [scheduling, setScheduling] = useState(false);
+    const [every, setEvery] = useState<number | null>(24);
+    const [parts, setParts] = useState<string[]>(PARTS.slice(0, 3));
 
     return (
         <Stack>
@@ -196,6 +211,11 @@ export function FeedbackSection() {
                     <Sample name="Prompt">
                         <Button onClick={() => setAsking(true)}>Rename</Button>
                     </Sample>
+                    <Sample name="Taller than the window">
+                        <Button onClick={() => setScheduling(true)}>
+                            Schedule an export
+                        </Button>
+                    </Sample>
                 </Samples>
                 <ConfirmDialog
                     open={confirming}
@@ -285,6 +305,59 @@ export function FeedbackSection() {
                         toast.show({ text: `Renamed ${name}` });
                     }}
                 />
+                <FormDialog
+                    open={scheduling}
+                    onOpenChange={setScheduling}
+                    title="Schedule an export"
+                    description="Atlas is copied out on its schedule and sent where you say."
+                    confirmLabel="Schedule"
+                    onConfirm={() => {
+                        setScheduling(false);
+                        toast.show({ text: "Export scheduled" });
+                    }}
+                >
+                    <div className="flex flex-col gap-4">
+                        <TextField label="Name" defaultValue="Nightly export" />
+                        <TextField
+                            label="Send it to"
+                            hint="An address that takes files, such as exports@example.com."
+                            defaultValue="exports@example.com"
+                        />
+                        <NumberField
+                            label="Every"
+                            value={every}
+                            onValueChange={setEvery}
+                            min={1}
+                            max={168}
+                            unit="hours"
+                            width={160}
+                        />
+                        <div className="flex flex-col gap-2">
+                            <p className="text-sm font-medium">What it holds</p>
+                            {PARTS.map((part) => (
+                                <Checkbox
+                                    key={part}
+                                    checked={parts.includes(part)}
+                                    onCheckedChange={(checked) =>
+                                        setParts(
+                                            checked
+                                                ? [...parts, part]
+                                                : parts.filter(
+                                                      (one) => one !== part,
+                                                  ),
+                                        )
+                                    }
+                                >
+                                    {part}
+                                </Checkbox>
+                            ))}
+                        </div>
+                        <TextField
+                            label="A note for whoever reads it"
+                            hint="Sent with each export."
+                        />
+                    </div>
+                </FormDialog>
             </Specimen>
 
             <Specimen

@@ -149,7 +149,6 @@ export function mergeConfig() {
             "transform-origin": [{ "origin": ["center", "top", "bottom", "left", "right", "top-left", "left-top", "top-right", "right-top", "bottom-right", "right-bottom", "bottom-left", "left-bottom", isArbitraryVariable, isArbitraryValue] }],
             "translate": [{ "translate": [isFraction, "full", isArbitraryVariable, isArbitraryValue, fromTheme("spacing")] }],
             "translate-x": [{ "translate-x": [isFraction, "full", isArbitraryVariable, isArbitraryValue, fromTheme("spacing")] }],
-            "translate-y": [{ "translate-y": [isFraction, "full", isArbitraryVariable, isArbitraryValue, fromTheme("spacing")] }],
             "translate-none": ["translate-none"],
             "cursor": [{ "cursor": ["auto", "default", "pointer", "wait", "text", "move", "help", "not-allowed", "none", "context-menu", "progress", "cell", "crosshair", "vertical-text", "alias", "copy", "no-drop", "grab", "grabbing", "all-scroll", "col-resize", "row-resize", "n-resize", "e-resize", "s-resize", "w-resize", "ne-resize", "nw-resize", "se-resize", "sw-resize", "ew-resize", "ns-resize", "nesw-resize", "nwse-resize", "zoom-in", "zoom-out", isArbitraryVariable, isArbitraryValue] }],
             "pointer-events": [{ "pointer-events": ["auto", "none"] }],
@@ -180,8 +179,8 @@ export function mergeConfig() {
             "border-color": ["border-color-x","border-color-y","border-color-s","border-color-e","border-color-bs","border-color-be","border-color-t","border-color-r","border-color-b","border-color-l"],
             "border-color-x": ["border-color-s","border-color-e","border-color-r","border-color-l"],
             "border-color-y": ["border-color-bs","border-color-be","border-color-t","border-color-b"],
-            "translate": ["translate-x","translate-y","translate-none"],
-            "translate-none": ["translate","translate-x","translate-y"],
+            "translate": ["translate-x","translate-none"],
+            "translate-none": ["translate","translate-x"],
         },
         conflictingClassGroupModifiers: {
         },

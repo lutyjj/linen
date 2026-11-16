@@ -3,6 +3,7 @@ import { usePresence } from "motion/react";
 import { type ReactNode, useLayoutEffect, useRef, useState } from "react";
 
 import { renderLeaving } from "../foundation/popup";
+import { useVisibleViewport } from "../foundation/viewport";
 
 /**
  * A dialog's root. It is open while its caller holds it open and while it is
@@ -49,7 +50,12 @@ export function DialogRoot({
 /**
  * The centred modal surface every dialog shares: backdrop, panel, and the
  * dialog radius. What the dialog asks is the caller's; how one sits on the
- * screen, and how it arrives and leaves (motion.css), is not.
+ * screen, and how it arrives and leaves (motion.css), is not. It stands in
+ * the part of the window a person can see, an on-screen keyboard's room
+ * taken out, and never grows past it: `DialogLayout` scrolls what lies
+ * between the title and the actions. Its child is a `DialogLayout`, or an
+ * element around one that is `flex min-h-0 flex-col`, as `FormDialog`'s
+ * `Form` is, so the bound reaches the layout.
  *
  * A dialog keeps the words it was open with while it leaves. Its caller often
  * forgets what the dialog was about the moment it closes, and a title that
@@ -71,16 +77,22 @@ export function DialogShell({
     useLayoutEffect(() => {
         if (open) said.current = children;
     });
+    const visible = useVisibleViewport();
     return (
         <Dialog.Portal>
             <Dialog.Backdrop className="dialog-backdrop fixed inset-0 z-40 bg-scrim" />
-            <Dialog.Popup
-                render={renderLeaving}
-                style={{ width: `min(${width}, 90vw)` }}
-                className="dialog fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 rounded-dialog border border-border bg-surface p-5 shadow-overlay outline-none"
+            <Dialog.Viewport
+                ref={visible}
+                className="fixed inset-x-0 top-(--visible-top,0px) z-50 flex h-(--visible-height,100dvh) items-center justify-center px-4 pt-[calc(var(--inset-top)+--spacing(4))] pb-[calc(env(safe-area-inset-bottom)+--spacing(4))]"
             >
-                {open ? children : said.current}
-            </Dialog.Popup>
+                <Dialog.Popup
+                    render={renderLeaving}
+                    style={{ width: `min(${width}, 100%)` }}
+                    className="dialog flex max-h-full flex-col rounded-dialog border border-border bg-surface p-5 shadow-overlay outline-none"
+                >
+                    {open ? children : said.current}
+                </Dialog.Popup>
+            </Dialog.Viewport>
         </Dialog.Portal>
     );
 }

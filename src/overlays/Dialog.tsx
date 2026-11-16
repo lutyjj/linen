@@ -9,7 +9,11 @@ import { DialogRoot, DialogShell } from "./DialogRoot";
 
 /**
  * What every dialog lays out the same way: its title, what it is about, what
- * it asks, and its actions at the end, the one it exists for last.
+ * it asks, and its actions at the end, the one it exists for last. In a
+ * window too short for all of it, the title and the actions keep their places
+ * and what lies between them scrolls. Its parts stand in the dialog's column,
+ * so an element placed around it, such as a `Form`, is `flex min-h-0
+ * flex-col`.
  */
 export function DialogLayout({
     title,
@@ -24,16 +28,25 @@ export function DialogLayout({
 }) {
     return (
         <>
-            <Dialog.Title className="text-md font-semibold">
+            <Dialog.Title className="shrink-0 text-md font-semibold">
                 {title}
             </Dialog.Title>
-            {description !== undefined && (
-                <Dialog.Description className="mt-1.5 text-sm text-text-secondary">
-                    {description}
-                </Dialog.Description>
+            {(description !== undefined || children !== undefined) && (
+                // Scrolls once the dialog meets the window's edges, with a
+                // hairline at each edge something lies past (motion.css). Its
+                // padding keeps a focus ring at its sides and foot in view.
+                <div className="dialog-body -mx-1 -mt-px -mb-[calc(--spacing(1)+1px)] min-h-0 overflow-y-auto border-y border-transparent px-1 pb-1">
+                    {description !== undefined && (
+                        <Dialog.Description className="mt-1.5 text-sm text-text-secondary">
+                            {description}
+                        </Dialog.Description>
+                    )}
+                    {children !== undefined && (
+                        <div className="mt-4">{children}</div>
+                    )}
+                </div>
             )}
-            {children !== undefined && <div className="mt-4">{children}</div>}
-            <Actions className="mt-5 justify-end">{actions}</Actions>
+            <Actions className="mt-5 shrink-0 justify-end">{actions}</Actions>
         </>
     );
 }
@@ -95,6 +108,7 @@ export function FormDialog({
         <DialogRoot open={open} onOpenChange={onOpenChange} busy={busy}>
             <DialogShell open={open} width={width}>
                 <Form
+                    className="flex min-h-0 flex-col"
                     onSubmit={() => {
                         if (!disabled) return wait(onConfirm());
                     }}
