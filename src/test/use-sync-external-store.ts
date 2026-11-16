@@ -2,10 +2,11 @@ import { useCallback, useRef, useSyncExternalStore } from "preact/compat";
 
 /*
  * use-sync-external-store, which Base UI imports and which ships only as
- * CommonJS: Vitest loads it natively, so its own require of React reaches
- * React itself whatever the aliases say. The Preact project resolves it to
+ * CommonJS: Vitest loads CommonJS in Node, past every alias, so its own
+ * require of React reaches React itself. The Preact project resolves it to
  * this module, on Preact's own hook. An app's bundler converts the package,
- * so an app needs none of this.
+ * so an app needs none of this; it goes once Base UI imports React's own
+ * hook, which every React it supports has.
  */
 export { useSyncExternalStore };
 
@@ -16,22 +17,30 @@ export function useSyncExternalStoreWithSelector<Snapshot, Selection>(
     selector: (snapshot: Snapshot) => Selection,
     isEqual?: (a: Selection, b: Selection) => boolean,
 ): Selection {
-    const last = useRef<{ snapshot: Snapshot; selection: Selection } | null>(
-        null,
-    );
+    // The last selection, and what it was made from: a new selector or a new
+    // snapshot makes a new one.
+    const last = useRef<{
+        snapshot: Snapshot;
+        selector: (snapshot: Snapshot) => Selection;
+        selection: Selection;
+    } | null>(null);
     const select = useCallback(() => {
         const snapshot = getSnapshot();
         const held = last.current;
-        if (held !== null && Object.is(held.snapshot, snapshot)) {
+        if (
+            held !== null &&
+            held.selector === selector &&
+            Object.is(held.snapshot, snapshot)
+        ) {
             return held.selection;
         }
         const selection = selector(snapshot);
-        if (held !== null && isEqual?.(held.selection, selection) === true) {
-            last.current = { snapshot, selection: held.selection };
-            return held.selection;
-        }
-        last.current = { snapshot, selection };
-        return selection;
+        const kept =
+            held !== null && isEqual?.(held.selection, selection) === true
+                ? held.selection
+                : selection;
+        last.current = { snapshot, selector, selection: kept };
+        return kept;
     }, [getSnapshot, selector, isEqual]);
     return useSyncExternalStore(subscribe, select);
 }
