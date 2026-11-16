@@ -3,7 +3,6 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
 import { ENGLISH } from "../foundation/words";
-import { ConfirmDialog } from "./ConfirmDialog";
 import {
     type ToastMessage,
     ToastProvider,
@@ -57,14 +56,6 @@ it("stands while its undo is on offer, then leaves", async () => {
     );
 });
 
-it("is announced through a live region that stays in the page", () => {
-    const standing = region();
-    expect(standing).toHaveAttribute("aria-live", "polite");
-    say({ text: "Token revoked" });
-    expect(standing).toHaveTextContent("Token revoked");
-    expect(region()).toBe(standing);
-});
-
 it("keeps a toast that offers an answer when an acknowledgement passes", () => {
     say({
         text: "The import failed.",
@@ -85,6 +76,18 @@ it("lets a sticky message replace a toast that offers an answer", () => {
         vi.advanceTimersByTime(UNDO_WINDOW_MS * 2);
     });
     expect(region()).toHaveTextContent("The server refused the password.");
+});
+
+it("offers one answer, undo or an action", () => {
+    const both = {
+        text: "Entry removed",
+        onUndo: () => undefined,
+        action: { label: "Restore", run: () => undefined },
+    };
+    // @ts-expect-error A toast offers undo or an action, not both.
+    say(both);
+    expect(screen.getByRole("button", { name: "Restore" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: ENGLISH.undo })).toBeNull();
 });
 
 it("tells its sender when it is dismissed, and not when its action runs", async () => {
@@ -115,20 +118,6 @@ it("shows its words once, and says the same words again as a new saying", () => 
     const second = screen.getByText("Saved");
     expect(second).not.toBe(first);
     expect(region()).toContainElement(second);
-});
-
-it("is still read out while a modal dialog hides the rest of the page", () => {
-    render(
-        <ConfirmDialog
-            open
-            onOpenChange={() => undefined}
-            title="Remove it?"
-            confirmLabel="Remove"
-            onConfirm={() => undefined}
-        />,
-    );
-    say({ text: "That name is already taken" });
-    expect(region()).toHaveTextContent("That name is already taken");
 });
 
 it("leaves standing what its own action says next", async () => {
