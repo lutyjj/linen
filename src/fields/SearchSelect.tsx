@@ -13,7 +13,7 @@ import { CONTROL_CLASS, Field } from "./Field";
 import { PICKER_CLASS, PickerMark } from "./Select";
 
 /** The search box at the top of a picker's list. */
-export const POPUP_SEARCH_CLASS = `${CONTROL_CLASS} mb-1 w-full outline-none`;
+const POPUP_SEARCH_CLASS = `${CONTROL_CLASS} mb-1 w-full outline-none`;
 
 /**
  * One value out of a list nobody can scan, such as the world's time zones,

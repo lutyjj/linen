@@ -1,30 +1,29 @@
 import { Checkbox as BaseCheckbox } from "@base-ui/react/checkbox";
-import type { ReactNode } from "react";
+import { type ReactNode, useRef } from "react";
 
 import { classes } from "../foundation/classes";
 
-// Shape and skin apart: a box that is marked replaces the resting colours
-// rather than layering over them, which two same-property utilities in one
-// class list settle by stylesheet order instead.
-const CHECK_SHAPE =
-    "inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-check border align-[-2px]";
-const CHECK_RESTING = "border-border-strong bg-surface";
-const CHECK_MARKED = "border-accent bg-accent text-bg";
+/** The box, marked in the ink while ticked or mixed. */
+const BOX_CLASS =
+    "inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-check border border-border-strong bg-surface align-[-2px] text-bg data-[checked]:border-accent data-[checked]:bg-accent data-[indeterminate]:border-accent data-[indeterminate]:bg-accent data-[disabled]:cursor-default";
 
-function CheckIcon() {
+/** A tick, or a dash while the box is mixed. */
+function Mark({ indeterminate = false }: { indeterminate?: boolean }) {
     return (
-        <svg
-            aria-hidden="true"
-            viewBox="0 0 12 12"
-            className="h-3 w-3"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
-            <path d="M2.5 6.5 5 9l4.5-5.5" />
-        </svg>
+        <BaseCheckbox.Indicator>
+            <svg
+                aria-hidden="true"
+                viewBox="0 0 12 12"
+                className="size-3"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            >
+                <path d={indeterminate ? "M3 6h6" : "M2.5 6.5 5 9l4.5-5.5"} />
+            </svg>
+        </BaseCheckbox.Indicator>
     );
 }
 
@@ -61,18 +60,14 @@ export function Checkbox({
             disabled={disabled}
             aria-label={ariaLabel}
             className={classes(
-                CHECK_SHAPE,
-                CHECK_RESTING,
-                "cursor-pointer text-bg data-[checked]:border-accent data-[checked]:bg-accent data-[disabled]:cursor-default",
+                BOX_CLASS,
                 // Held in its words, the box dims with them.
                 children === undefined
                     ? classes("data-[disabled]:opacity-50", className)
                     : "",
             )}
         >
-            <BaseCheckbox.Indicator>
-                <CheckIcon />
-            </BaseCheckbox.Indicator>
+            <Mark />
         </BaseCheckbox.Root>
     );
     if (children === undefined) return box;
@@ -92,11 +87,9 @@ export function Checkbox({
 
 /**
  * The control that selects a row, or every row, wherever a list can be acted
- * on in bulk.
- *
- * A checkbox by role rather than by shape, so the count the selection bar
- * states is reachable by name, and one padded hit target so a thumb can find
- * it in a table row that is 36px tall.
+ * on in bulk: a checkbox, mixed while some rows are chosen, named by what it
+ * selects so the count a selection bar states is reachable by name. Its hit
+ * target reaches past the box, so a thumb finds it in a row 36px tall.
  */
 export function SelectToggle({
     label,
@@ -109,56 +102,29 @@ export function SelectToggle({
     checked: boolean;
     indeterminate?: boolean;
     disabled?: boolean;
-    /** The state a press asks for, and whether it asked for a range, with
-     * Shift held. */
+    /**
+     * The state a press asks for, and whether it asked for a range, with
+     * Shift held.
+     */
     onCheckedChange: (checked: boolean, range: boolean) => void;
 }) {
+    const shifted = useRef(false);
     return (
-        <button
-            type="button"
-            role="checkbox"
-            aria-checked={checked ? true : indeterminate ? "mixed" : false}
+        <BaseCheckbox.Root
             aria-label={label}
+            checked={checked}
+            indeterminate={indeterminate}
             disabled={disabled}
-            onClick={(event) => onCheckedChange(!checked, event.shiftKey)}
-            className="-m-2 cursor-pointer p-2 disabled:cursor-default disabled:opacity-45"
-        >
-            <CheckGlyph checked={checked} indeterminate={indeterminate} />
-        </button>
-    );
-}
-
-/** The checkbox visual alone, for rows whose selection the row itself owns. */
-export function CheckGlyph({
-    checked,
-    indeterminate = false,
-}: {
-    checked: boolean;
-    indeterminate?: boolean;
-}) {
-    const marked = checked || indeterminate;
-    return (
-        <span
-            aria-hidden="true"
+            // The press itself says whether Shift was held: the change it
+            // makes reaches Preact as an event that does not.
+            onClick={(event) => (shifted.current = event.shiftKey)}
+            onCheckedChange={(next) => onCheckedChange(next, shifted.current)}
             className={classes(
-                CHECK_SHAPE,
-                marked ? CHECK_MARKED : CHECK_RESTING,
+                BOX_CLASS,
+                "relative after:absolute after:-inset-2 data-[disabled]:opacity-45",
             )}
         >
-            {indeterminate ? (
-                <svg
-                    viewBox="0 0 12 12"
-                    className="h-3 w-3"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                >
-                    <path d="M3 6h6" />
-                </svg>
-            ) : checked ? (
-                <CheckIcon />
-            ) : null}
-        </span>
+            <Mark indeterminate={indeterminate} />
+        </BaseCheckbox.Root>
     );
 }

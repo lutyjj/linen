@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
     Button,
     CellInput,
+    CellText,
     Checkbox,
     Chip,
     ChipTrigger,
@@ -13,9 +14,11 @@ import {
     IconButton,
     Kbd,
     OptionCards,
+    SearchField,
     SearchSelect,
     SegmentedControl,
     Select,
+    SelectToggle,
     Switch,
     TextField,
 } from "../src";
@@ -26,6 +29,8 @@ const REFUSED = {
     port: "A port is a whole number up to 65535.",
     owner: "A project needs an owner.",
 };
+
+const PROJECTS = ["Atlas", "Orion", "Vega", "Lyra"];
 
 const ZONES = [
     "Europe/London",
@@ -73,6 +78,27 @@ export function ControlsSection() {
     const [removal, setRemoval] = useState<"archive" | "delete">("archive");
     const [saving, setSaving] = useState(false);
     const [port, setPort] = useState("80800");
+    const [listens, setListens] = useState("8080");
+    const [query, setQuery] = useState("");
+    const [picked, setPicked] = useState(["Orion"]);
+    const [lastPicked, setLastPicked] = useState(0);
+    // Shift takes every row between the last one pressed and this one.
+    const pick = (at: number, checked: boolean, range: boolean) => {
+        const rows = range
+            ? PROJECTS.slice(
+                  Math.min(lastPicked, at),
+                  Math.max(lastPicked, at) + 1,
+              )
+            : PROJECTS.slice(at, at + 1);
+        setPicked(
+            checked
+                ? PROJECTS.filter(
+                      (one) => picked.includes(one) || rows.includes(one),
+                  )
+                : picked.filter((one) => !rows.includes(one)),
+        );
+        setLastPicked(at);
+    };
 
     const save = () => {
         setSaving(true);
@@ -214,6 +240,58 @@ export function ControlsSection() {
                             ]}
                             onValueChange={setDensity}
                         />
+                    </Sample>
+                    <Sample name="Search, as typing pauses">
+                        <SearchField
+                            label="Search projects"
+                            placeholder="Search projects"
+                            value={query}
+                            onValueChange={setQuery}
+                        />
+                    </Sample>
+                    <Sample name="Corrected in place">
+                        <CellText
+                            label="Listens on"
+                            value={listens}
+                            unit="port"
+                            onCommit={(next) => {
+                                setListens(next);
+                                return Promise.resolve(true);
+                            }}
+                        />
+                    </Sample>
+                    <Sample name="Selecting rows, a range with Shift">
+                        <div className="flex flex-col gap-2 text-sm">
+                            <span className="flex items-center gap-3 text-text-secondary">
+                                <SelectToggle
+                                    label="Select every project"
+                                    checked={picked.length === PROJECTS.length}
+                                    indeterminate={
+                                        picked.length > 0 &&
+                                        picked.length < PROJECTS.length
+                                    }
+                                    onCheckedChange={(checked) =>
+                                        setPicked(checked ? PROJECTS : [])
+                                    }
+                                />
+                                {picked.length} chosen
+                            </span>
+                            {PROJECTS.map((project, at) => (
+                                <span
+                                    key={project}
+                                    className="flex items-center gap-3"
+                                >
+                                    <SelectToggle
+                                        label={`Select ${project}`}
+                                        checked={picked.includes(project)}
+                                        onCheckedChange={(checked, range) =>
+                                            pick(at, checked, range)
+                                        }
+                                    />
+                                    {project}
+                                </span>
+                            ))}
+                        </div>
                     </Sample>
                 </Samples>
             </Specimen>
