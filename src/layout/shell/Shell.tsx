@@ -65,7 +65,12 @@ export function Shell({
     mark?: ReactNode;
     /** A choice under the wordmark, such as which area the places belong to. */
     head?: ReactNode;
-    /** The rail's foot, which the account menu takes. */
+    /**
+     * The rail's foot, which the account menu takes. It is drawn a second
+     * time at the end of the phone's bar, and CSS shows the one that fits,
+     * so what it holds mounts twice; `AccountMenu` draws itself for each
+     * place, and anything else is drawn as a folded rail's row.
+     */
     foot?: ReactNode;
     /** What every screen's top bar puts before its title. */
     lead?: ReactNode;
@@ -99,6 +104,7 @@ export function Shell({
             placesKey={placesKey}
             home={home}
             wordmark={wordmark}
+            foot={foot}
         />
     );
 

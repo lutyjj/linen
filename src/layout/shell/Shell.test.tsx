@@ -6,6 +6,7 @@ import { afterEach, expect, it, vi } from "vitest";
 import { ENGLISH } from "../../foundation/words";
 import { LinenProvider } from "../../LinenProvider";
 import { memoryNavigation } from "../../test/memoryNavigation";
+import { AccountMenu } from "./AccountMenu";
 import { Shell } from "./Shell";
 
 afterEach(() => vi.restoreAllMocks());
@@ -173,4 +174,36 @@ it("marks the current place from the page's own address where the app has no rou
     } finally {
         window.history.pushState({}, "", "/");
     }
+});
+
+it("puts the rail's foot at the end of a phone's bar, top or bottom", () => {
+    const foot = (
+        <AccountMenu name="Ada" label="Ada's account" menuLabel="Account" />
+    );
+    const at = (phoneNav: "top" | "bottom") => (
+        <Shell
+            label="Places"
+            places={[{ href: "/", label: "Projects", icon: Folder }]}
+            home={HOME}
+            wordmark="linen"
+            storageKey="test:rail"
+            phoneNav={phoneNav}
+            foot={foot}
+        >
+            <p>The screen</p>
+        </Shell>
+    );
+    const view = render(at("bottom"));
+    const tabs = document.querySelector<HTMLElement>("[data-tab-bar]");
+    if (tabs === null) throw new Error("no tab bar");
+    expect(
+        within(tabs).getByRole("button", { name: "Ada's account" }),
+    ).toBeInTheDocument();
+
+    view.rerender(at("top"));
+    const [, top] = screen.getAllByRole("navigation", { name: "Places" });
+    if (top === undefined) throw new Error("no phone navigation");
+    expect(
+        within(top).getByRole("button", { name: "Ada's account" }),
+    ).toBeInTheDocument();
 });
