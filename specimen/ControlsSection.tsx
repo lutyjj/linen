@@ -9,6 +9,7 @@ import {
     ChipTrigger,
     CopyValue,
     FieldRow,
+    Form,
     IconButton,
     Kbd,
     OptionCards,
@@ -19,6 +20,12 @@ import {
     TextField,
 } from "../src";
 import { Sample, Samples, Specimen, Stack } from "./Specimen";
+
+/** What an answer refused, held as the app holds it. */
+const REFUSED = {
+    port: "A port is a whole number up to 65535.",
+    owner: "A project needs an owner.",
+};
 
 const ZONES = [
     "Europe/London",
@@ -113,7 +120,11 @@ export function ControlsSection() {
                 title="Fields"
                 rule="A field wears the same frame wherever it stands, its name above it and its hint below. A refused value says why under the control, before the hint. A picker ends in one chevron, which turns as its list opens; a list of more than one kind of thing holds each under its heading."
             >
-                <div className="grid max-w-2xl gap-x-4 sm:grid-cols-2">
+                <Form
+                    errors={REFUSED}
+                    onSubmit={() => undefined}
+                    className="grid max-w-2xl gap-x-4 sm:grid-cols-2"
+                >
                     <TextField
                         label="Name"
                         hint="Everyone in the workspace sees it."
@@ -122,12 +133,8 @@ export function ControlsSection() {
                     />
                     <TextField
                         label="Port"
+                        name="port"
                         hint="Where the service listens."
-                        error={
-                            Number(port) > 65535 || !/^\d+$/.test(port)
-                                ? "A port is a whole number up to 65535."
-                                : undefined
-                        }
                         inputMode="numeric"
                         value={port}
                         onChange={(event) => setPort(event.target.value)}
@@ -143,8 +150,8 @@ export function ControlsSection() {
                         label="Owner"
                         placeholder="Nobody"
                         choices={ASSIGNEES}
+                        name="owner"
                         value=""
-                        error="A project needs an owner."
                         onValueChange={() => undefined}
                     />
                     <Select
@@ -180,7 +187,7 @@ export function ControlsSection() {
                             unit="sec"
                         />
                     </div>
-                </div>
+                </Form>
                 <Samples>
                     <Sample name="Checkbox, for a form">
                         <Checkbox

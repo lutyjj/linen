@@ -27,7 +27,7 @@ it("steps within its range from the keyboard and its buttons", async () => {
     render(<Volume />);
     const volume = screen.getByRole("textbox", { name: "Volume" });
     expect(volume).toHaveAccessibleDescription(
-        "The level the output starts at. dB",
+        "dB The level the output starts at.",
     );
 
     await user.click(volume);

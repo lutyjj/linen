@@ -24,7 +24,8 @@ const STEP_CLASS =
 export function NumberField({
     label,
     hint,
-    error,
+    name,
+    validate,
     value,
     onValueChange,
     onValueCommit,
@@ -41,7 +42,9 @@ export function NumberField({
 }: {
     label: string;
     hint?: ReactNode;
-    error?: ReactNode;
+    /** The key of its error in its form's `errors`. */
+    name?: string;
+    validate?: Parameters<typeof Field>[0]["validate"];
     /** Null while the field is empty. */
     value: number | null;
     onValueChange: (value: number | null) => void;
@@ -64,68 +67,66 @@ export function NumberField({
     const words = useWords();
     const unitId = useId();
     return (
-        <Field label={label} hint={hint} error={error} width={width} id={id}>
-            {(control) => (
-                <BaseNumberField.Root
-                    id={control.id}
-                    value={value}
-                    onValueChange={(next) => onValueChange(next)}
-                    onValueCommitted={(next) => onValueCommit?.(next)}
-                    min={min}
-                    max={max}
-                    step={step}
-                    largeStep={largeStep}
-                    format={format}
-                    disabled={disabled}
+        <Field
+            label={label}
+            hint={hint}
+            name={name}
+            validate={validate}
+            width={width}
+        >
+            <BaseNumberField.Root
+                id={id}
+                value={value}
+                onValueChange={(next) => onValueChange(next)}
+                onValueCommitted={(next) => onValueCommit?.(next)}
+                min={min}
+                max={max}
+                step={step}
+                largeStep={largeStep}
+                format={format}
+                disabled={disabled}
+            >
+                <BaseNumberField.Group
+                    className={classes(
+                        CONTROL_CLASS,
+                        "flex w-full items-stretch overflow-hidden p-0 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-1 has-[:focus-visible]:outline-accent has-[[aria-invalid=true]]:border-danger has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50",
+                        className,
+                    )}
                 >
-                    <BaseNumberField.Group
+                    <BaseNumberField.Decrement
+                        aria-label={words.decrease}
                         className={classes(
-                            CONTROL_CLASS,
-                            "flex w-full items-stretch overflow-hidden p-0 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-1 has-[:focus-visible]:outline-accent has-[[aria-invalid=true]]:border-danger has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50",
-                            className,
+                            STEP_CLASS,
+                            "border-r border-border",
                         )}
                     >
-                        <BaseNumberField.Decrement
-                            aria-label={words.decrease}
-                            className={classes(
-                                STEP_CLASS,
-                                "border-r border-border",
-                            )}
+                        <Minus aria-hidden="true" className="size-3.5" />
+                    </BaseNumberField.Decrement>
+                    <BaseNumberField.Input
+                        aria-describedby={
+                            unit === undefined ? undefined : unitId
+                        }
+                        className="min-w-0 flex-1 bg-transparent px-2 text-right tabular-nums outline-none"
+                    />
+                    {unit !== undefined && (
+                        <span
+                            id={unitId}
+                            className="flex shrink-0 items-center pr-2.5 text-text-muted"
                         >
-                            <Minus aria-hidden="true" className="size-3.5" />
-                        </BaseNumberField.Decrement>
-                        <BaseNumberField.Input
-                            aria-describedby={
-                                [
-                                    control["aria-describedby"],
-                                    unit === undefined ? undefined : unitId,
-                                ]
-                                    .filter((part) => part !== undefined)
-                                    .join(" ") || undefined
-                            }
-                            aria-invalid={control["aria-invalid"]}
-                            className="min-w-0 flex-1 bg-transparent px-2 text-right tabular-nums outline-none"
-                        />
-                        {unit !== undefined && (
-                            <span
-                                id={unitId}
-                                className="flex shrink-0 items-center pr-2.5 text-text-muted"
-                            >
-                                {unit}
-                            </span>
+                            {unit}
+                        </span>
+                    )}
+                    <BaseNumberField.Increment
+                        aria-label={words.increase}
+                        className={classes(
+                            STEP_CLASS,
+                            "border-l border-border",
                         )}
-                        <BaseNumberField.Increment
-                            aria-label={words.increase}
-                            className={classes(
-                                STEP_CLASS,
-                                "border-l border-border",
-                            )}
-                        >
-                            <Plus aria-hidden="true" className="size-3.5" />
-                        </BaseNumberField.Increment>
-                    </BaseNumberField.Group>
-                </BaseNumberField.Root>
-            )}
+                    >
+                        <Plus aria-hidden="true" className="size-3.5" />
+                    </BaseNumberField.Increment>
+                </BaseNumberField.Group>
+            </BaseNumberField.Root>
         </Field>
     );
 }

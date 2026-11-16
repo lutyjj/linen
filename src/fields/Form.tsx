@@ -1,41 +1,46 @@
-import { type ReactNode, useLayoutEffect, useRef, useState } from "react";
+import { Form as BaseForm } from "@base-ui/react/form";
+import { type ReactNode, useMemo, useState } from "react";
 
 import { useWaiting } from "../foundation/waiting";
 
+/** Why each field's value was refused, by the field's `name`. */
+export type FormErrors = Record<string, string | string[]>;
+
 /**
- * A form whose refused submit is heard. Once a submit has been answered, at
- * once or when the promise it returned settles, the first field marked
- * invalid takes the focus, so its name and its error are read out together
- * and the person starts where the fault is. A submit while the last answer is
- * still to come starts nothing.
+ * A form whose refused submit is heard. Base UI's form carries it: a submit
+ * checks every field first, and a field it refuses takes the focus instead of
+ * reaching `onSubmit`. Once an answer has come, the first field its `errors`
+ * name takes the focus, and each error stands under its field until the value
+ * is edited. A submit while the last answer is still to come starts nothing.
  *
- * The app marks fields invalid by their `error`, set by the time the answer
- * has come.
+ * The app holds `errors` in state and sets them from every answer: what was
+ * refused, or nothing once nothing was. It does not clear them as a submit
+ * starts, which would spend the focus before the answer comes. An error says
+ * what is wrong with its field's value, and a submit is refused at once until
+ * that value is edited; a refusal for any other reason, and a failure, is a
+ * `Notice`, and the next submit asks again.
  */
 export function Form({
+    errors,
     onSubmit,
     className,
     children,
 }: {
+    errors?: FormErrors;
     /** The answers are given. An answer that comes later is its promise. */
     onSubmit: () => void | Promise<unknown>;
     className?: string;
     children: ReactNode;
 }) {
-    const form = useRef<HTMLFormElement>(null);
     const [waiting, wait] = useWaiting();
-    // Each answer renders, so a refusal in the same words is heard again.
     const [answers, setAnswers] = useState(0);
-    useLayoutEffect(() => {
-        if (answers === 0) return;
-        form.current
-            ?.querySelector<HTMLElement>('[aria-invalid="true"]')
-            ?.focus();
-    }, [answers]);
+    // Base UI shows errors again only when they are a new object, so each
+    // answer hands it one, and a refusal in the same words is heard again.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const given = useMemo(() => errors && { ...errors }, [errors, answers]);
     return (
-        <form
-            ref={form}
-            noValidate
+        <BaseForm
+            errors={given}
             className={className}
             onSubmit={(event) => {
                 event.preventDefault();
@@ -44,6 +49,6 @@ export function Form({
             }}
         >
             {children}
-        </form>
+        </BaseForm>
     );
 }

@@ -36,7 +36,7 @@ export { Progress } from "./feedback/Progress";
 export { Status, type StatusTone } from "./feedback/Status";
 export { type Step, Steps } from "./feedback/Steps";
 export { CONTROL_CLASS, Field, FieldRow } from "./fields/Field";
-export { Form } from "./fields/Form";
+export { Form, type FormErrors } from "./fields/Form";
 export { NumberField } from "./fields/NumberField";
 export { SearchField } from "./fields/SearchField";
 export { POPUP_SEARCH_CLASS, SearchSelect } from "./fields/SearchSelect";

@@ -8,6 +8,7 @@ import {
     ConfirmDialog,
     Elapsed,
     FormDialog,
+    type FormErrors,
     Gauge,
     Gauges,
     Notice,
@@ -46,7 +47,7 @@ export function FeedbackSection() {
     const [making, setMaking] = useState(false);
     const [name, setName] = useState("");
     const [removing, setRemoving] = useState(false);
-    const [refused, setRefused] = useState<string | undefined>();
+    const [refused, setRefused] = useState<FormErrors>();
     const [removal, setRemoval] = useState<"archive" | "delete">("archive");
     const [scheduling, setScheduling] = useState(false);
     const [every, setEvery] = useState<number | null>(24);
@@ -271,26 +272,27 @@ export function FeedbackSection() {
                     description="It acts as you until you revoke it."
                     confirmLabel="Create token"
                     disabled={name.trim() === ""}
+                    errors={refused}
                     onConfirm={async () => {
                         // A check that refuses a name in use.
                         await pause(1200);
                         if (name.trim() === "Nightly export") {
-                            setRefused("A token already has this name.");
+                            setRefused({
+                                name: "A token already has this name.",
+                            });
                             return;
                         }
+                        setRefused(undefined);
                         setMaking(false);
                         toast.show({ text: `${name} created` });
                     }}
                 >
                     <TextField
                         label="Name"
+                        name="name"
                         hint="What will hold it, so you know which to revoke. Nightly export is taken."
-                        error={refused}
                         value={name}
-                        onChange={(event) => {
-                            setName(event.target.value);
-                            setRefused(undefined);
-                        }}
+                        onChange={(event) => setName(event.target.value)}
                     />
                 </FormDialog>
                 <PromptDialog

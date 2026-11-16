@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { expect, it, vi } from "vitest";
 
+import type { FormErrors } from "../fields/Form";
 import { TextField } from "../fields/TextField";
 import { ENGLISH } from "../foundation/words";
 import { FormDialog } from "./Dialog";
@@ -12,29 +13,25 @@ let answer: () => void = () => undefined;
 
 /** A dialog whose check of the name takes a moment and refuses it. */
 function Making({ onOpenChange }: { onOpenChange: (open: boolean) => void }) {
-    const [error, setError] = useState<string>();
+    const [errors, setErrors] = useState<FormErrors>();
     return (
         <FormDialog
             open
             onOpenChange={onOpenChange}
             title="New token"
             confirmLabel="Create"
+            errors={errors}
             onConfirm={() =>
                 new Promise<void>((resolve) => {
                     answer = () => {
-                        setError("A token already has this name.");
+                        setErrors({ name: "A token already has this name." });
                         resolve();
                     };
                 })
             }
         >
-            <TextField label="Port" value="80" onChange={() => undefined} />
-            <TextField
-                label="Name"
-                error={error}
-                value="Nightly"
-                onChange={() => undefined}
-            />
+            <TextField label="Port" name="port" defaultValue="80" />
+            <TextField label="Name" name="name" defaultValue="Nightly" />
         </FormDialog>
     );
 }

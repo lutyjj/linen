@@ -1,4 +1,5 @@
-import { type ReactNode, useId } from "react";
+import { Field } from "@base-ui/react/field";
+import type { ReactNode } from "react";
 
 import { Switch } from "../controls/Switch";
 import { classes } from "../foundation/classes";
@@ -13,8 +14,7 @@ import { SettlingItem } from "../motion/SettlingRows";
  * it does not; the row decides from its own width, not the screen's, so the
  * same setting lays out the same way in any card.
  *
- * The description is wired to the control by `describedBy`, which the caller
- * hands to whichever element is the control.
+ * The description describes the control, any of Base UI's, through its field.
  */
 export function SettingRow({
     title,
@@ -31,7 +31,7 @@ export function SettingRow({
     /** `listitem`, where the rows are a list of like things. */
     role?: "listitem";
     className?: string;
-    children?: ReactNode | ((describedBy: string | undefined) => ReactNode);
+    children?: ReactNode;
 }) {
     return (
         <SettingLayout
@@ -90,16 +90,13 @@ export function SettingToggle({
             columns="grid-cols-[minmax(0,1fr)_auto]"
             place="justify-end"
         >
-            {(describedBy) => (
-                <Switch
-                    aria-label={label}
-                    aria-describedby={describedBy}
-                    checked={checked}
-                    onCheckedChange={onCheckedChange}
-                    disabled={disabled}
-                    busy={busy}
-                />
-            )}
+            <Switch
+                aria-label={label}
+                checked={checked}
+                onCheckedChange={onCheckedChange}
+                disabled={disabled}
+                busy={busy}
+            />
         </SettingLayout>
     );
 }
@@ -127,10 +124,8 @@ function SettingLayout({
     className: string | undefined;
     columns: string;
     place: string;
-    children?: ReactNode | ((describedBy: string | undefined) => ReactNode);
+    children?: ReactNode;
 }) {
-    const id = useId();
-    const describedBy = description === undefined ? undefined : id;
     return (
         <SettlingItem
             role={role}
@@ -139,9 +134,9 @@ function SettingLayout({
                 className,
             )}
         >
-            <div
+            <Field.Root
                 className={classes(
-                    "grid items-center gap-x-6 gap-y-2.5 px-gutter py-3 ",
+                    "grid items-center gap-x-6 gap-y-2.5 px-gutter py-3",
                     columns,
                     dimmed && "opacity-55",
                 )}
@@ -151,12 +146,12 @@ function SettingLayout({
                         {title}
                     </div>
                     {description !== undefined && (
-                        <div
-                            id={id}
+                        <Field.Description
+                            render={<div />}
                             className="mt-0.5 max-w-[60ch] text-sm text-text-secondary"
                         >
                             {description}
-                        </div>
+                        </Field.Description>
                     )}
                 </div>
                 {children !== undefined && (
@@ -166,12 +161,10 @@ function SettingLayout({
                             place,
                         )}
                     >
-                        {typeof children === "function"
-                            ? children(describedBy)
-                            : children}
+                        {children}
                     </div>
                 )}
-            </div>
+            </Field.Root>
         </SettlingItem>
     );
 }

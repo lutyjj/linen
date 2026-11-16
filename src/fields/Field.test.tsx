@@ -1,6 +1,12 @@
+import { Input } from "@base-ui/react/input";
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { useState } from "react";
+import { expect, it } from "vitest";
 
+import { Button } from "../controls/Button";
+import { Field } from "./Field";
+import { Form, type FormErrors } from "./Form";
 import { SearchSelect } from "./SearchSelect";
 import { Select } from "./Select";
 import { TextField } from "./TextField";
@@ -10,89 +16,129 @@ const ZONES = [
     { value: "lisbon", label: "Europe/Lisbon" },
 ];
 
-describe("a field that holds a refused value", () => {
-    it("says why under the control, and the control is described by it", () => {
-        render(
-            <TextField
-                label="Address"
-                hint="Where the service answers."
-                error="An address needs a host."
-                value="https://"
-                onChange={() => undefined}
-            />,
-        );
-        const address = screen.getByRole("textbox", { name: "Address" });
-        expect(address).toBeInvalid();
-        expect(address).toHaveAccessibleDescription(
-            "An address needs a host. Where the service answers.",
-        );
-    });
-
-    it("is valid again once its error is gone", () => {
-        render(
-            <TextField
-                label="Address"
-                hint="Where the service answers."
-                value="https://example.com"
-                onChange={() => undefined}
-            />,
-        );
-        const address = screen.getByRole("textbox", { name: "Address" });
-        expect(address).not.toHaveAttribute("aria-invalid");
-        expect(address).toHaveAccessibleDescription(
-            "Where the service answers.",
-        );
-    });
-
-    it("keeps what the caller says describes the control", () => {
-        render(
-            <>
-                <p id="rules">Letters and digits only.</p>
+it("says why a value was refused under its control, read before its hint", async () => {
+    function Refusing() {
+        const [errors, setErrors] = useState<FormErrors>();
+        return (
+            <Form
+                errors={errors}
+                onSubmit={() =>
+                    setErrors({ address: "An address needs a host." })
+                }
+            >
                 <TextField
-                    label="Name"
-                    hint="Everyone sees it."
-                    error="A name is needed."
-                    aria-describedby="rules"
-                    value=""
-                    onChange={() => undefined}
+                    label="Address"
+                    name="address"
+                    hint="Where the service answers."
+                    defaultValue="https://"
                 />
-            </>,
+                <Button type="submit">Save</Button>
+            </Form>
         );
-        expect(
-            screen.getByRole("textbox", { name: "Name" }),
-        ).toHaveAccessibleDescription(
-            "A name is needed. Everyone sees it. Letters and digits only.",
-        );
-    });
+    }
+    render(<Refusing />);
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+    const address = screen.getByRole("textbox", { name: "Address" });
+    expect(address).toBeInvalid();
+    expect(address).toHaveAccessibleDescription(
+        "An address needs a host. Where the service answers.",
+    );
+});
 
-    it("marks a picker invalid the same way", () => {
-        render(
-            <>
-                <Select
-                    label="Time zone"
-                    choices={ZONES}
-                    value=""
-                    placeholder="Choose a zone"
-                    error="Choose where the clock runs."
-                    onValueChange={() => undefined}
-                />
-                <SearchSelect
-                    label="Search zones"
-                    searchLabel="Find a zone"
-                    placeholder="Choose a zone"
-                    choices={ZONES}
-                    value=""
-                    error="Choose where the clock runs."
-                    onValueChange={() => undefined}
-                />
-            </>,
+it("marks a picker invalid the same way", () => {
+    render(
+        <Form
+            errors={{
+                zone: "Choose where the clock runs.",
+                searched: "Choose where the clock runs.",
+            }}
+            onSubmit={() => undefined}
+        >
+            <Select
+                label="Time zone"
+                name="zone"
+                choices={ZONES}
+                value=""
+                placeholder="Choose a zone"
+                onValueChange={() => undefined}
+            />
+            <SearchSelect
+                label="Search zones"
+                name="searched"
+                searchLabel="Find a zone"
+                placeholder="Choose a zone"
+                choices={ZONES}
+                value=""
+                onValueChange={() => undefined}
+            />
+        </Form>,
+    );
+    for (const name of ["Time zone", "Search zones"]) {
+        const picker = screen.getByRole("combobox", { name });
+        expect(picker).toHaveAttribute("aria-invalid", "true");
+        expect(picker).toHaveAccessibleDescription(
+            "Choose where the clock runs.",
         );
-        for (const name of ["Time zone", "Search zones"]) {
-            const picker = screen.getByRole("combobox", { name });
-            expect(picker).toHaveAttribute("aria-invalid", "true");
-            expect(picker).toHaveAccessibleDescription(
-                "Choose where the clock runs.",
-            );
-        }
-    });
+    }
+});
+
+it("focuses a picker when its name is pressed, without opening its list", async () => {
+    render(
+        <>
+            <Select
+                label="Time zone"
+                choices={ZONES}
+                value="utc"
+                onValueChange={() => undefined}
+            />
+            <SearchSelect
+                label="Search zones"
+                searchLabel="Find a zone"
+                placeholder="Choose a zone"
+                choices={ZONES}
+                value=""
+                onValueChange={() => undefined}
+            />
+        </>,
+    );
+    for (const name of ["Time zone", "Search zones"]) {
+        await userEvent.click(screen.getByText(name));
+        expect(screen.getByRole("combobox", { name })).toHaveFocus();
+        expect(screen.queryByRole("listbox")).toBeNull();
+    }
+});
+
+it("names the search box in a picker's list by its own words", async () => {
+    render(
+        <SearchSelect
+            label="Search zones"
+            searchLabel="Find a zone"
+            placeholder="Choose a zone"
+            choices={ZONES}
+            value=""
+            onValueChange={() => undefined}
+        />,
+    );
+    await userEvent.click(
+        screen.getByRole("combobox", { name: "Search zones" }),
+    );
+    expect(
+        await screen.findByRole("combobox", { name: "Find a zone" }),
+    ).toBeInTheDocument();
+});
+
+it("names and describes a native control given through Base UI's Input", () => {
+    render(
+        <Form errors={{ note: "A note is needed." }} onSubmit={() => undefined}>
+            <Field label="Note" hint="Sent with each export.">
+                <Input name="note" render={<textarea />} />
+            </Field>
+        </Form>,
+    );
+    const note = screen.getByRole("textbox", { name: "Note" });
+    expect(note.tagName).toBe("TEXTAREA");
+    expect(note).toBeInvalid();
+    expect(note).toHaveAccessibleDescription(
+        "A note is needed. Sent with each export.",
+    );
 });
