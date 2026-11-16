@@ -6,6 +6,7 @@ import {
     MousePointerClick,
     Palette,
     Sparkles,
+    SunMoon,
     SwatchBook,
 } from "lucide-react";
 import { StrictMode, useLayoutEffect, useState } from "react";
@@ -167,37 +168,39 @@ function Specimen() {
                 </RailChoice>
             }
             foot={
-                <AccountMenu
-                    name="Specimen"
-                    label="Specimen settings"
-                    menuLabel="Specimen settings"
-                    caption="This browser"
-                >
-                    <MenuChoice label="Theme">
+                <>
+                    <RailChoice icon={SunMoon} label="Theme">
                         <SegmentedControl
                             label="Theme"
                             value={preference}
                             options={THEMES}
                             onValueChange={setPreference}
                         />
-                    </MenuChoice>
-                    <MenuChoice label="Conditions">
-                        <SegmentedControl
-                            label="Conditions"
-                            value={raised}
-                            options={RAISED}
-                            onValueChange={setRaised}
-                        />
-                    </MenuChoice>
-                    <MenuChoice label="Phone navigation">
-                        <SegmentedControl
-                            label="Phone navigation"
-                            value={phoneNav}
-                            options={PHONE_NAVS}
-                            onValueChange={setPhoneNav}
-                        />
-                    </MenuChoice>
-                </AccountMenu>
+                    </RailChoice>
+                    <AccountMenu
+                        name="Specimen"
+                        label="Specimen settings"
+                        menuLabel="Specimen settings"
+                        caption="This browser"
+                    >
+                        <MenuChoice label="Conditions">
+                            <SegmentedControl
+                                label="Conditions"
+                                value={raised}
+                                options={RAISED}
+                                onValueChange={setRaised}
+                            />
+                        </MenuChoice>
+                        <MenuChoice label="Phone navigation">
+                            <SegmentedControl
+                                label="Phone navigation"
+                                value={phoneNav}
+                                options={PHONE_NAVS}
+                                onValueChange={setPhoneNav}
+                            />
+                        </MenuChoice>
+                    </AccountMenu>
+                </>
             }
         >
             <TopBar title={screen?.label ?? "linen"} />

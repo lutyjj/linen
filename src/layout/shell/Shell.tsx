@@ -66,10 +66,11 @@ export function Shell({
     /** A choice under the wordmark, such as which area the places belong to. */
     head?: ReactNode;
     /**
-     * The rail's foot, which the account menu takes. It is drawn a second
-     * time at the end of the phone's bar, and CSS shows the one that fits,
-     * so what it holds mounts twice; `AccountMenu` draws itself for each
-     * place, and anything else is drawn as a folded rail's row.
+     * The rail's foot: the account menu, and choices beside it
+     * (`RailChoice`). It is drawn a second time at the end of the phone's
+     * bar, and CSS shows the one that fits, so what it holds mounts twice.
+     * Each part draws itself as what stands beside it: a row of the rail,
+     * a place's icon in the phone's top bar, a place's cell in the tab bar.
      */
     foot?: ReactNode;
     /** What every screen's top bar puts before its title. */

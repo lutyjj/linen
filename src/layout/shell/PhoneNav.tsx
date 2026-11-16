@@ -15,7 +15,13 @@ import {
     useMotionLink,
     useNavigation,
 } from "../../navigation/navigation";
-import { type Home, HomeLink, type Place, type PlaceList } from "./places";
+import {
+    type Home,
+    HomeLink,
+    type Place,
+    type PlaceList,
+    TAB_CELL_CLASS,
+} from "./places";
 import { FootPlaceContext, RailContext } from "./Rail";
 
 /**
@@ -43,7 +49,8 @@ function TabBar({
             className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-sunken pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] md:hidden"
         >
             <div className="flex h-(--height-tabbar) items-stretch">
-                {/* The places share the bar with the foot, one cell each. */}
+                {/* The places share the bar with the parts of the foot, one
+                    cell each. */}
                 <m.div
                     {...arrive()}
                     key={placesKey}
@@ -56,11 +63,7 @@ function TabBar({
                 </m.div>
                 {foot !== undefined && (
                     <FootPlaceContext value="bottom">
-                        <RailContext value={true}>
-                            <div className="flex flex-1 basis-0 items-stretch">
-                                {foot}
-                            </div>
-                        </RailContext>
+                        <RailContext value={true}>{foot}</RailContext>
                     </FootPlaceContext>
                 )}
             </div>
@@ -77,7 +80,7 @@ function TabLink({ href, label, icon: Icon, exact = false, badge }: Place) {
             href={href}
             aria-current={current ? "page" : undefined}
             className={classes(
-                "relative flex flex-1 flex-col items-center justify-center gap-0.5 text-3xs",
+                TAB_CELL_CLASS,
                 current ? "font-medium text-accent" : "text-text-secondary",
             )}
         >
@@ -169,7 +172,7 @@ function TopNav({
                 {foot !== undefined && (
                     <FootPlaceContext value="top">
                         <RailContext value={true}>
-                            <div className="flex shrink-0 items-center">
+                            <div className="flex shrink-0 items-center gap-1">
                                 {foot}
                             </div>
                         </RailContext>

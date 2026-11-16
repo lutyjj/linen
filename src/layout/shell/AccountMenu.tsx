@@ -8,6 +8,7 @@ import {
     POSITIONER_CLASS,
     renderLeaving,
 } from "../../foundation/popup";
+import { TAB_CELL_CLASS } from "./places";
 import { FootPlaceContext, railItemClass, useRailCompact } from "./Rail";
 
 /**
@@ -53,7 +54,7 @@ export function AccountMenu({
             compact ? "justify-center px-0" : "pl-1",
         ),
         top: "flex size-(--height-control) cursor-pointer items-center justify-center rounded-full",
-        bottom: "flex w-full cursor-pointer flex-col items-center justify-center gap-0.5 text-3xs text-text-secondary",
+        bottom: classes(TAB_CELL_CLASS, "cursor-pointer text-text-secondary"),
     }[place];
     const side = {
         rail: compact ? "right" : "top",

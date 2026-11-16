@@ -1,12 +1,14 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Folder, Users } from "lucide-react";
+import { Folder, Sun, Users } from "lucide-react";
 import { afterEach, expect, it, vi } from "vitest";
 
+import { SegmentedControl } from "../../controls/SegmentedControl";
 import { ENGLISH } from "../../foundation/words";
 import { LinenProvider } from "../../LinenProvider";
 import { memoryNavigation } from "../../test/memoryNavigation";
 import { AccountMenu } from "./AccountMenu";
+import { RailChoice } from "./Rail";
 import { Shell } from "./Shell";
 
 afterEach(() => vi.restoreAllMocks());
@@ -206,4 +208,58 @@ it("puts the rail's foot at the end of a phone's bar, top or bottom", () => {
     expect(
         within(top).getByRole("button", { name: "Ada's account" }),
     ).toBeInTheDocument();
+});
+
+it("opens a choice in the foot from each phone bar, under the choice's name", async () => {
+    const foot = (
+        <RailChoice icon={Sun} label="Theme">
+            <SegmentedControl
+                label="Theme"
+                value="light"
+                options={[
+                    { value: "light", label: "Light" },
+                    { value: "dark", label: "Dark" },
+                ]}
+                onValueChange={() => undefined}
+            />
+        </RailChoice>
+    );
+    const at = (phoneNav: "top" | "bottom") => (
+        <Shell
+            label="Places"
+            places={[{ href: "/", label: "Projects", icon: Folder }]}
+            home={HOME}
+            wordmark="linen"
+            storageKey="test:rail"
+            phoneNav={phoneNav}
+            foot={foot}
+        >
+            <p>The screen</p>
+        </Shell>
+    );
+    const opens = async (bar: HTMLElement) => {
+        const trigger = within(bar).getByRole("button", { name: "Theme" });
+        // Named as a place is, not by a folded rail's tip, which only a
+        // resting pointer or the keyboard shows (motion.css's rail-tip).
+        expect(trigger.querySelector(".rail-tip")).toBeNull();
+        await userEvent.click(trigger);
+        const choice = await screen.findByRole("dialog", { name: "Theme" });
+        expect(
+            within(choice).getByRole("heading", { name: "Theme" }),
+        ).toBeInTheDocument();
+        expect(
+            within(choice).getByRole("radio", { name: "Light" }),
+        ).toBeChecked();
+        await userEvent.keyboard("{Escape}");
+    };
+
+    const view = render(at("bottom"));
+    const tabs = document.querySelector<HTMLElement>("[data-tab-bar]");
+    if (tabs === null) throw new Error("no tab bar");
+    await opens(tabs);
+
+    view.rerender(at("top"));
+    const [, top] = screen.getAllByRole("navigation", { name: "Places" });
+    if (top === undefined) throw new Error("no phone navigation");
+    await opens(top);
 });

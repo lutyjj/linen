@@ -45,6 +45,10 @@ export function HomeLink({
     );
 }
 
+/** A cell of the tab bar, a place's or the foot's: its icon over its name. */
+export const TAB_CELL_CLASS =
+    "relative flex flex-1 flex-col items-center justify-center gap-0.5 text-3xs";
+
 export interface PlaceList {
     /** Names the navigation, apart from a screen's own section navigation. */
     label: string;

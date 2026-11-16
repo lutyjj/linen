@@ -12,7 +12,13 @@ import {
 import { useWords } from "../../foundation/words";
 import { arrive } from "../../motion/arrive";
 import { useCurrent, useNavigation } from "../../navigation/navigation";
-import { type Home, HomeLink, type Place, type PlaceList } from "./places";
+import {
+    type Home,
+    HomeLink,
+    type Place,
+    type PlaceList,
+    TAB_CELL_CLASS,
+} from "./places";
 
 /**
  * Whether the rail is folded to its icons. A preference of this browser, like
@@ -183,13 +189,21 @@ function RailFold({
     );
 }
 
+/** Where a choice opens from its trigger, for where it stands. */
+const CHOICE_POPUP = {
+    rail: { side: "right", align: "start" },
+    top: { side: "bottom", align: "end" },
+    bottom: { side: "top", align: "end" },
+} as const;
+
 /**
  * A choice the rail offers as a segmented control. Too wide for the compact
- * rail, where a row wearing the choice's icon opens it beside the rail
- * instead.
+ * rail and the phone's bars, where a trigger wearing the choice's icon opens
+ * it instead, drawn as what stands beside it: a row of the rail, a place's
+ * icon in the top bar, a place's cell in the tab bar.
  */
 export function RailChoice({
-    icon,
+    icon: Icon,
     label,
     children,
 }: {
@@ -199,28 +213,56 @@ export function RailChoice({
     children: ReactNode;
 }) {
     const compact = useRailCompact();
-    if (!compact) return <div className="px-2">{children}</div>;
+    const place = use(FootPlaceContext);
+    if (place === "rail" && !compact)
+        return <div className="px-2">{children}</div>;
+    const trigger = {
+        rail: railItemClass(false),
+        top: "flex size-(--height-control) shrink-0 cursor-pointer items-center justify-center rounded-button text-text-secondary hover:bg-border hover:text-text",
+        bottom: classes(TAB_CELL_CLASS, "cursor-pointer text-text-secondary"),
+    }[place];
     return (
         <Popover.Root>
             <Popover.Trigger
                 render={<button />}
-                className={railItemClass(false)}
+                className={classes(
+                    trigger,
+                    "data-[popup-open]:bg-border data-[popup-open]:text-text",
+                )}
             >
-                <RailRow icon={icon} label={label} />
+                {place === "rail" ? (
+                    <RailRow icon={Icon} label={label} />
+                ) : (
+                    <>
+                        <Icon
+                            aria-hidden="true"
+                            className={place === "top" ? "size-4" : "size-5"}
+                        />
+                        <span
+                            className={place === "top" ? "sr-only" : undefined}
+                        >
+                            {label}
+                        </span>
+                    </>
+                )}
             </Popover.Trigger>
             <Popover.Portal>
                 <Popover.Positioner
-                    side="right"
-                    align="start"
+                    {...CHOICE_POPUP[place]}
                     sideOffset={8}
                     className={POSITIONER_CLASS}
                 >
                     <Popover.Popup
                         render={renderLeaving}
-                        aria-label={label}
-                        className={classes(POPUP_CLASS, "p-2")}
+                        className={classes(
+                            POPUP_CLASS,
+                            "flex flex-col gap-1.5 p-2",
+                        )}
                     >
                         <Popover.Arrow className="absolute" />
+                        <Popover.Title className="text-xs text-text-secondary">
+                            {label}
+                        </Popover.Title>
                         {children}
                     </Popover.Popup>
                 </Popover.Positioner>
@@ -296,7 +338,7 @@ export function Rail({
                 </m.div>
 
                 {foot !== undefined && (
-                    <div className="mt-auto border-t border-border pt-3">
+                    <div className="mt-auto flex flex-col gap-2 border-t border-border pt-3">
                         {foot}
                     </div>
                 )}
