@@ -3,7 +3,6 @@ import { useState } from "react";
 import {
     Button,
     Checkbox,
-    Condition,
     Conditions,
     ConfirmDialog,
     Elapsed,
@@ -109,24 +108,29 @@ export function FeedbackSection() {
                 framed={false}
             >
                 <div className="overflow-hidden rounded-card border border-border">
-                    <Conditions className="static">
-                        <Condition
-                            tone="danger"
-                            title="The service does not answer."
-                            description="Changes wait until it does."
-                            action={<Button>Try again</Button>}
-                        />
-                        <Condition
-                            tone="accent"
-                            active
-                            title="Exporting the archive"
-                            description={<Elapsed since={STARTED} />}
-                        />
-                        <Condition
-                            tone="warn"
-                            title="Read only while storage is nearly full."
-                        />
-                    </Conditions>
+                    <Conditions
+                        className="static"
+                        conditions={[
+                            {
+                                id: "service",
+                                tone: "danger",
+                                title: "The service does not answer.",
+                                description: "Changes wait until it does.",
+                                action: <Button>Try again</Button>,
+                            },
+                            {
+                                id: "export",
+                                active: true,
+                                title: "Exporting the archive",
+                                description: <Elapsed since={STARTED} />,
+                            },
+                            {
+                                id: "storage",
+                                tone: "warn",
+                                title: "Read only while storage is nearly full.",
+                            },
+                        ]}
+                    />
                 </div>
             </Specimen>
 

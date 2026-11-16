@@ -5,93 +5,52 @@ import { expect, it } from "vitest";
 
 import { Shell } from "../layout/shell/Shell";
 import { TopBar } from "../layout/TopBar";
-import { Condition, Conditions } from "./Conditions";
+import { Conditions } from "./Conditions";
 import { Elapsed } from "./Elapsed";
 
 it("stands a failure first, then a warning, then what is under way", () => {
     render(
-        <Conditions>
-            <Condition tone="accent" title="Updating" active />
-            <Condition tone="warn" title="Running on battery" />
-            <Condition tone="danger" title="Contact is lost" />
-        </Conditions>,
-    );
-    const standing = screen.getByRole("status");
-    expect(
-        [...standing.children].map((condition) => condition.textContent),
-    ).toEqual(["Contact is lost", "Running on battery", "Updating"]);
-});
-
-it("orders conditions an app groups in fragments", () => {
-    render(
-        <Conditions>
-            <>
-                <Condition tone="warn" title="Running on battery" />
-                {null}
-            </>
-            <>
-                <Condition tone="danger" title="Contact is lost" />
-            </>
-        </Conditions>,
+        <Conditions
+            conditions={[
+                {
+                    id: "update",
+                    tone: "accent",
+                    title: "Updating",
+                    active: true,
+                },
+                { id: "battery", tone: "warn", title: "Running on battery" },
+                { id: "contact", tone: "danger", title: "Contact is lost" },
+                { id: "sync", title: "Syncing" },
+            ]}
+        />,
     );
     expect(
         [...screen.getByRole("status").children].map((one) => one.textContent),
-    ).toEqual(["Contact is lost", "Running on battery"]);
-});
-
-it("keeps every condition from fragments and siblings apart", () => {
-    render(
-        <Conditions>
-            <>
-                <Condition tone="accent" title="Updating" />
-                <Condition tone="warn" title="Running on battery" />
-            </>
-            <Condition tone="danger" title="Contact is lost" />
-        </Conditions>,
-    );
-    expect(
-        [...screen.getByRole("status").children].map((one) => one.textContent),
-    ).toEqual(["Contact is lost", "Running on battery", "Updating"]);
-});
-
-it("takes conditions given in any list, as React takes children", () => {
-    render(
-        <Conditions>
-            {
-                new Set([
-                    <Condition
-                        key="battery"
-                        tone="warn"
-                        title="Running on battery"
-                    />,
-                    <Condition
-                        key="contact"
-                        tone="danger"
-                        title="Contact is lost"
-                    />,
-                ])
-            }
-        </Conditions>,
-    );
-    expect(
-        [...screen.getByRole("status").children].map((one) => one.textContent),
-    ).toEqual(["Contact is lost", "Running on battery"]);
+    ).toEqual(["Contact is lost", "Running on battery", "Updating", "Syncing"]);
 });
 
 it("keeps focus in a condition while one before it ends", async () => {
     function Standing({ updating }: { updating: boolean }) {
         return (
-            <Conditions>
-                <>
-                    {updating && <Condition tone="accent" title="Updating" />}
-                    <Condition
-                        tone="warn"
-                        title="Running on battery"
-                        action={<button type="button">Plug in</button>}
-                    />
-                </>
-                <Condition tone="danger" title="Contact is lost" />
-            </Conditions>
+            <Conditions
+                conditions={[
+                    ...(updating
+                        ? [
+                              {
+                                  id: "contact",
+                                  tone: "danger" as const,
+                                  title: "Contact is lost",
+                              },
+                          ]
+                        : []),
+                    {
+                        id: "battery",
+                        tone: "warn",
+                        title: "Running on battery",
+                        action: <button type="button">Plug in</button>,
+                    },
+                ]}
+            />
         );
     }
     const { rerender } = render(<Standing updating />);
@@ -105,14 +64,16 @@ it("keeps focus in a condition while one before it ends", async () => {
 });
 
 it("keeps its place, said politely, while nothing holds", () => {
-    const { rerender } = render(<Conditions>{false}</Conditions>);
+    const { rerender } = render(<Conditions conditions={[]} />);
     const place = screen.getByRole("status");
     expect(place).toBeEmptyDOMElement();
 
     rerender(
-        <Conditions>
-            <Condition tone="danger" title="Contact is lost" />
-        </Conditions>,
+        <Conditions
+            conditions={[
+                { id: "contact", tone: "danger", title: "Contact is lost" },
+            ]}
+        />,
     );
     expect(screen.getByRole("status")).toBe(place);
     expect(place).toHaveTextContent("Contact is lost");
@@ -120,35 +81,20 @@ it("keeps its place, said politely, while nothing holds", () => {
 
 it("counts how long a condition has held as a timer, which is not read out", () => {
     render(
-        <Conditions>
-            <Condition
-                tone="accent"
-                active
-                title="Exporting"
-                description={<Elapsed since={Date.now()} />}
-            />
-        </Conditions>,
+        <Conditions
+            conditions={[
+                {
+                    id: "export",
+                    active: true,
+                    title: "Exporting",
+                    description: <Elapsed since={Date.now()} />,
+                },
+            ]}
+        />,
     );
     // A timer is a live region of its own that is off, inside the polite one.
     expect(
         within(screen.getByRole("status")).getByRole("timer"),
-    ).toBeInTheDocument();
-});
-
-it("offers each condition's own action", () => {
-    render(
-        <Conditions>
-            <Condition
-                tone="danger"
-                title="Contact is lost"
-                action={<button type="button">Try again</button>}
-            />
-        </Conditions>,
-    );
-    expect(
-        within(screen.getByRole("status")).getByRole("button", {
-            name: "Try again",
-        }),
     ).toBeInTheDocument();
 });
 
@@ -160,7 +106,9 @@ it("stands in the shell over every screen's top bar", () => {
             home={{ href: "/", label: "Example" }}
             wordmark="Example"
             storageKey="test:rail"
-            conditions={<Condition tone="danger" title="Contact is lost" />}
+            conditions={[
+                { id: "contact", tone: "danger", title: "Contact is lost" },
+            ]}
         >
             <TopBar title="Projects" />
         </Shell>,
