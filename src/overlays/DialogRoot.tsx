@@ -1,6 +1,6 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { usePresence } from "motion/react";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useLayoutEffect, useRef, useState } from "react";
 
 import { renderLeaving } from "../foundation/popup";
 
@@ -64,8 +64,13 @@ export function DialogShell({
     width?: string;
     children: ReactNode;
 }) {
-    const [said, setSaid] = useState(children);
-    if (open && said !== children) setSaid(children);
+    // The words it last showed open, kept once they reach the page; they
+    // change nothing there until the dialog leaves, so they need no render
+    // of their own.
+    const said = useRef(children);
+    useLayoutEffect(() => {
+        if (open) said.current = children;
+    });
     return (
         <Dialog.Portal>
             <Dialog.Backdrop className="dialog-backdrop fixed inset-0 z-40 bg-scrim" />
@@ -74,7 +79,7 @@ export function DialogShell({
                 style={{ width: `min(${width}, 90vw)` }}
                 className="dialog fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 rounded-dialog border border-border bg-surface p-5 shadow-overlay outline-none"
             >
-                {open ? children : said}
+                {open ? children : said.current}
             </Dialog.Popup>
         </Dialog.Portal>
     );
