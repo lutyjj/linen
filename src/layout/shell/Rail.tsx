@@ -42,7 +42,15 @@ function useCompactRail(key: string): [boolean, (compact: boolean) => void] {
 }
 
 /** Whether the rail stands folded to its icons, for every row inside it. */
-const RailContext = createContext(false);
+export const RailContext = createContext(false);
+
+/**
+ * Where the rail's foot stands: in the rail, or at the end of the phone's
+ * bar along the top or the bottom, which a part in it draws itself for.
+ */
+export type FootPlace = "rail" | "top" | "bottom";
+
+export const FootPlaceContext = createContext<FootPlace>("rail");
 
 export function useRailCompact(): boolean {
     return use(RailContext);
