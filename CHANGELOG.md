@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.6.0](https://github.com/lutyjj/linen/compare/v0.5.0...v0.6.0) (2026-11-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* The shell's foot holds AccountMenu and RailChoice, which draw themselves for the rail and for each phone bar, and the tab bar no longer draws a cell around the foot: each part stands as a cell of its own. Pass the parts as siblings, in a fragment, not wrapped in an element. An app that put its own element in the foot moves it into the AccountMenu, among its choices or in its footer, or makes it a RailChoice; an element left there stands in the tab bar at its own size.
+
+### Features
+
+* a compact gauge for a row of a list ([47ff00a](https://github.com/lutyjj/linen/commit/47ff00a75638eca2650ce0105cf89df693aba975))
+* a narrow field's messages may be wider than its control ([d7ed23f](https://github.com/lutyjj/linen/commit/d7ed23f40456f8b349df73acccdbf180cb33bb59))
+* an ExplainedStatus says why its state holds ([be087c5](https://github.com/lutyjj/linen/commit/be087c58cc08b5f4a365374a25f679a7a79f3377))
+
+
+### Bug Fixes
+
+* a choice in the shell's foot stands in a phone's bar as a place does ([738d264](https://github.com/lutyjj/linen/commit/738d26437f30e1222b5fbd02b4f0e1f4e261067e))
+* a gauge at its lowest reads as empty ([747b1e3](https://github.com/lutyjj/linen/commit/747b1e3acd534ea7d34d071bca7a786b66b76354))
+
 ## [0.5.0](https://github.com/lutyjj/linen/compare/v0.4.0...v0.5.0) (2026-11-16)
 
 
