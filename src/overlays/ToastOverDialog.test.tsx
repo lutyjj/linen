@@ -55,7 +55,7 @@ async function standing(message: ToastMessage) {
     say(message);
     // The dialog moves focus into itself once it has opened; focus is set
     // after that, or the dialog's own move would take it away again.
-    const dialog = screen.getByRole("dialog", { name: "Remove it?" });
+    const dialog = screen.getByRole("alertdialog", { name: "Remove it?" });
     await waitFor(() => {
         expect(dialog).toContainElement(document.activeElement as HTMLElement);
     });

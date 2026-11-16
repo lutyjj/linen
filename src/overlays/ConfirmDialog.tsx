@@ -10,7 +10,8 @@ import { DialogRoot, DialogShell } from "./DialogRoot";
  * record however few it is. It states what and how much.
  *
  * These confirm rather than offer undo, because a confirmation the user read
- * beats an undo they must notice. An act that can be put back exactly, such
+ * beats an undo they must notice. It is an alert dialog, which a press beside
+ * it does not dismiss. An act that can be put back exactly, such
  * as a corrected value, takes a toast's undo instead and does not come here.
  */
 export function ConfirmDialog({
@@ -46,7 +47,7 @@ export function ConfirmDialog({
 }) {
     const [busy, wait] = useWaiting();
     return (
-        <DialogRoot open={open} onOpenChange={onOpenChange} busy={busy}>
+        <DialogRoot alert open={open} onOpenChange={onOpenChange} busy={busy}>
             <DialogShell open={open} width={width}>
                 <DialogLayout
                     title={title}
