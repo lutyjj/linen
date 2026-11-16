@@ -185,7 +185,10 @@ export function FeedbackSection() {
                     <Sample name="Form">
                         <Button
                             variant="primary"
-                            onClick={() => setMaking(true)}
+                            onClick={() => {
+                                setName("");
+                                setMaking(true);
+                            }}
                         >
                             New token
                         </Button>
