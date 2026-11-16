@@ -37,13 +37,6 @@ const ZONE_INK: Record<Tone, string> = {
     danger: "var(--color-danger)",
 };
 
-const ZONE_TINT: Record<Tone, string> = {
-    accent: "var(--color-accent-weak)",
-    positive: "var(--color-positive-weak)",
-    warn: "var(--color-warn-weak)",
-    danger: "var(--color-danger-weak)",
-};
-
 /**
  * A layer across the scale, each zone in its colour and the rest in `rest`:
  * always an image, so it can stand in `background-image`.
@@ -98,9 +91,9 @@ function Mark({
 /**
  * A value on a bounded scale, such as a level, a load or a fill: its name,
  * a bar that fills toward the end of the scale, and the value in words.
- * The bar wears the colour of each zone it reaches, and marks stand on it
- * where the value was held or where a threshold is set. It is a meter to
- * assistive technology.
+ * The bar wears the colour of each zone it reaches, a line under it shows
+ * where the zones lie, and marks stand on it where the value was held or
+ * where a threshold is set. It is a meter to assistive technology.
  *
  * A value that changes on its own (`Readable`) is followed without
  * rendering, so a gauge can follow a value many times a second inside a
@@ -144,7 +137,7 @@ export function Gauge({
     });
     const style = {
         "--fill": stripes(zones, at, ZONE_INK, "var(--color-accent)"),
-        "--track": stripes(zones, at, ZONE_TINT, "var(--color-sunken)"),
+        "--zones": stripes(zones, at, ZONE_INK, "transparent"),
     } as CSSProperties;
     // The words take the room of the widest value the scale can show, so
     // the bar keeps its length as they change.
@@ -167,11 +160,19 @@ export function Gauge({
             <span id={name} className="text-text-secondary">
                 {label}
             </span>
-            <span className="relative h-2 overflow-hidden rounded-full bg-(image:--track)">
-                <span className="absolute inset-0 bg-(image:--fill) [clip-path:inset(0_calc((1_-_var(--level,0))_*_100%)_0_0)]" />
-                {marks.map((mark, index) => (
-                    <Mark key={index} mark={mark} at={at} />
-                ))}
+            {/* The track is the scale, empty, its zones a line under it;
+                only the fill, in the ink of each zone it reaches, is the
+                value, so a gauge at its lowest reads as empty. */}
+            <span className="flex flex-col gap-0.5">
+                <span className="relative h-2 overflow-hidden rounded-full bg-sunken">
+                    <span className="absolute inset-0 bg-(image:--fill) [clip-path:inset(0_calc((1_-_var(--level,0))_*_100%)_0_0)]" />
+                    {marks.map((mark, index) => (
+                        <Mark key={index} mark={mark} at={at} />
+                    ))}
+                </span>
+                {zones.length > 0 && (
+                    <span className="h-0.5 rounded-full bg-(image:--zones)" />
+                )}
             </span>
             <span
                 ref={words}

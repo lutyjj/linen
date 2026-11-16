@@ -142,7 +142,7 @@ export function FeedbackSection() {
 
             <Specimen
                 title="Gauges"
-                rule="A gauge shows a value on a bounded scale, filling toward its end in the colour of each zone it reaches, with a mark where the value was held or a threshold is set. Gauges read together stand close, lined up. A live gauge follows its value without rendering anything around it."
+                rule="A gauge shows a value on a bounded scale: an empty track with its zones in a line under it, and a fill in the colour of each zone it reaches, with a mark where the value was held or a threshold is set. At its lowest it is empty. Gauges read together stand close, lined up. A live gauge follows its value without rendering anything around it."
             >
                 <div className="flex max-w-md flex-col gap-5">
                     <Gauge
@@ -155,6 +155,16 @@ export function FeedbackSection() {
                             { from: 0.9, to: 1, tone: "danger" },
                         ]}
                         marks={[{ value: 0.9, kind: "set", label: "Limit" }]}
+                    />
+                    <Gauge
+                        label="Backlog"
+                        value={0}
+                        max={40}
+                        format={(value) => `${value} tasks`}
+                        zones={[
+                            { from: 0, to: 30, tone: "accent" },
+                            { from: 30, to: 40, tone: "warn" },
+                        ]}
                     />
                     <Gauges label="Disk activity">
                         <Gauge
