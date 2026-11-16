@@ -18,11 +18,11 @@
  * declaration, so neither can be revised without the other. */
 
 /* The components' own classes, so an app's Tailwind sees them; the class
- * groups classes() merges with, and the declarations, are words about
- * classes rather than classes, and the viewport hooks hold none but the
- * names of the events they follow, such as "resize". */
+ * joiner and the declarations are words about classes rather than classes,
+ * and the viewport hooks hold none but the names of the events they follow,
+ * such as "resize". */
 @source "../";
-@source not "../foundation/merge-config.*";
+@source not "../foundation/classes.*";
 @source not "../foundation/viewport.*";
 @source not "../**/*.d.ts";
 

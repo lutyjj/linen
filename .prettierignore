@@ -4,6 +4,3 @@ pnpm-lock.yaml
 # Release Please writes these.
 CHANGELOG.md
 .release-please-manifest.json
-
-# tools/merge-config.ts writes this.
-src/foundation/merge-config.ts

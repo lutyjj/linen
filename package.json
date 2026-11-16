@@ -33,10 +33,9 @@
         "specimen:still": "vite --mode still",
         "specimen:preact": "vite --mode preact",
         "build": "tsdown",
-        "generate": "node tools/generate.ts",
         "typecheck": "tsc --noEmit",
         "test": "vitest run",
-        "check": "pnpm run build && prettier --check . && eslint . && tsc --noEmit && tsc -p tools && tsc -p consumer && tsc -p consumer/tsconfig.strict.json && vitest run && vite build && vite build --mode still && vite build --mode preact && vite build --config consumer/vite.config.ts --mode minimal && vite build --config consumer/vite.config.ts --mode app",
+        "check": "pnpm run build && prettier --check . && eslint . && tsc --noEmit && tsc -p consumer && tsc -p consumer/tsconfig.strict.json && vitest run && vite build && vite build --mode still && vite build --mode preact && vite build --config consumer/vite.config.ts --mode minimal && vite build --config consumer/vite.config.ts --mode app",
         "format": "prettier --write ."
     },
     "dependencies": {

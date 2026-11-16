@@ -71,12 +71,7 @@ function moduleOrder() {
  */
 export default tseslint.config(
     {
-        ignores: [
-            "dist",
-            "specimen/dist",
-            "consumer/dist",
-            "src/foundation/merge-config.ts",
-        ],
+        ignores: ["dist", "specimen/dist", "consumer/dist"],
     },
     js.configs.recommended,
     ...tseslint.configs.recommendedTypeChecked,
