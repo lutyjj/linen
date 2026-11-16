@@ -71,12 +71,8 @@ export default defineConfig(({ mode }) => ({
                 test: {
                     name: "still",
                     setupFiles: ["src/test/still.ts"],
-                    // Motion's own springs are what this test compares to,
-                    // and the merge configuration has nothing to do with it.
-                    exclude: [
-                        "src/motion/springs.test.ts",
-                        "src/foundation/merge-config.test.ts",
-                    ],
+                    // Motion's own springs are what this test compares to.
+                    exclude: ["src/motion/springs.test.ts"],
                 },
             },
             {
@@ -93,7 +89,6 @@ export default defineConfig(({ mode }) => ({
                     setupFiles: ["src/test/still.ts", "src/test/preact.ts"],
                     exclude: [
                         "src/motion/springs.test.ts",
-                        "src/foundation/merge-config.test.ts",
                         // React Router needs hooks Preact does not have.
                         "src/navigation/react-router.test.tsx",
                     ],

@@ -22,6 +22,10 @@ describe("class names", () => {
         expect(classes("rounded-card", "rounded-input")).toBe("rounded-input");
     });
 
+    it("keeps one shadow, whichever was said last", () => {
+        expect(classes("shadow-overlay", "shadow-none")).toBe("shadow-none");
+    });
+
     it("reads the gutter as a step of the spacing scale", () => {
         expect(classes("first:pl-gutter px-3", "first:pl-0 px-0")).toBe(
             "first:pl-0 px-0",

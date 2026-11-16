@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState, useSyncExternalStore } from "react";
 
-// The stylesheet's source scan and the generated class groups skip this file,
-// whose event names, such as "resize", read as classes: it holds no classes.
+// The stylesheet's source scan skips this file, whose event names, such as
+// "resize", read as classes: it holds no classes.
 
 /**
  * The one breakpoint the interface has, matching Tailwind's `md`. Below it
