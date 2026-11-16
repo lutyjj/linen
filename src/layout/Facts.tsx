@@ -5,8 +5,11 @@ import { classes } from "../foundation/classes";
 
 /**
  * Names and their values, read and not changed: what a thing is, at a
- * glance. The names stand in one column and the values in the next while
- * the list has room, the value under its name once it does not.
+ * glance. Each name starts its line and its value ends it, where a setting's
+ * control stands, so the values in a card share one edge with its controls,
+ * and a hairline between facts keeps a value with its name across a wide
+ * card. A value too long to stand beside its name goes under it, with its
+ * copy control beside it.
  */
 export function Facts({
     className,
@@ -16,13 +19,10 @@ export function Facts({
     /** Each a `Fact`. */
     children: ReactNode;
 }) {
-    // The list asks how wide its box is, which a grid cannot ask of itself.
     return (
-        <div className={classes("@container", className)}>
-            <dl className="grid grid-cols-1 gap-y-1 text-sm @min-[26rem]:grid-cols-[minmax(0,auto)_minmax(0,1fr)] @min-[26rem]:gap-x-6 @min-[26rem]:gap-y-2">
-                {children}
-            </dl>
-        </div>
+        <dl className={classes("flex flex-col text-sm", className)}>
+            {children}
+        </dl>
     );
 }
 
@@ -43,12 +43,12 @@ export function Fact({
     children: ReactNode;
 }) {
     return (
-        <div className="contents">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-0.5 border-t border-border py-2 first:border-t-0 first:pt-0 last:pb-0">
             <dt className="text-text-secondary">{name}</dt>
-            <dd className="mb-2 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1 @min-[26rem]:mb-0">
+            <dd className="flex min-w-0 items-center gap-x-1.5">
                 <span
                     className={classes(
-                        "min-w-0 break-words",
+                        "min-w-0 wrap-anywhere",
                         mono && "font-mono text-xs/5",
                     )}
                 >

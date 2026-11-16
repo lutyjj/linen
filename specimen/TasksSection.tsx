@@ -13,6 +13,7 @@ import {
     LogView,
     NumberField,
     Progress,
+    SettingRow,
     Steps,
 } from "../src";
 import { Sample, Samples, Specimen, Stack } from "./Specimen";
@@ -28,6 +29,10 @@ const BODY: Record<string, string> = {
     secret: "What signs each request, so the other side can trust it.",
     test: "One request is sent, and its answer shown.",
 };
+
+/** A key's fingerprint, too long to stand beside its name on a phone. */
+const SIGNING_KEY =
+    "3f9a6c1e8b2d47f0a5e9c3b1d6f8a2e4c7b9d1f3a5e7c9b2d4f6a8c1e3b5d7f9";
 
 /** A line a service might write, made up for the specimen. */
 function line(count: number): string {
@@ -162,26 +167,53 @@ export function TasksSection() {
 
             <Specimen
                 title="Facts and machine text"
-                rule="Facts are names and values read at a glance, the names in one column while there is room; a value typed exactly is set in mono and taken whole. Text a machine writes stands in a box that follows new lines until the reader scrolls up, and is copied or saved whole."
+                rule="Facts are names and values read at a glance: each name starts its line and its value ends it, where a setting's control stands, so a card's values and controls share an edge, and a value too long to stand beside its name goes under it. A value typed exactly is set in mono and taken whole. Text a machine writes stands in a box that follows new lines until the reader scrolls up, and is copied or saved whole."
+                framed={false}
             >
-                <div className="flex max-w-2xl flex-col gap-6">
-                    <Facts>
-                        <Fact name="Version">2.4.1</Fact>
-                        <Fact
-                            name="Address"
-                            mono
-                            copy={{ value: "192.0.2.10", label: "Address" }}
-                        >
-                            192.0.2.10
-                        </Fact>
-                        <Fact name="Running for">3 days, 4 hours</Fact>
-                    </Facts>
-                    <LogView
-                        label="Service log"
-                        text={lines.join("\n")}
-                        filename="service.log"
+                <Card>
+                    <CardHead
+                        title="Export service"
+                        description="What runs the nightly export."
                     />
-                </div>
+                    <CardBody>
+                        <Facts>
+                            <Fact name="Version">2.4.1</Fact>
+                            <Fact
+                                name="Address"
+                                mono
+                                copy={{ value: "192.0.2.10", label: "Address" }}
+                            >
+                                192.0.2.10
+                            </Fact>
+                            <Fact name="Running for">3 days, 4 hours</Fact>
+                            <Fact
+                                name="Signing key"
+                                mono
+                                copy={{
+                                    value: SIGNING_KEY,
+                                    label: "Signing key",
+                                }}
+                            >
+                                {SIGNING_KEY}
+                            </Fact>
+                        </Facts>
+                    </CardBody>
+                    <SettingRow
+                        title="Restart"
+                        description="Exports that are waiting start again once it is back."
+                    >
+                        <Button>Restart</Button>
+                    </SettingRow>
+                </Card>
+                <Card>
+                    <CardBody>
+                        <LogView
+                            label="Service log"
+                            text={lines.join("\n")}
+                            filename="service.log"
+                        />
+                    </CardBody>
+                </Card>
             </Specimen>
         </Stack>
     );
