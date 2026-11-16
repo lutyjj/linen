@@ -1,3 +1,4 @@
+import { Input } from "@base-ui/react/input";
 import {
     type InputHTMLAttributes,
     type ReactNode,
@@ -12,42 +13,26 @@ import { CONTROL_CLASS, Field } from "./Field";
 export function TextField({
     label,
     hint,
-    error,
+    validate,
     width,
     className = "",
-    id: named,
     ...rest
 }: {
     label: string;
     hint?: ReactNode;
-    error?: ReactNode;
+    validate?: Parameters<typeof Field>[0]["validate"];
     width?: number;
 } & Parameters<typeof CellInput>[0]) {
     return (
-        <Field label={label} hint={hint} error={error} width={width} id={named}>
-            {(control) => (
-                <CellInput
-                    {...rest}
-                    {...control}
-                    // What the caller says about the control stays, beside
-                    // what the field says.
-                    aria-describedby={
-                        [control["aria-describedby"], rest["aria-describedby"]]
-                            .filter((part) => part !== undefined)
-                            .join(" ") || undefined
-                    }
-                    aria-invalid={
-                        control["aria-invalid"] ?? rest["aria-invalid"]
-                    }
-                    className={classes("w-full", className)}
-                />
-            )}
+        <Field label={label} hint={hint} validate={validate} width={width}>
+            <CellInput {...rest} className={classes("w-full", className)} />
         </Field>
     );
 }
 
 /**
- * A bare control for use inside a table cell, where the column is the label.
+ * A bare control for use inside a table cell, where the column is the label,
+ * and the control inside a `Field`, which names and describes it.
  *
  * A unit, when the value has one, is part of the field rather than words
  * floating beside it: it sits inside the frame, after the value, so "120" and
@@ -60,7 +45,7 @@ export function CellInput({
 }: InputHTMLAttributes<HTMLInputElement> & { unit?: ReactNode }) {
     if (unit === undefined) {
         return (
-            <input className={classes(CONTROL_CLASS, className)} {...rest} />
+            <Input className={classes(CONTROL_CLASS, className)} {...rest} />
         );
     }
     return (
@@ -71,7 +56,7 @@ export function CellInput({
                 className,
             )}
         >
-            <input
+            <Input
                 className="h-full min-w-0 flex-1 bg-transparent text-inherit outline-none placeholder:text-text-muted"
                 {...rest}
             />

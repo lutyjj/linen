@@ -23,7 +23,8 @@ export const POPUP_SEARCH_CLASS = `${CONTROL_CLASS} mb-1 w-full outline-none`;
 export function SearchSelect({
     label,
     hint,
-    error,
+    name,
+    validate,
     placeholder,
     searchLabel,
     choices,
@@ -36,7 +37,9 @@ export function SearchSelect({
 }: {
     label: string;
     hint?: ReactNode;
-    error?: ReactNode;
+    /** The key of its error in its form's `errors`. */
+    name?: string;
+    validate?: Parameters<typeof Field>[0]["validate"];
     placeholder: string;
     searchLabel: string;
     choices: readonly Choice[];
@@ -52,73 +55,75 @@ export function SearchSelect({
     const chosen = choices.find((choice) => choice.value === value);
 
     return (
-        <Field label={label} hint={hint} error={error} width={width} id={id}>
-            {(control) => (
-                <Combobox.Root
-                    items={choices}
-                    autoHighlight
-                    open={open}
-                    onOpenChange={setOpen}
-                    disabled={disabled}
-                    value={chosen ?? null}
-                    onValueChange={(next: Choice | null) => {
-                        if (next === null) return;
-                        onValueChange(next.value);
-                        setOpen(false);
-                    }}
+        <Field label={label} hint={hint} validate={validate} width={width}>
+            <Combobox.Root
+                items={choices}
+                autoHighlight
+                open={open}
+                onOpenChange={setOpen}
+                disabled={disabled}
+                name={name}
+                value={chosen ?? null}
+                onValueChange={(next: Choice | null) => {
+                    if (next === null) return;
+                    onValueChange(next.value);
+                    setOpen(false);
+                }}
+            >
+                <Combobox.Trigger
+                    id={id}
+                    className={classes(
+                        PICKER_CLASS,
+                        "flex w-full data-[disabled]:cursor-default data-[disabled]:opacity-50",
+                        chosen === undefined ? "text-text-secondary" : "",
+                        className,
+                    )}
+                    onClick={() => setOpen(true)}
                 >
-                    <Combobox.Trigger
-                        {...control}
-                        className={classes(
-                            PICKER_CLASS,
-                            "flex w-full data-[disabled]:cursor-default data-[disabled]:opacity-50",
-                            chosen === undefined ? "text-text-secondary" : "",
-                            className,
-                        )}
-                        onClick={() => setOpen(true)}
+                    <span className="truncate">
+                        {chosen?.label ?? placeholder}
+                    </span>
+                    <PickerMark />
+                </Combobox.Trigger>
+                <Combobox.Portal>
+                    <Combobox.Positioner
+                        sideOffset={4}
+                        align="start"
+                        className={POSITIONER_CLASS}
                     >
-                        <span className="truncate">
-                            {chosen?.label ?? placeholder}
-                        </span>
-                        <PickerMark />
-                    </Combobox.Trigger>
-                    <Combobox.Portal>
-                        <Combobox.Positioner
-                            sideOffset={4}
-                            align="start"
-                            className={POSITIONER_CLASS}
+                        <Combobox.Popup
+                            render={renderLeaving}
+                            aria-label={label}
+                            className={classes(
+                                POPUP_CLASS,
+                                "w-[var(--anchor-width)] min-w-64",
+                            )}
                         >
-                            <Combobox.Popup
-                                render={renderLeaving}
-                                aria-label={label}
-                                className={classes(
-                                    POPUP_CLASS,
-                                    "w-[var(--anchor-width)] min-w-64",
+                            <Combobox.Arrow className="absolute" />
+                            <Combobox.Input
+                                // Named by its own words rather than by
+                                // the field's, which name the trigger.
+                                aria-labelledby={undefined}
+                                aria-label={searchLabel}
+                                placeholder={searchLabel}
+                                className={POPUP_SEARCH_CLASS}
+                            />
+                            <Combobox.List className="max-h-56 overflow-y-auto">
+                                {(choice: Choice) => (
+                                    <Combobox.Item
+                                        key={choice.value}
+                                        value={choice}
+                                        disabled={choice.disabled}
+                                        className={OPTION_CLASS}
+                                    >
+                                        {choice.label}
+                                    </Combobox.Item>
                                 )}
-                            >
-                                <Combobox.Arrow className="absolute" />
-                                <Combobox.Input
-                                    aria-label={searchLabel}
-                                    placeholder={searchLabel}
-                                    className={POPUP_SEARCH_CLASS}
-                                />
-                                <Combobox.List className="max-h-56 overflow-y-auto">
-                                    {(choice: Choice) => (
-                                        <Combobox.Item
-                                            key={choice.value}
-                                            value={choice}
-                                            disabled={choice.disabled}
-                                            className={OPTION_CLASS}
-                                        >
-                                            {choice.label}
-                                        </Combobox.Item>
-                                    )}
-                                </Combobox.List>
-                            </Combobox.Popup>
-                        </Combobox.Positioner>
-                    </Combobox.Portal>
-                </Combobox.Root>
-            )}
+                            </Combobox.List>
+                        </Combobox.Popup>
+                    </Combobox.Positioner>
+                </Combobox.Portal>
+            </Combobox.Root>
         </Field>
     );
 }

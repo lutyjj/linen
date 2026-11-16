@@ -1,5 +1,6 @@
+import { Field as BaseField } from "@base-ui/react/field";
 import { CircleAlert } from "lucide-react";
-import { type ReactNode, useId } from "react";
+import type { ReactNode } from "react";
 
 import { classes } from "../foundation/classes";
 
@@ -13,47 +14,36 @@ import { classes } from "../foundation/classes";
 export const CONTROL_CLASS =
     "h-(--height-control) rounded-button border border-border-strong bg-surface px-2.5 text-sm text-text placeholder:text-text-muted hover:border-text-muted data-[popup-open]:border-text-muted aria-[invalid=true]:border-danger disabled:cursor-not-allowed disabled:opacity-50";
 
-/** What a field hands the one control its name labels, to spread on it. */
-export interface FieldControl {
-    id: string;
-    /** The field's error and hint, which say more about the control. */
-    "aria-describedby": string | undefined;
-    /** Set while the field holds an error. */
-    "aria-invalid": true | undefined;
-}
-
 /**
  * A control under its name, with the hint that explains it and, once its
- * value is refused, the error that says why.
- *
- * A child given as a function is one control, which the name labels: it is
- * handed the control's id, what describes it and whether it is invalid, to
- * spread on the control. A child given as itself is a group or a popup's own
- * control, and the name is a span: a `label` element forwards clicks inside
- * it to the control it names, which reopens a popup rendered in place rather
- * than choosing from it.
+ * value is refused, the error that says why. Base UI's field carries it: the
+ * control inside is named by the label and described by the error and the
+ * hint, and marked invalid while refused. That control is Base UI's, such as
+ * `CellInput` or a picker; a native element goes through Base UI's `Input`,
+ * as `<Input render={<textarea />} />` does. The name is no `label` element,
+ * so a press on it focuses a picker rather than opening it.
  */
 export function Field({
     label,
     hint,
-    error,
+    name,
+    validate,
     compact = false,
     width,
     className = "",
-    id: named,
     children,
 }: {
     label: string;
     hint?: ReactNode;
-    /** Why the value was refused, said under the control in its own words. */
-    error?: ReactNode;
+    /** The key of its error in its form's `errors`. */
+    name?: string;
+    /**
+     * The app's own check of the value, Base UI's: the error, or null where
+     * the value is fine. It runs on submit, and as the value changes after.
+     */
+    validate?: BaseField.Root.Props["validate"];
     /** For a tight place, such as inside another popup. */
     compact?: boolean;
-    /**
-     * A name of the caller's choosing, for a control something outside the
-     * form has to reach, such as the question a submit puts the cursor back on.
-     */
-    id?: string;
     /**
      * How much room the control needs, in the spacing scale's own steps. A
      * field that states its own width does not need a box drawn around it to
@@ -61,21 +51,12 @@ export function Field({
      */
     width?: number;
     className?: string;
-    children: ReactNode | ((control: FieldControl) => ReactNode);
+    children: ReactNode;
 }) {
-    const generated = useId();
-    const id = named ?? generated;
-    const labels = typeof children === "function";
-    const refused = error !== undefined && error !== null && error !== false;
-    const errorId = `${id}-error`;
-    const hintId = `${id}-hint`;
-    const describedBy =
-        [refused ? errorId : "", hint !== undefined ? hintId : ""]
-            .filter((part) => part !== "")
-            .join(" ") || undefined;
-    const Name = labels ? "label" : "span";
     return (
-        <div
+        <BaseField.Root
+            name={name}
+            validate={validate}
             data-field
             // A stated width is what the field asks for, up to the width it is
             // given. Held against that width, it is not the least room the
@@ -91,8 +72,9 @@ export function Field({
                 className,
             )}
         >
-            <Name
-                {...(labels ? { htmlFor: id } : {})}
+            <BaseField.Label
+                nativeLabel={false}
+                render={<div />}
                 className={classes(
                     "mb-1 block",
                     compact
@@ -101,32 +83,36 @@ export function Field({
                 )}
             >
                 {label}
-            </Name>
-            {labels
-                ? children({
-                      id,
-                      "aria-describedby": describedBy,
-                      "aria-invalid": refused || undefined,
-                  })
-                : children}
-            {refused && (
-                <p
-                    id={errorId}
-                    className="mt-1 flex items-start gap-1 text-xs text-danger"
-                >
-                    <CircleAlert
-                        aria-hidden="true"
-                        className="mt-px size-3.5 shrink-0"
-                    />
-                    <span className="min-w-0">{error}</span>
-                </p>
-            )}
+            </BaseField.Label>
+            {children}
+            <BaseField.Error
+                className="mt-1 flex items-start gap-1 text-xs text-danger"
+                render={({ children: error, ...props }) => (
+                    <div {...props}>
+                        <CircleAlert
+                            aria-hidden="true"
+                            className="mt-px size-3.5 shrink-0"
+                        />
+                        <span className="min-w-0">{error}</span>
+                    </div>
+                )}
+            />
             {hint !== undefined && (
-                <p id={hintId} className="mt-1 text-xs text-text-secondary">
-                    {hint}
-                </p>
+                <BaseField.Validity>
+                    {/* Base UI describes the control in the order its parts
+                        appear; the hint comes again after a refusal, so the
+                        control is described by its error first. */}
+                    {({ validity }) => (
+                        <BaseField.Description
+                            key={String(validity.valid === false)}
+                            className="mt-1 text-xs text-text-secondary"
+                        >
+                            {hint}
+                        </BaseField.Description>
+                    )}
+                </BaseField.Validity>
             )}
-        </div>
+        </BaseField.Root>
     );
 }
 

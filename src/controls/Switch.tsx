@@ -5,7 +5,8 @@ import { classes } from "../foundation/classes";
 /**
  * A setting that takes effect the moment it is turned, such as notifications
  * on or a sync that runs. A checkbox is a choice a form submits later; a
- * switch is a change already made, and its thumb travels to say so.
+ * switch is a change already made, and its thumb travels to say so. Inside a
+ * field, such as a setting's row, the field's words describe it.
  */
 export function Switch({
     checked,
@@ -15,7 +16,6 @@ export function Switch({
     id,
     className,
     "aria-label": ariaLabel,
-    "aria-describedby": describedBy,
 }: {
     checked: boolean;
     onCheckedChange: (checked: boolean) => void;
@@ -25,7 +25,6 @@ export function Switch({
     id?: string;
     className?: string;
     "aria-label"?: string;
-    "aria-describedby"?: string;
 }) {
     return (
         <BaseSwitch.Root
@@ -36,7 +35,6 @@ export function Switch({
             readOnly={busy}
             aria-busy={busy || undefined}
             aria-label={ariaLabel}
-            aria-describedby={describedBy}
             className={classes(
                 "inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border border-border-strong bg-sunken p-px hover:border-text-muted data-[checked]:border-accent data-[checked]:bg-accent data-[disabled]:cursor-default data-[disabled]:opacity-50",
                 busy && "thinking",

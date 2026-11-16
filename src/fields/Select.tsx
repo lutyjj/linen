@@ -41,9 +41,8 @@ export function CellSelect({
     inline = false,
     className = "",
     id,
+    name,
     "aria-label": ariaLabel,
-    "aria-describedby": describedBy,
-    "aria-invalid": invalid,
 }: {
     /**
      * Plain choices, and groups of them under a heading, listed in this
@@ -62,10 +61,9 @@ export function CellSelect({
     inline?: boolean;
     className?: string;
     id?: string;
+    /** The key of its error in its form's `errors`. */
+    name?: string;
     "aria-label"?: string;
-    "aria-describedby"?: string;
-    /** Set while the value is refused, as a field's error does. */
-    "aria-invalid"?: boolean;
 }) {
     const entries: readonly (Choice | ChoiceGroup)[] =
         placeholder === undefined
@@ -148,13 +146,12 @@ export function CellSelect({
                 if ((next ?? "") !== value) onValueChange(next ?? "");
             }}
             disabled={disabled}
+            name={name}
             modal={false}
         >
             <BaseSelect.Trigger
                 id={id}
                 aria-label={ariaLabel}
-                aria-describedby={describedBy}
-                aria-invalid={invalid}
                 className={classes(
                     PICKER_CLASS,
                     "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
@@ -178,29 +175,20 @@ export function CellSelect({
 export function Select({
     label,
     hint,
-    error,
+    validate,
     width,
     className = "",
     ...rest
 }: {
     label: string;
     hint?: ReactNode;
-    error?: ReactNode;
+    validate?: Parameters<typeof Field>[0]["validate"];
     width?: number;
     className?: string;
-} & Omit<
-    Parameters<typeof CellSelect>[0],
-    "id" | "className" | "aria-describedby" | "aria-invalid"
->) {
+} & Omit<Parameters<typeof CellSelect>[0], "className" | "aria-label">) {
     return (
-        <Field label={label} hint={hint} error={error} width={width}>
-            {(control) => (
-                <CellSelect
-                    {...rest}
-                    {...control}
-                    className={classes("w-full", className)}
-                />
-            )}
+        <Field label={label} hint={hint} validate={validate} width={width}>
+            <CellSelect {...rest} className={classes("w-full", className)} />
         </Field>
     );
 }

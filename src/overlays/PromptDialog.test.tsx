@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { expect, it, vi } from "vitest";
@@ -60,4 +60,46 @@ it("opens on its default each time, whatever was typed before", async () => {
     expect(await screen.findByRole("textbox", { name: "Name" })).toHaveValue(
         "Atlas",
     );
+});
+
+it("says a refusal that comes later again, in the same words, after an edit", async () => {
+    let answer: () => void = () => undefined;
+    function Checking() {
+        const [error, setError] = useState<string>();
+        return (
+            <PromptDialog
+                open
+                onOpenChange={() => undefined}
+                title="Rename the project"
+                label="Name"
+                placeholder="Atlas"
+                confirmLabel="Rename"
+                error={error}
+                onConfirm={() =>
+                    new Promise<void>((resolve) => {
+                        answer = () => {
+                            setError("A project has this name.");
+                            resolve();
+                        };
+                    })
+                }
+            />
+        );
+    }
+    render(<Checking />);
+    const box = screen.getByRole("textbox", { name: "Name" });
+    await userEvent.type(box, "Orion");
+    for (const attempt of ["first", "after an edit"]) {
+        await userEvent.click(screen.getByRole("button", { name: "Rename" }));
+        await act(() => {
+            answer();
+            return new Promise((resolve) => setTimeout(resolve, 0));
+        });
+        expect(box, attempt).toHaveFocus();
+        expect(box, attempt).toHaveAccessibleDescription(
+            "A project has this name.",
+        );
+        await userEvent.type(box, "s");
+        expect(box, attempt).not.toHaveAccessibleDescription();
+    }
 });

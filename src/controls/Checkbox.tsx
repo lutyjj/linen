@@ -31,11 +31,10 @@ function CheckIcon() {
 /**
  * A box that is ticked, and the words that say what ticking it does.
  *
- * The words are part of the control rather than a `label` pointing at it: the
- * element a library renders for the box is not the one a person presses, so a
- * label aimed at it names something invisible and clicking the words does
- * nothing. Given no children the box carries its name in `aria-label`, which is
- * the shape a table column takes, where the heading is the words.
+ * The words are the box's label, which holds it, so a press on them ticks the
+ * box, as Base UI's checkbox is labelled. Given no children the box carries
+ * its name in `aria-label`, which is the shape a table column takes, where the
+ * heading is the words.
  */
 export function Checkbox({
     checked,
@@ -56,35 +55,38 @@ export function Checkbox({
     children?: ReactNode;
 }) {
     const box = (
-        <span
-            aria-hidden="true"
-            className={classes(
-                CHECK_SHAPE,
-                CHECK_RESTING,
-                "text-bg group-data-[checked]:border-accent group-data-[checked]:bg-accent",
-            )}
-        >
-            <BaseCheckbox.Indicator>
-                <CheckIcon />
-            </BaseCheckbox.Indicator>
-        </span>
-    );
-    return (
         <BaseCheckbox.Root
             checked={checked}
             onCheckedChange={onCheckedChange}
             disabled={disabled}
             aria-label={ariaLabel}
             className={classes(
-                "group inline-flex cursor-pointer items-center gap-2 text-left text-sm data-[disabled]:cursor-default data-[disabled]:opacity-50",
-                children === undefined ? "" : "w-full",
+                CHECK_SHAPE,
+                CHECK_RESTING,
+                "cursor-pointer text-bg data-[checked]:border-accent data-[checked]:bg-accent data-[disabled]:cursor-default",
+                // Held in its words, the box dims with them.
+                children === undefined
+                    ? classes("data-[disabled]:opacity-50", className)
+                    : "",
+            )}
+        >
+            <BaseCheckbox.Indicator>
+                <CheckIcon />
+            </BaseCheckbox.Indicator>
+        </BaseCheckbox.Root>
+    );
+    if (children === undefined) return box;
+    return (
+        <label
+            className={classes(
+                "inline-flex w-full cursor-pointer items-center gap-2 text-left text-sm has-data-[disabled]:cursor-default has-data-[disabled]:opacity-50",
                 secondary ? "text-text-secondary hover:text-text" : "",
                 className,
             )}
         >
             {box}
             {children}
-        </BaseCheckbox.Root>
+        </label>
     );
 }
 

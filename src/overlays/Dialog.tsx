@@ -2,7 +2,7 @@ import { Dialog } from "@base-ui/react/dialog";
 import type { ReactNode } from "react";
 
 import { Actions, Button } from "../controls/Button";
-import { Form } from "../fields/Form";
+import { Form, type FormErrors } from "../fields/Form";
 import { useWaiting } from "../foundation/waiting";
 import { useWords } from "../foundation/words";
 import { DialogRoot, DialogShell } from "./DialogRoot";
@@ -81,6 +81,7 @@ export function FormDialog({
     description,
     confirmLabel,
     disabled = false,
+    errors,
     onConfirm,
     width,
     children,
@@ -91,6 +92,8 @@ export function FormDialog({
     description?: ReactNode;
     confirmLabel: string;
     disabled?: boolean;
+    /** Why the answers were refused, by field `name`, as a `Form` takes them. */
+    errors?: FormErrors;
     /**
      * The answers are given; the dialog does its one thing with them. A thing
      * that takes a moment is the promise returned: until it settles the
@@ -100,7 +103,7 @@ export function FormDialog({
      */
     onConfirm: () => void | Promise<unknown>;
     width?: string;
-    /** The fields, and what went wrong with the last submit. */
+    /** The fields, and a notice of what failed with the last submit. */
     children: ReactNode;
 }) {
     const [busy, wait] = useWaiting();
@@ -108,6 +111,7 @@ export function FormDialog({
         <DialogRoot open={open} onOpenChange={onOpenChange} busy={busy}>
             <DialogShell open={open} width={width}>
                 <Form
+                    errors={errors}
                     className="flex min-h-0 flex-col"
                     onSubmit={() => {
                         if (!disabled) return wait(onConfirm());
