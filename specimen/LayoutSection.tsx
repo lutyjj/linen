@@ -23,6 +23,7 @@ import {
     TitleField,
     TopBar,
 } from "../src";
+import { HueChoice, PhoneNavChoice, RaisedChoice, ThemeChoice } from "./frame";
 import { Specimen, Stack } from "./Specimen";
 
 export function LayoutSection() {
@@ -34,6 +35,37 @@ export function LayoutSection() {
 
     return (
         <Stack>
+            <Specimen
+                title="The frame"
+                rule="On a desk the rail holds the places, a choice at its head, and its foot: the account menu and choices beside it. A phone's bar holds the places alone, so what the rail's head and foot hold has a place on a screen as well, as these rows hold this specimen's."
+                framed={false}
+            >
+                <Card>
+                    <CardHead title="This specimen" />
+                    <SettingRow
+                        title="Theme"
+                        description="Auto follows this device. Kept in this browser."
+                    >
+                        <ThemeChoice />
+                    </SettingRow>
+                    <SettingRow title="Hue">
+                        <HueChoice />
+                    </SettingRow>
+                    <SettingRow
+                        title="Phone navigation"
+                        description="Where a phone shows the places."
+                    >
+                        <PhoneNavChoice />
+                    </SettingRow>
+                    <SettingRow
+                        title="Conditions"
+                        description="How many of the app's conditions stand at the top of every page."
+                    >
+                        <RaisedChoice />
+                    </SettingRow>
+                </Card>
+            </Specimen>
+
             <Specimen
                 title="A screen beneath another"
                 rule="Its top bar names the screens above it in a small trail over the title, each a link. Past two steps the outer ones fold behind one button. An editable name stands where the title does, as wide as its words."

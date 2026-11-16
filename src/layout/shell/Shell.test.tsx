@@ -178,9 +178,22 @@ it("marks the current place from the page's own address where the app has no rou
     }
 });
 
-it("puts the rail's foot at the end of a phone's bar, top or bottom", () => {
+it("keeps the rail's foot out of a phone's bar, top or bottom", () => {
     const foot = (
-        <AccountMenu name="Ada" label="Ada's account" menuLabel="Account" />
+        <>
+            <RailChoice icon={Sun} label="Theme">
+                <SegmentedControl
+                    label="Theme"
+                    value="light"
+                    options={[
+                        { value: "light", label: "Light" },
+                        { value: "dark", label: "Dark" },
+                    ]}
+                    onValueChange={() => undefined}
+                />
+            </RailChoice>
+            <AccountMenu name="Ada" label="Ada's account" menuLabel="Account" />
+        </>
     );
     const at = (phoneNav: "top" | "bottom") => (
         <Shell
@@ -195,71 +208,66 @@ it("puts the rail's foot at the end of a phone's bar, top or bottom", () => {
             <p>The screen</p>
         </Shell>
     );
-    const view = render(at("bottom"));
-    const tabs = document.querySelector<HTMLElement>("[data-tab-bar]");
-    if (tabs === null) throw new Error("no tab bar");
-    expect(
-        within(tabs).getByRole("button", { name: "Ada's account" }),
-    ).toBeInTheDocument();
-
-    view.rerender(at("top"));
-    const [, top] = screen.getAllByRole("navigation", { name: "Places" });
-    if (top === undefined) throw new Error("no phone navigation");
-    expect(
-        within(top).getByRole("button", { name: "Ada's account" }),
-    ).toBeInTheDocument();
-});
-
-it("opens a choice in the foot from each phone bar, under the choice's name", async () => {
-    const foot = (
-        <RailChoice icon={Sun} label="Theme">
-            <SegmentedControl
-                label="Theme"
-                value="light"
-                options={[
-                    { value: "light", label: "Light" },
-                    { value: "dark", label: "Dark" },
-                ]}
-                onValueChange={() => undefined}
-            />
-        </RailChoice>
-    );
-    const at = (phoneNav: "top" | "bottom") => (
-        <Shell
-            label="Places"
-            places={[{ href: "/", label: "Projects", icon: Folder }]}
-            home={HOME}
-            wordmark="linen"
-            storageKey="test:rail"
-            phoneNav={phoneNav}
-            foot={foot}
-        >
-            <p>The screen</p>
-        </Shell>
-    );
-    const opens = async (bar: HTMLElement) => {
-        const trigger = within(bar).getByRole("button", { name: "Theme" });
-        // Named as a place is, not by a folded rail's tip, which only a
-        // resting pointer or the keyboard shows (motion.css's rail-tip).
-        expect(trigger.querySelector(".rail-tip")).toBeNull();
-        await userEvent.click(trigger);
-        const choice = await screen.findByRole("dialog", { name: "Theme" });
+    const holdsPlacesAlone = (bar: HTMLElement) => {
         expect(
-            within(choice).getByRole("heading", { name: "Theme" }),
+            within(bar).getByRole("link", { name: "Projects" }),
+        ).toBeInTheDocument();
+        expect(within(bar).queryByRole("button")).toBeNull();
+        expect(within(bar).queryByRole("radiogroup")).toBeNull();
+    };
+    // The rail holds the foot, once.
+    const railHoldsFoot = () => {
+        expect(
+            screen.getByRole("button", { name: "Ada's account" }),
         ).toBeInTheDocument();
         expect(
-            within(choice).getByRole("radio", { name: "Light" }),
-        ).toBeChecked();
-        await userEvent.keyboard("{Escape}");
+            screen.getByRole("radiogroup", { name: "Theme" }),
+        ).toBeInTheDocument();
     };
 
     const view = render(at("bottom"));
     const tabs = document.querySelector<HTMLElement>("[data-tab-bar]");
     if (tabs === null) throw new Error("no tab bar");
-    await opens(tabs);
+    holdsPlacesAlone(tabs);
+    railHoldsFoot();
 
     view.rerender(at("top"));
     const [, top] = screen.getAllByRole("navigation", { name: "Places" });
     if (top === undefined) throw new Error("no phone navigation");
-    await opens(top);
+    holdsPlacesAlone(top);
+    railHoldsFoot();
+});
+
+it("opens a choice of the folded rail under the choice's name", async () => {
+    render(
+        <Shell
+            label="Places"
+            places={[{ href: "/", label: "Projects", icon: Folder }]}
+            home={HOME}
+            wordmark="linen"
+            storageKey="test:rail"
+            folded
+            foot={
+                <RailChoice icon={Sun} label="Theme">
+                    <SegmentedControl
+                        label="Theme"
+                        value="light"
+                        options={[
+                            { value: "light", label: "Light" },
+                            { value: "dark", label: "Dark" },
+                        ]}
+                        onValueChange={() => undefined}
+                    />
+                </RailChoice>
+            }
+        >
+            <p>The screen</p>
+        </Shell>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Theme" }));
+    const choice = await screen.findByRole("dialog", { name: "Theme" });
+    expect(
+        within(choice).getByRole("heading", { name: "Theme" }),
+    ).toBeInTheDocument();
+    expect(within(choice).getByRole("radio", { name: "Light" })).toBeChecked();
 });

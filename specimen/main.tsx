@@ -9,34 +9,36 @@ import {
     SunMoon,
     SwatchBook,
 } from "lucide-react";
-import { StrictMode, useLayoutEffect, useState } from "react";
+import { StrictMode, useLayoutEffect } from "react";
 import { createRoot } from "react-dom/client";
 
 import {
     AccountMenu,
     Button,
     Content,
-    createThemeStore,
     LinenProvider,
     MenuChoice,
-    type PhoneNav,
     type Place,
     RailChoice,
-    SegmentedControl,
     Shell,
-    type ThemePreference,
     ToastProvider,
     TopBar,
 } from "../src";
 import { ControlsSection } from "./ControlsSection";
 import { FeedbackSection } from "./FeedbackSection";
 import { FoundationsSection } from "./FoundationsSection";
+import {
+    FrameProvider,
+    HueChoice,
+    PhoneNavChoice,
+    RaisedChoice,
+    ThemeChoice,
+    useFrame,
+} from "./frame";
 import { LayoutSection } from "./LayoutSection";
 import { MotionSection } from "./MotionSection";
 import { historyNavigation, navigate } from "./navigation";
 import { TasksSection } from "./TasksSection";
-
-const { useTheme } = createThemeStore({ key: "linen:theme" });
 
 const SCREENS = [
     {
@@ -83,49 +85,15 @@ const PLACES: readonly Place[] = SCREENS.map(({ to, label, icon }) => ({
     icon,
 }));
 
-/** Hues the specimen can be seen in. */
-const HUES = [
-    { value: "296", label: "Violet" },
-    { value: "218", label: "Teal" },
-    { value: "150", label: "Green" },
-];
-
-/** Where a phone shows the places, to see both in a narrowed window. */
-const PHONE_NAVS: { value: PhoneNav; label: string }[] = [
-    { value: "bottom", label: "Bottom" },
-    { value: "top", label: "Top" },
-];
-
-/** How many of the app's conditions the specimen raises on every page. */
-const RAISED = [
-    { value: "0", label: "None" },
-    { value: "1", label: "One" },
-    { value: "2", label: "Two" },
-];
-
-const THEMES: { value: ThemePreference; label: string }[] = [
-    { value: "system", label: "Auto" },
-    { value: "light", label: "Light" },
-    { value: "dark", label: "Dark" },
-];
-
 function Specimen() {
     const pathname = historyNavigation.usePathname();
-    const { preference, setPreference } = useTheme();
-    const [hue, setHue] = useState("296");
-    const [phoneNav, setPhoneNav] = useState<PhoneNav>("bottom");
-    const [raised, setRaised] = useState("0");
+    const { phoneNav, raised, setRaised } = useFrame();
     const screen = SCREENS.find((one) => pathname.startsWith(one.to));
     // An address the specimen has no page for opens its first page.
     useLayoutEffect(() => {
         if (screen === undefined)
             navigate(PLACES[0]?.href ?? "/", { replace: true });
     }, [screen]);
-
-    const changeHue = (next: string) => {
-        document.documentElement.style.setProperty("--hue", next);
-        setHue(next);
-    };
 
     return (
         <Shell
@@ -141,9 +109,7 @@ function Specimen() {
                     tone: "danger" as const,
                     title: "The service does not answer.",
                     action: (
-                        <Button onClick={() => setRaised("0")}>
-                            Try again
-                        </Button>
+                        <Button onClick={() => setRaised(0)}>Try again</Button>
                     ),
                 },
                 {
@@ -151,7 +117,7 @@ function Specimen() {
                     tone: "warn" as const,
                     title: "Read only while storage is nearly full.",
                 },
-            ].slice(0, Number(raised))}
+            ].slice(0, raised)}
             wordmark={
                 <span className="font-display text-md font-semibold">
                     linen
@@ -159,23 +125,13 @@ function Specimen() {
             }
             head={
                 <RailChoice icon={Palette} label="Hue">
-                    <SegmentedControl
-                        label="Hue"
-                        value={hue}
-                        options={HUES}
-                        onValueChange={changeHue}
-                    />
+                    <HueChoice />
                 </RailChoice>
             }
             foot={
                 <>
                     <RailChoice icon={SunMoon} label="Theme">
-                        <SegmentedControl
-                            label="Theme"
-                            value={preference}
-                            options={THEMES}
-                            onValueChange={setPreference}
-                        />
+                        <ThemeChoice />
                     </RailChoice>
                     <AccountMenu
                         name="Specimen"
@@ -184,20 +140,10 @@ function Specimen() {
                         caption="This browser"
                     >
                         <MenuChoice label="Conditions">
-                            <SegmentedControl
-                                label="Conditions"
-                                value={raised}
-                                options={RAISED}
-                                onValueChange={setRaised}
-                            />
+                            <RaisedChoice />
                         </MenuChoice>
                         <MenuChoice label="Phone navigation">
-                            <SegmentedControl
-                                label="Phone navigation"
-                                value={phoneNav}
-                                options={PHONE_NAVS}
-                                onValueChange={setPhoneNav}
-                            />
+                            <PhoneNavChoice />
                         </MenuChoice>
                     </AccountMenu>
                 </>
@@ -215,7 +161,9 @@ createRoot(root).render(
     <StrictMode>
         <LinenProvider navigation={historyNavigation}>
             <ToastProvider>
-                <Specimen />
+                <FrameProvider>
+                    <Specimen />
+                </FrameProvider>
             </ToastProvider>
         </LinenProvider>
     </StrictMode>,

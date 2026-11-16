@@ -1,6 +1,6 @@
 import { Popover } from "@base-ui/react/popover";
 import { ChevronsUpDown } from "lucide-react";
-import { type ReactNode, use } from "react";
+import type { ReactNode } from "react";
 
 import { classes } from "../../foundation/classes";
 import {
@@ -8,8 +8,7 @@ import {
     POSITIONER_CLASS,
     renderLeaving,
 } from "../../foundation/popup";
-import { TAB_CELL_CLASS } from "./places";
-import { FootPlaceContext, railItemClass, useRailCompact } from "./Rail";
+import { railItemClass, useRailCompact } from "./Rail";
 
 /**
  * Who is signed in, and what they have chosen for this browser, with the way
@@ -18,9 +17,8 @@ import { FootPlaceContext, railItemClass, useRailCompact } from "./Rail";
  * One control at the foot of the rail rather than loose ones: it reads as the
  * person, and opening it shows what belongs to them. A shared machine's next
  * person looks for their own name to leave by, and finds the way out under
- * it. It draws itself for where the foot stands: a row in the rail, its
- * mark alone at the end of a phone's top bar, and a cell like a place's in
- * the tab bar.
+ * it. A phone has no rail, so the app's settings hold the same choices and
+ * the way out.
  */
 export function AccountMenu({
     name,
@@ -43,57 +41,25 @@ export function AccountMenu({
     footer?: ReactNode;
 }) {
     const compact = useRailCompact();
-    const place = use(FootPlaceContext);
     const initial = name.slice(0, 1).toUpperCase();
-    // In the rail it is a row; at the end of a phone's top bar, the mark
-    // alone; in the tab bar, a cell like a place's, its mark over the name.
-    const trigger = {
-        rail: classes(
-            railItemClass(false),
-            "h-10",
-            compact ? "justify-center px-0" : "pl-1",
-        ),
-        top: "flex size-(--height-control) cursor-pointer items-center justify-center rounded-full",
-        bottom: classes(TAB_CELL_CLASS, "cursor-pointer text-text-secondary"),
-    }[place];
-    const side = {
-        rail: compact ? "right" : "top",
-        top: "bottom",
-        bottom: "top",
-    } as const;
-    const align = {
-        rail: compact ? "end" : "start",
-        top: "end",
-        bottom: "end",
-    } as const;
     return (
         <Popover.Root>
             <Popover.Trigger
                 render={<button />}
                 aria-label={label}
                 className={classes(
-                    trigger,
-                    "data-[popup-open]:bg-border data-[popup-open]:text-text",
+                    railItemClass(false),
+                    "h-10 data-[popup-open]:bg-border data-[popup-open]:text-text",
+                    compact ? "justify-center px-0" : "pl-1",
                 )}
             >
                 <span
                     aria-hidden="true"
-                    className={classes(
-                        "flex shrink-0 items-center justify-center rounded-full bg-accent-weak text-xs font-semibold text-accent",
-                        place === "bottom" ? "size-6" : "size-7",
-                    )}
+                    className="flex size-7 shrink-0 items-center justify-center rounded-full bg-accent-weak text-xs font-semibold text-accent"
                 >
                     {initial}
                 </span>
-                {place === "bottom" && (
-                    <span
-                        aria-hidden="true"
-                        className="max-w-full truncate px-1"
-                    >
-                        {name}
-                    </span>
-                )}
-                {place === "rail" && !compact && (
+                {!compact && (
                     <>
                         <span className="min-w-0 flex-1 truncate font-medium text-text">
                             {name}
@@ -107,8 +73,8 @@ export function AccountMenu({
             </Popover.Trigger>
             <Popover.Portal>
                 <Popover.Positioner
-                    side={side[place]}
-                    align={align[place]}
+                    side={compact ? "right" : "top"}
+                    align={compact ? "end" : "start"}
                     sideOffset={8}
                     className={POSITIONER_CLASS}
                 >

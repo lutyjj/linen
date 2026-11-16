@@ -12,13 +12,7 @@ import {
 import { useWords } from "../../foundation/words";
 import { arrive } from "../../motion/arrive";
 import { useCurrent, useNavigation } from "../../navigation/navigation";
-import {
-    type Home,
-    HomeLink,
-    type Place,
-    type PlaceList,
-    TAB_CELL_CLASS,
-} from "./places";
+import { type Home, HomeLink, type Place, type PlaceList } from "./places";
 
 /**
  * Whether the rail is folded to its icons. A preference of this browser, like
@@ -48,15 +42,7 @@ function useCompactRail(key: string): [boolean, (compact: boolean) => void] {
 }
 
 /** Whether the rail stands folded to its icons, for every row inside it. */
-export const RailContext = createContext(false);
-
-/**
- * Where the rail's foot stands: in the rail, or at the end of the phone's
- * bar along the top or the bottom, which a part in it draws itself for.
- */
-export type FootPlace = "rail" | "top" | "bottom";
-
-export const FootPlaceContext = createContext<FootPlace>("rail");
+const RailContext = createContext(false);
 
 export function useRailCompact(): boolean {
     return use(RailContext);
@@ -189,21 +175,13 @@ function RailFold({
     );
 }
 
-/** Where a choice opens from its trigger, for where it stands. */
-const CHOICE_POPUP = {
-    rail: { side: "right", align: "start" },
-    top: { side: "bottom", align: "end" },
-    bottom: { side: "top", align: "end" },
-} as const;
-
 /**
  * A choice the rail offers as a segmented control. Too wide for the compact
- * rail and the phone's bars, where a trigger wearing the choice's icon opens
- * it instead, drawn as what stands beside it: a row of the rail, a place's
- * icon in the top bar, a place's cell in the tab bar.
+ * rail, where a row wearing the choice's icon opens it beside the rail
+ * instead, under the choice's name.
  */
 export function RailChoice({
-    icon: Icon,
+    icon,
     label,
     children,
 }: {
@@ -213,42 +191,22 @@ export function RailChoice({
     children: ReactNode;
 }) {
     const compact = useRailCompact();
-    const place = use(FootPlaceContext);
-    if (place === "rail" && !compact)
-        return <div className="px-2">{children}</div>;
-    const trigger = {
-        rail: railItemClass(false),
-        top: "flex size-(--height-control) shrink-0 cursor-pointer items-center justify-center rounded-button text-text-secondary hover:bg-border hover:text-text",
-        bottom: classes(TAB_CELL_CLASS, "cursor-pointer text-text-secondary"),
-    }[place];
+    if (!compact) return <div className="px-2">{children}</div>;
     return (
         <Popover.Root>
             <Popover.Trigger
                 render={<button />}
                 className={classes(
-                    trigger,
+                    railItemClass(false),
                     "data-[popup-open]:bg-border data-[popup-open]:text-text",
                 )}
             >
-                {place === "rail" ? (
-                    <RailRow icon={Icon} label={label} />
-                ) : (
-                    <>
-                        <Icon
-                            aria-hidden="true"
-                            className={place === "top" ? "size-4" : "size-5"}
-                        />
-                        <span
-                            className={place === "top" ? "sr-only" : undefined}
-                        >
-                            {label}
-                        </span>
-                    </>
-                )}
+                <RailRow icon={icon} label={label} />
             </Popover.Trigger>
             <Popover.Portal>
                 <Popover.Positioner
-                    {...CHOICE_POPUP[place]}
+                    side="right"
+                    align="start"
                     sideOffset={8}
                     className={POSITIONER_CLASS}
                 >

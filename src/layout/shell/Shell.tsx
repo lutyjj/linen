@@ -63,14 +63,13 @@ export function Shell({
     wordmark: ReactNode;
     /** The product's mark alone, at the head of a rail the screen folded. */
     mark?: ReactNode;
-    /** A choice under the wordmark, such as which area the places belong to. */
+    /** A choice under the wordmark, such as which area the places belong to.
+     * The rail's alone, as the foot is. */
     head?: ReactNode;
     /**
      * The rail's foot: the account menu, and choices beside it
-     * (`RailChoice`). It is drawn a second time at the end of the phone's
-     * bar, and CSS shows the one that fits, so what it holds mounts twice.
-     * Each part draws itself as what stands beside it: a row of the rail,
-     * a place's icon in the phone's top bar, a place's cell in the tab bar.
+     * (`RailChoice`). A phone's bar holds the places alone, so the app
+     * offers what the foot holds on a screen as well, such as its settings.
      */
     foot?: ReactNode;
     /** What every screen's top bar puts before its title. */
@@ -105,7 +104,6 @@ export function Shell({
             placesKey={placesKey}
             home={home}
             wordmark={wordmark}
-            foot={foot}
         />
     );
 

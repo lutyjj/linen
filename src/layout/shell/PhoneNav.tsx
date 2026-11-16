@@ -15,14 +15,7 @@ import {
     useMotionLink,
     useNavigation,
 } from "../../navigation/navigation";
-import {
-    type Home,
-    HomeLink,
-    type Place,
-    type PlaceList,
-    TAB_CELL_CLASS,
-} from "./places";
-import { FootPlaceContext, RailContext } from "./Rail";
+import { type Home, HomeLink, type Place, type PlaceList } from "./places";
 
 /**
  * Where a phone shows the places: a tab bar along the bottom, within the
@@ -36,37 +29,22 @@ export type PhoneNav = "bottom" | "top";
  * padded past the home indicator. Toasts stand above it while it is on the
  * page (`data-tab-bar`, read by linen.css).
  */
-function TabBar({
-    label,
-    places,
-    placesKey,
-    foot,
-}: PlaceList & { foot?: ReactNode }) {
+function TabBar({ label, places, placesKey }: PlaceList) {
     return (
         <nav
             aria-label={label}
             data-tab-bar=""
             className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-sunken pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] md:hidden"
         >
-            <div className="flex h-(--height-tabbar) items-stretch">
-                {/* The places share the bar with the parts of the foot, one
-                    cell each. */}
-                <m.div
-                    {...arrive()}
-                    key={placesKey}
-                    style={{ flexGrow: places.length }}
-                    className="flex basis-0 items-stretch"
-                >
-                    {places.map((place) => (
-                        <TabLink key={place.href} {...place} />
-                    ))}
-                </m.div>
-                {foot !== undefined && (
-                    <FootPlaceContext value="bottom">
-                        <RailContext value={true}>{foot}</RailContext>
-                    </FootPlaceContext>
-                )}
-            </div>
+            <m.div
+                {...arrive()}
+                key={placesKey}
+                className="flex h-(--height-tabbar) items-stretch"
+            >
+                {places.map((place) => (
+                    <TabLink key={place.href} {...place} />
+                ))}
+            </m.div>
         </nav>
     );
 }
@@ -80,7 +58,7 @@ function TabLink({ href, label, icon: Icon, exact = false, badge }: Place) {
             href={href}
             aria-current={current ? "page" : undefined}
             className={classes(
-                TAB_CELL_CLASS,
+                "relative flex flex-1 flex-col items-center justify-center gap-0.5 text-3xs",
                 current ? "font-medium text-accent" : "text-text-secondary",
             )}
         >
@@ -107,8 +85,7 @@ function TopNav({
     placesKey,
     home,
     wordmark,
-    foot,
-}: PlaceList & { home: Home; wordmark: ReactNode; foot?: ReactNode }) {
+}: PlaceList & { home: Home; wordmark: ReactNode }) {
     const group = useId();
     const scroller = useRef<HTMLDivElement>(null);
     const pathname = useNavigation().usePathname();
@@ -169,15 +146,6 @@ function TopNav({
                         ))}
                     </m.div>
                 </m.div>
-                {foot !== undefined && (
-                    <FootPlaceContext value="top">
-                        <RailContext value={true}>
-                            <div className="flex shrink-0 items-center gap-1">
-                                {foot}
-                            </div>
-                        </RailContext>
-                    </FootPlaceContext>
-                )}
             </div>
         </nav>
     );
@@ -255,31 +223,25 @@ function TopNavLink({
     );
 }
 
-/** The phone's navigation, wherever the app puts it. */
+/**
+ * The phone's navigation, wherever the app puts it: the places alone. A
+ * phone has no rail, so what the rail's head and foot hold has its place on
+ * a screen as well.
+ */
 export function PhoneNavigation({
     at,
     home,
     wordmark,
-    foot,
     ...navigation
 }: PlaceList & {
     at: PhoneNav;
     home: Home;
     wordmark: ReactNode;
-    /** The rail's foot, at the end of the bar: a phone has no rail. */
-    foot?: ReactNode;
 }) {
     switch (at) {
         case "bottom":
-            return <TabBar {...navigation} foot={foot} />;
+            return <TabBar {...navigation} />;
         case "top":
-            return (
-                <TopNav
-                    {...navigation}
-                    home={home}
-                    wordmark={wordmark}
-                    foot={foot}
-                />
-            );
+            return <TopNav {...navigation} home={home} wordmark={wordmark} />;
     }
 }

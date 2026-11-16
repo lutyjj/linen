@@ -121,7 +121,7 @@ export function FeedbackSection() {
 
             <Specimen
                 title="Conditions of the whole app"
-                rule="A condition that concerns the whole app stands at the top of every screen until it ends, stuck there while the screen scrolls, with the screen's bars beneath it. Two or more stand a failure first. The menu at the rail's foot raises them on this page."
+                rule="A condition that concerns the whole app stands at the top of every screen until it ends, stuck there while the screen scrolls, with the screen's bars beneath it. Two or more stand a failure first. This specimen's settings raise them on every page: the menu at the rail's foot, or the Layout page on a phone."
                 framed={false}
             >
                 <div className="overflow-hidden rounded-card border border-border">
