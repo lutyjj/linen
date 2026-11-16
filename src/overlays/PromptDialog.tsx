@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useState } from "react";
 
 import { Field } from "../fields/Field";
 import { CellInput } from "../fields/TextField";
@@ -16,6 +16,7 @@ export function PromptDialog({
     placeholder,
     confirmLabel,
     defaultValue = "",
+    error,
     onOpenChange,
     onConfirm,
 }: {
@@ -26,40 +27,45 @@ export function PromptDialog({
     confirmLabel: string;
     /** What the box holds when it opens, such as a suggested name. */
     defaultValue?: string;
+    /** Why the answer was refused, said under the box, which takes the focus. */
+    error?: ReactNode;
     onOpenChange: (open: boolean) => void;
-    onConfirm: (value: string) => void;
+    /**
+     * The answer, trimmed. One that takes a moment to act on is the promise
+     * returned (`FormDialog`). The app closes the dialog once it is done.
+     */
+    onConfirm: (value: string) => void | Promise<unknown>;
 }) {
-    const [value, setValue] = useState("");
-    useEffect(() => {
+    // Each opening starts from the default, set before the first frame; a
+    // closing dialog keeps its words as it leaves.
+    const [value, setValue] = useState(defaultValue);
+    const [shown, setShown] = useState(open);
+    if (open !== shown) {
+        setShown(open);
         if (open) setValue(defaultValue);
-    }, [open, defaultValue]);
+    }
 
     return (
         <FormDialog
             open={open}
-            onOpenChange={(next) => {
-                if (!next) setValue("");
-                onOpenChange(next);
-            }}
+            onOpenChange={onOpenChange}
             title={title}
             confirmLabel={confirmLabel}
             disabled={value.trim() === ""}
             width="26rem"
-            onConfirm={() => {
-                onConfirm(value.trim());
-                setValue("");
-                onOpenChange(false);
-            }}
+            onConfirm={() => onConfirm(value.trim())}
         >
-            <Field compact label={label}>
-                <CellInput
-                    autoFocus
-                    aria-label={label}
-                    value={value}
-                    placeholder={placeholder}
-                    onChange={(event) => setValue(event.target.value)}
-                    className="w-full"
-                />
+            <Field compact label={label} error={error}>
+                {(control) => (
+                    <CellInput
+                        {...control}
+                        autoFocus
+                        value={value}
+                        placeholder={placeholder}
+                        onChange={(event) => setValue(event.target.value)}
+                        className="w-full"
+                    />
+                )}
             </Field>
         </FormDialog>
     );

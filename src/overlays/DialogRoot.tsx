@@ -13,10 +13,13 @@ import { renderLeaving } from "../foundation/popup";
 export function DialogRoot({
     open,
     onOpenChange,
+    busy = false,
     children,
 }: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    /** Escape and a press beside it leave the dialog standing while set. */
+    busy?: boolean;
     children: ReactNode;
 }) {
     // At rest closed: never opened, or Base UI has finished its exit. A shut
@@ -28,7 +31,10 @@ export function DialogRoot({
     return (
         <Dialog.Root
             open={open && present}
-            onOpenChange={onOpenChange}
+            onOpenChange={(next) => {
+                if (!next && busy) return;
+                onOpenChange(next);
+            }}
             onOpenChangeComplete={(opened) => {
                 if (opened) return;
                 setShut(true);

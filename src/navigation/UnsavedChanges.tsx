@@ -75,13 +75,7 @@ export function UnsavedChangesGuard({ children }: { children: ReactNode }) {
         return () => window.removeEventListener("beforeunload", warn);
     }, [anyUnsaved]);
 
-    // The dialog closes after its confirmation too, and that close must not
-    // call the move off; each new question starts undecided.
-    const leaving = useRef(false);
     const blocked = blocker.blocked;
-    useEffect(() => {
-        if (blocked) leaving.current = false;
-    }, [blocked]);
     const names = blocked
         ? holding().flatMap((draft) => (draft.name ? [draft.name] : []))
         : [];
@@ -92,17 +86,13 @@ export function UnsavedChangesGuard({ children }: { children: ReactNode }) {
             <ConfirmDialog
                 open={blocked}
                 onOpenChange={(open) => {
-                    if (open || leaving.current) return;
-                    blocker.reset();
+                    if (!open) blocker.reset();
                 }}
                 title={words.leaveUnsaved}
                 description={words.unsavedLost(names)}
                 confirmLabel={words.leave}
                 destructive
-                onConfirm={() => {
-                    leaving.current = true;
-                    blocker.proceed();
-                }}
+                onConfirm={() => blocker.proceed()}
             />
         </DraftsContext>
     );
