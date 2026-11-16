@@ -9,7 +9,7 @@ In an app that builds with Tailwind CSS 4, install a [release](https://github.co
 <!-- x-release-please-start-version -->
 
 ```sh
-version=0.4.0
+version=0.5.0
 pnpm add "https://github.com/lutyjj/linen/releases/download/v$version/linen-$version.tgz" \
     react react-dom motion @base-ui/react lucide-react
 ```
