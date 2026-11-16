@@ -16,7 +16,7 @@ export {
     type ChipTone,
     ChipTrigger,
 } from "./controls/Chip";
-export { CopyValue, ShownOnce } from "./controls/CopyValue";
+export { CopyButton, CopyValue, ShownOnce } from "./controls/CopyValue";
 export { Kbd } from "./controls/Kbd";
 export { type CardOption, OptionCards } from "./controls/OptionCards";
 export { SegmentedControl } from "./controls/SegmentedControl";
@@ -28,12 +28,15 @@ export {
     type GaugeMark,
     Gauges,
     type GaugeZone,
-    type Live,
-    type Readable,
 } from "./feedback/Gauge";
+export { type Live, type Readable } from "./feedback/live";
+export { LogView } from "./feedback/LogView";
 export { Notice } from "./feedback/Notice";
+export { Progress } from "./feedback/Progress";
 export { Status, type StatusTone } from "./feedback/Status";
+export { type Step, Steps } from "./feedback/Steps";
 export { CONTROL_CLASS, Field, FieldRow } from "./fields/Field";
+export { NumberField } from "./fields/NumberField";
 export { SearchField } from "./fields/SearchField";
 export { POPUP_SEARCH_CLASS, SearchSelect } from "./fields/SearchSelect";
 export { CellSelect, PICKER_CLASS, PickerMark, Select } from "./fields/Select";
@@ -61,6 +64,7 @@ export {
 export { Content, SCREEN_TITLE_CLASS } from "./layout/column";
 export { DisclosurePanel } from "./layout/Disclosure";
 export { EmptyState } from "./layout/EmptyState";
+export { Fact, Facts } from "./layout/Facts";
 export { type Section, SectionNav } from "./layout/SectionNav";
 export { SettingNote, SettingRow, SettingToggle } from "./layout/Setting";
 export { AccountMenu, MenuChoice } from "./layout/shell/AccountMenu";

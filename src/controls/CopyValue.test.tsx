@@ -66,6 +66,37 @@ it("puts what the button names on the clipboard, in the app's words", async () =
     expect(screen.getByRole("button", { name: "Kopiert" })).toBeVisible();
 });
 
+it("says what losing the secret means in the app's words where it gives them", () => {
+    const { rerender } = render(
+        <ShownOnce
+            what="Code"
+            label="Pairing code"
+            secret="4417"
+            copyLabel="Copy code"
+        >
+            Enter it on the other screen.
+        </ShownOnce>,
+    );
+    expect(
+        screen.getByText(/Enter it on the other screen\./),
+    ).toHaveTextContent(ENGLISH.shownOnce);
+
+    rerender(
+        <ShownOnce
+            what="Code"
+            label="Pairing code"
+            secret="4417"
+            copyLabel="Copy code"
+            lost="If it is lost, pairing starts over."
+        >
+            Enter it on the other screen.
+        </ShownOnce>,
+    );
+    const said = screen.getByText(/Enter it on the other screen\./);
+    expect(said).toHaveTextContent("If it is lost, pairing starts over.");
+    expect(said).not.toHaveTextContent(ENGLISH.shownOnce);
+});
+
 it("asks for the text by hand where the page has no clipboard at all", async () => {
     // user-event lends the page a clipboard of its own, so it goes after setup.
     const user = userEvent.setup();
