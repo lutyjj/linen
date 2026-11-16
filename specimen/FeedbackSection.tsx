@@ -24,6 +24,17 @@ import { wandering } from "./live";
 import { Group, Sample, Samples, Specimen, Stack } from "./Specimen";
 
 const [READ, WRITE] = wandering([60, 30], 0, 200);
+/** Projects in a list, each with its own disk activity. */
+const BUSY = ["Atlas", "Orion", "Vega"].map((name, at) => {
+    const [read, write] = wandering([50 + at * 50, 20 + at * 30], 0, 200);
+    return {
+        name,
+        channels: [
+            { label: "Read", channel: read },
+            { label: "Write", channel: write },
+        ],
+    };
+});
 const PARTS = [
     "Tasks",
     "Comments",
@@ -142,7 +153,7 @@ export function FeedbackSection() {
 
             <Specimen
                 title="Gauges"
-                rule="A gauge shows a value on a bounded scale: an empty track with its zones in a line under it, and a fill in the colour of each zone it reaches, with a mark where the value was held or a threshold is set. At its lowest it is empty. Gauges read together stand close, lined up. A live gauge follows its value without rendering anything around it."
+                rule="A gauge shows a value on a bounded scale: an empty track with its zones in a line under it, and a fill in the colour of each zone it reaches, with a mark where the value was held or a threshold is set. At its lowest it is empty. Gauges read together stand close, lined up. A live gauge follows its value without rendering anything around it. In a row of a list, a compact gauge is its bar alone."
             >
                 <div className="flex max-w-md flex-col gap-5">
                     <Gauge
@@ -194,6 +205,45 @@ export function FeedbackSection() {
                             ]}
                         />
                     </Gauges>
+                    <ul className="divide-y divide-border rounded-card border border-border">
+                        {BUSY.map(({ name, channels }) => (
+                            <li
+                                key={name}
+                                className="flex items-center gap-3 px-3 py-2.5 text-sm"
+                            >
+                                <span className="flex-1">{name}</span>
+                                <Gauges
+                                    label={`${name}'s disk activity`}
+                                    compact
+                                    className="w-24"
+                                >
+                                    {channels.map(({ label, channel }) => (
+                                        <Gauge
+                                            key={label}
+                                            label={label}
+                                            value={channel?.level ?? 0}
+                                            max={200}
+                                            format={mbps}
+                                            zones={[
+                                                {
+                                                    from: 160,
+                                                    to: 200,
+                                                    tone: "warn",
+                                                },
+                                            ]}
+                                            marks={[
+                                                {
+                                                    value: channel?.high ?? 0,
+                                                    kind: "held",
+                                                    label: "Highest",
+                                                },
+                                            ]}
+                                        />
+                                    ))}
+                                </Gauges>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             </Specimen>
 

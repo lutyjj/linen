@@ -98,7 +98,9 @@ function Mark({
  * A value that changes on its own (`Readable`) is followed without
  * rendering, so a gauge can follow a value many times a second inside a
  * screen that does not render for it. Two or more read together stand in
- * `Gauges`.
+ * `Gauges`. A `compact` gauge, for a row of a list, is its bar alone, thin
+ * and without the line of its zones; its name and its value in words are
+ * the meter's, read out but not shown.
  */
 export function Gauge({
     label,
@@ -108,6 +110,7 @@ export function Gauge({
     zones = [],
     marks = [],
     format = (number) => String(Math.round(number)),
+    compact = false,
     className,
 }: {
     /** What it measures, beside the bar and as the meter's name. */
@@ -119,10 +122,13 @@ export function Gauge({
     marks?: readonly GaugeMark[];
     /** The value in words, as it is shown and read out, such as `-12 dB`. */
     format?: (value: number) => string;
+    /** Alone, the bar for a row of a list; in `Gauges`, theirs decides. */
+    compact?: boolean;
     className?: string;
 }) {
     const name = useId();
-    const lined = use(InRows);
+    const rows = use(InRows);
+    const small = rows === null ? compact : rows === "compact";
     const meter = useRef<HTMLDivElement>(null);
     const words = useRef<HTMLSpanElement>(null);
     const at = (number: number) =>
@@ -153,49 +159,68 @@ export function Gauge({
             aria-valuetext={isReadable(value) ? undefined : format(value)}
             style={style}
             className={classes(
-                "grid grid-cols-subgrid col-span-3 items-center text-xs",
+                small
+                    ? "block"
+                    : "grid grid-cols-subgrid col-span-3 items-center text-xs",
                 className,
             )}
         >
-            <span id={name} className="text-text-secondary">
+            <span
+                id={name}
+                className={small ? "sr-only" : "text-text-secondary"}
+            >
                 {label}
             </span>
             {/* The track is the scale, empty, its zones a line under it;
                 only the fill, in the ink of each zone it reaches, is the
                 value, so a gauge at its lowest reads as empty. */}
             <span className="flex flex-col gap-0.5">
-                <span className="relative h-2 overflow-hidden rounded-full bg-sunken">
+                <span
+                    className={classes(
+                        "relative overflow-hidden rounded-full bg-sunken",
+                        small ? "h-1" : "h-2",
+                    )}
+                >
                     <span className="absolute inset-0 bg-(image:--fill) [clip-path:inset(0_calc((1_-_var(--level,0))_*_100%)_0_0)]" />
                     {marks.map((mark, index) => (
                         <Mark key={index} mark={mark} at={at} />
                     ))}
                 </span>
-                {zones.length > 0 && (
+                {zones.length > 0 && !small && (
                     <span className="h-0.5 rounded-full bg-(image:--zones)" />
                 )}
             </span>
-            <span
-                ref={words}
-                aria-hidden="true"
-                style={{ minWidth: `${room}ch` }}
-                className="text-right text-text tabular-nums"
-            />
+            {!small && (
+                <span
+                    ref={words}
+                    aria-hidden="true"
+                    style={{ minWidth: `${room}ch` }}
+                    className="text-right text-text tabular-nums"
+                />
+            )}
         </div>
     );
-    return lined ? gauge : <GaugeRows>{gauge}</GaugeRows>;
+    return rows === null ? (
+        <GaugeRows compact={small}>{gauge}</GaugeRows>
+    ) : (
+        gauge
+    );
 }
 
 /**
  * Gauges read together, such as two channels of one signal: one name over
  * them, the bars stacked close and lined up, their names in one column and
- * their values in another.
+ * their values in another. `compact` stacks the bars alone, for a row of a
+ * list, and keeps the names for assistive technology.
  */
 export function Gauges({
     label,
+    compact = false,
     className,
     children,
 }: {
     label: ReactNode;
+    compact?: boolean;
     className?: string;
     /** Each a `Gauge`. */
     children: ReactNode;
@@ -203,22 +228,37 @@ export function Gauges({
     const name = useId();
     return (
         <div role="group" aria-labelledby={name} className={className}>
-            <div id={name} className="mb-1.5 text-xs font-medium">
+            <div
+                id={name}
+                className={compact ? "sr-only" : "mb-1.5 text-xs font-medium"}
+            >
                 {label}
             </div>
-            <GaugeRows>{children}</GaugeRows>
+            <GaugeRows compact={compact}>{children}</GaugeRows>
         </div>
     );
 }
 
-/** Whether a gauge stands in rows it shares with others. */
-const InRows = createContext(false);
+/** The rows a gauge stands in, if any, and how small. */
+const InRows = createContext<"full" | "compact" | null>(null);
 
 /** The grid gauges line up in, alone or together. */
-function GaugeRows({ children }: { children: ReactNode }) {
+function GaugeRows({
+    compact,
+    children,
+}: {
+    compact: boolean;
+    children: ReactNode;
+}) {
     return (
-        <InRows value={true}>
-            <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2.5 gap-y-1">
+        <InRows value={compact ? "compact" : "full"}>
+            <div
+                className={
+                    compact
+                        ? "flex flex-col gap-0.5"
+                        : "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2.5 gap-y-1"
+                }
+            >
                 {children}
             </div>
         </InRows>

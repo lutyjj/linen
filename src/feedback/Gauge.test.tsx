@@ -1,4 +1,4 @@
-import { act, render, screen } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
 import { expect, it } from "vitest";
 
 import { Gauge, Gauges } from "./Gauge";
@@ -103,4 +103,53 @@ it("writes its value again the new way when its scale changes", () => {
     expect(load.style.getPropertyValue("--level")).toBe("0.25");
     expect(load).toHaveTextContent("2 of 8");
     expect(load).toHaveAttribute("aria-valuetext", "2 of 8");
+});
+
+it("stands in a row of a list as its bars alone, still meters that follow their values", () => {
+    const left = source(-30);
+    const right = source(-40);
+    let renders = 0;
+    function Row() {
+        renders += 1;
+        const dB = (value: number) => `${value} dB`;
+        return (
+            <>
+                <Gauges label="Level" compact>
+                    <Gauge
+                        label="Left"
+                        value={left.readable}
+                        min={-60}
+                        max={0}
+                        format={dB}
+                    />
+                    <Gauge
+                        label="Right"
+                        value={right.readable}
+                        min={-60}
+                        max={0}
+                        format={dB}
+                    />
+                </Gauges>
+                <Gauge label="Load" value={0.5} compact />
+            </>
+        );
+    }
+    render(<Row />);
+    const level = screen.getByRole("group", { name: "Level" });
+    const first = within(level).getByRole("meter", { name: "Left" });
+    expect(within(level).getByRole("meter", { name: "Right" })).toHaveAttribute(
+        "aria-valuetext",
+        "-40 dB",
+    );
+    expect(screen.getByRole("meter", { name: "Load" })).toHaveAttribute(
+        "aria-valuenow",
+        "0.5",
+    );
+
+    act(() => left.set(-12));
+    expect(first).toHaveAttribute("aria-valuetext", "-12 dB");
+    expect(first.style.getPropertyValue("--level")).toBe("0.8");
+    // The value is read out, not shown beside the bar.
+    expect(first).not.toHaveTextContent("dB");
+    expect(renders).toBe(1);
 });
