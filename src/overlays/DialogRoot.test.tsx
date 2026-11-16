@@ -35,7 +35,7 @@ it("a shut dialog does not hold up the part of the page leaving around it", asyn
 
 it("an open dialog is closed, and so leaves with its own exit, before the part around it goes", async () => {
     const { rerender } = render(<Holder shown open />);
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(screen.getByRole("alertdialog")).toBeInTheDocument();
 
     // Base UI closes the dialog it is still holding, which is when the
     // stylesheet plays its leave; a dialog removed at once never closes.
@@ -45,7 +45,7 @@ it("an open dialog is closed, and so leaves with its own exit, before the part a
             if (
                 record.attributeName === "data-closed" &&
                 record.target instanceof Element &&
-                record.target.getAttribute("role") === "dialog"
+                record.target.getAttribute("role") === "alertdialog"
             ) {
                 closed.push(true);
             }
@@ -107,7 +107,7 @@ it("stands in the part of the window a person can see, as a keyboard leaves it",
         />,
     );
     // The dialog stands in the room the stylesheet bounds by these.
-    const room = screen.getByRole("dialog").parentElement;
+    const room = screen.getByRole("alertdialog").parentElement;
     const bounds = () => [
         room?.style.getPropertyValue("--visible-top"),
         room?.style.getPropertyValue("--visible-height"),
@@ -167,7 +167,7 @@ it("stops following the window once it has gone", () => {
             onConfirm={() => undefined}
         />,
     );
-    const room = screen.getByRole("dialog").parentElement;
+    const room = screen.getByRole("alertdialog").parentElement;
     unmount();
     visible.height = 200;
     visible.dispatchEvent(new Event("resize"));

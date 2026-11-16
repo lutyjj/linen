@@ -74,7 +74,7 @@ function guarded() {
 }
 
 const question = () =>
-    screen.queryByRole("dialog", { name: "Leave without saving?" });
+    screen.queryByRole("alertdialog", { name: "Leave without saving?" });
 
 it("holds a move for unsaved work through a data router's blocker", async () => {
     const { user, router } = guarded();

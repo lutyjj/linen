@@ -32,7 +32,7 @@ function setup(page: ReactNode) {
 }
 
 const question = () =>
-    screen.queryByRole("dialog", { name: "Leave without saving?" });
+    screen.queryByRole("alertdialog", { name: "Leave without saving?" });
 
 describe("leaving unsaved work", () => {
     it("moves on at once while every draft is saved", async () => {

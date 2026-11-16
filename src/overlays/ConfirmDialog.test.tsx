@@ -5,7 +5,7 @@ import { expect, it, vi } from "vitest";
 import { ENGLISH } from "../foundation/words";
 import { ConfirmDialog } from "./ConfirmDialog";
 
-it("leaves on Escape and on a press beside it while nothing is under way", async () => {
+it("is an alert, which Escape leaves and a press beside it does not", async () => {
     const closing = vi.fn();
     render(
         <ConfirmDialog
@@ -16,11 +16,13 @@ it("leaves on Escape and on a press beside it while nothing is under way", async
             onConfirm={() => undefined}
         />,
     );
-    await userEvent.keyboard("{Escape}");
+    expect(
+        screen.getByRole("alertdialog", { name: "Revoke the token?" }),
+    ).toBeInTheDocument();
     await userEvent.click(document.body);
-    expect(closing).toHaveBeenCalledTimes(2);
-    expect(closing).toHaveBeenNthCalledWith(1, false);
-    expect(closing).toHaveBeenNthCalledWith(2, false);
+    expect(closing).not.toHaveBeenCalled();
+    await userEvent.keyboard("{Escape}");
+    expect(closing).toHaveBeenCalledExactlyOnceWith(false);
 });
 
 it("waits on the act it confirms, and cannot be left until it is done", async () => {
@@ -48,7 +50,7 @@ it("waits on the act it confirms, and cannot be left until it is done", async ()
     await userEvent.click(document.body);
     expect(confirmed).toHaveBeenCalledTimes(1);
     expect(closing).not.toHaveBeenCalled();
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(screen.getByRole("alertdialog")).toBeInTheDocument();
 
     await act(() => {
         settle();

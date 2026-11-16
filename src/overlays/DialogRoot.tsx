@@ -1,3 +1,4 @@
+import { AlertDialog } from "@base-ui/react/alert-dialog";
 import { Dialog } from "@base-ui/react/dialog";
 import { usePresence } from "motion/react";
 import { type ReactNode, useLayoutEffect, useRef, useState } from "react";
@@ -15,12 +16,18 @@ export function DialogRoot({
     open,
     onOpenChange,
     busy = false,
+    alert = false,
     children,
 }: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     /** Escape and a press beside it leave the dialog standing while set. */
     busy?: boolean;
+    /**
+     * Base UI's alert dialog, for an act to confirm: a press beside it does
+     * not dismiss it.
+     */
+    alert?: boolean;
     children: ReactNode;
 }) {
     // At rest closed: never opened, or Base UI has finished its exit. A shut
@@ -29,8 +36,9 @@ export function DialogRoot({
     const [shut, setShut] = useState(!open);
     if (open && shut) setShut(false);
     const [present, safeToRemove] = usePresence(!shut);
+    const Root = alert ? AlertDialog.Root : Dialog.Root;
     return (
-        <Dialog.Root
+        <Root
             open={open && present}
             onOpenChange={(next) => {
                 if (!next && busy) return;
@@ -43,7 +51,7 @@ export function DialogRoot({
             }}
         >
             {children}
-        </Dialog.Root>
+        </Root>
     );
 }
 
