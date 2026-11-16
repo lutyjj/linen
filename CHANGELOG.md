@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.5.0](https://github.com/lutyjj/linen/compare/v0.4.0...v0.5.0) (2026-11-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* CheckGlyph and POPUP_SEARCH_CLASS are no longer exported; draw a box with SelectToggle or Checkbox. SelectToggle renders Base UI's checkbox (a span with role checkbox and a hidden input) in place of a button; its props are unchanged.
+* Condition is a type, no longer a component. `<Conditions><Condition tone="danger" title="..." /></Conditions>` becomes `<Conditions conditions={[{ id: "contact", tone: "danger",
+* a ToastMessage offers `onUndo` or `action`, not both; one with both no longer type-checks. Keep the answer the toast needs.
+* ConfirmDialog, and with it the unsaved-work guard's question, has the role `alertdialog`: a test that finds it by role `dialog` finds it by `alertdialog`. A press beside it no longer closes it.
+* a field's `error` prop is gone. An answer's refusal goes in `errors` on Form or FormDialog, keyed by the field's `name` (`<TextField name="port" />` in `<Form errors={{ port: "..." }}>`), held in state, set from every answer and never cleared as a submit starts. A check the app makes itself is the field's `validate`. Errors are strings. Field takes its control as a child instead of a function of FieldControl, and loses `id`: a Base UI control or CellInput, and a native element through Base UI's Input (`<Input render={<textarea />} />`), or it is not named or described. A standing error now refuses the next submit until its value is edited; a refusal that is not about the value goes in a Notice. SettingRow's child is a node, not a function of `describedBy`. Switch loses `aria-describedby`, and CellSelect loses `aria-describedby` and `aria-invalid`, which a field now sets. PromptDialog's `error` is a string.
+
+### Features
+
+* a confirmation is Base UI's alert dialog ([60fca7b](https://github.com/lutyjj/linen/commit/60fca7b8ec700d3ac2ef02880a39c881cf9a9bdd))
+* classes() resolves conflicts on every Tailwind property ([b6ff8c3](https://github.com/lutyjj/linen/commit/b6ff8c380ca658de746833dbfc5219baa79f1d3e))
+* conditions are data the app hands Conditions and Shell ([3e4452e](https://github.com/lutyjj/linen/commit/3e4452ec340b7a5d4b38289281cf25a5f01b8e25))
+* fields and forms stand on Base UI's Field and Form ([3532620](https://github.com/lutyjj/linen/commit/35326202c57c3781df3006d00d708b31788361b1))
+* SelectToggle is Base UI's checkbox, and every export has a use ([8a70898](https://github.com/lutyjj/linen/commit/8a70898aec0094bb4b0dcea0ef2d3d3a44ff6b07))
+
+
+### Code Refactoring
+
+* a toast's answer is Base UI's toast action ([3a4a511](https://github.com/lutyjj/linen/commit/3a4a5111f47ef5457e90e42283a9f7eee0c64e89))
+
 ## [0.4.0](https://github.com/lutyjj/linen/compare/v0.3.0...v0.4.0) (2026-11-16)
 
 
