@@ -16,6 +16,7 @@ import {
     useNavigation,
 } from "../../navigation/navigation";
 import { type Home, HomeLink, type Place, type PlaceList } from "./places";
+import { FootPlaceContext, RailContext } from "./Rail";
 
 /**
  * Where a phone shows the places: a tab bar along the bottom, within the
@@ -29,22 +30,40 @@ export type PhoneNav = "bottom" | "top";
  * padded past the home indicator. Toasts stand above it while it is on the
  * page (`data-tab-bar`, read by linen.css).
  */
-function TabBar({ label, places, placesKey }: PlaceList) {
+function TabBar({
+    label,
+    places,
+    placesKey,
+    foot,
+}: PlaceList & { foot?: ReactNode }) {
     return (
         <nav
             aria-label={label}
             data-tab-bar=""
             className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-sunken pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] md:hidden"
         >
-            <m.div
-                {...arrive()}
-                key={placesKey}
-                className="flex h-(--height-tabbar) items-stretch"
-            >
-                {places.map((place) => (
-                    <TabLink key={place.href} {...place} />
-                ))}
-            </m.div>
+            <div className="flex h-(--height-tabbar) items-stretch">
+                {/* The places share the bar with the foot, one cell each. */}
+                <m.div
+                    {...arrive()}
+                    key={placesKey}
+                    style={{ flexGrow: places.length }}
+                    className="flex basis-0 items-stretch"
+                >
+                    {places.map((place) => (
+                        <TabLink key={place.href} {...place} />
+                    ))}
+                </m.div>
+                {foot !== undefined && (
+                    <FootPlaceContext value="bottom">
+                        <RailContext value={true}>
+                            <div className="flex flex-1 basis-0 items-stretch">
+                                {foot}
+                            </div>
+                        </RailContext>
+                    </FootPlaceContext>
+                )}
+            </div>
         </nav>
     );
 }
@@ -85,7 +104,8 @@ function TopNav({
     placesKey,
     home,
     wordmark,
-}: PlaceList & { home: Home; wordmark: ReactNode }) {
+    foot,
+}: PlaceList & { home: Home; wordmark: ReactNode; foot?: ReactNode }) {
     const group = useId();
     const scroller = useRef<HTMLDivElement>(null);
     const pathname = useNavigation().usePathname();
@@ -146,6 +166,15 @@ function TopNav({
                         ))}
                     </m.div>
                 </m.div>
+                {foot !== undefined && (
+                    <FootPlaceContext value="top">
+                        <RailContext value={true}>
+                            <div className="flex shrink-0 items-center">
+                                {foot}
+                            </div>
+                        </RailContext>
+                    </FootPlaceContext>
+                )}
             </div>
         </nav>
     );
@@ -228,12 +257,26 @@ export function PhoneNavigation({
     at,
     home,
     wordmark,
+    foot,
     ...navigation
-}: PlaceList & { at: PhoneNav; home: Home; wordmark: ReactNode }) {
+}: PlaceList & {
+    at: PhoneNav;
+    home: Home;
+    wordmark: ReactNode;
+    /** The rail's foot, at the end of the bar: a phone has no rail. */
+    foot?: ReactNode;
+}) {
     switch (at) {
         case "bottom":
-            return <TabBar {...navigation} />;
+            return <TabBar {...navigation} foot={foot} />;
         case "top":
-            return <TopNav {...navigation} home={home} wordmark={wordmark} />;
+            return (
+                <TopNav
+                    {...navigation}
+                    home={home}
+                    wordmark={wordmark}
+                    foot={foot}
+                />
+            );
     }
 }
