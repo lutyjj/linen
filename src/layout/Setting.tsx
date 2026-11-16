@@ -10,9 +10,11 @@ import { SettlingItem } from "../motion/SettlingRows";
  *
  * Each setting gets its own row, so two controls never share a line because
  * the words happened to be short enough in one language. The control stands at
- * the end of the row while the row has room for it, and below the words once
- * it does not; the row decides from its own width, not the screen's, so the
- * same setting lays out the same way in any card.
+ * the end of the row while the row has room for it beside the words, and below
+ * them once it does not, where a control as wide as its line fills it; the row
+ * decides from its own width and the control's, not the screen's, so the same
+ * setting lays out the same way in any card, and a wide control never
+ * squeezes the words.
  *
  * The description describes the control, any of Base UI's, through its field.
  */
@@ -40,8 +42,9 @@ export function SettingRow({
             dimmed={dimmed}
             role={role}
             className={className}
-            columns="grid-cols-1 @min-[34rem]:grid-cols-[minmax(0,1fr)_auto]"
-            place="@min-[34rem]:justify-end"
+            frame="flex flex-wrap"
+            words="grow-[999] basis-64"
+            place="grow"
         >
             {children}
         </SettingLayout>
@@ -87,7 +90,8 @@ export function SettingToggle({
             dimmed={dimmed}
             role={role}
             className={className}
-            columns="grid-cols-[minmax(0,1fr)_auto]"
+            frame="grid grid-cols-[minmax(0,1fr)_auto]"
+            words=""
             place="justify-end"
         >
             <Switch
@@ -112,7 +116,8 @@ function SettingLayout({
     description,
     dimmed = false,
     role,
-    columns,
+    frame,
+    words,
     place,
     className,
     children,
@@ -122,7 +127,11 @@ function SettingLayout({
     dimmed?: boolean;
     role?: "listitem";
     className: string | undefined;
-    columns: string;
+    /** How the words and the control share the row. */
+    frame: string;
+    /** The words' share of it. */
+    words: string;
+    /** Where the control stands in its own share. */
     place: string;
     children?: ReactNode;
 }) {
@@ -130,18 +139,18 @@ function SettingLayout({
         <SettlingItem
             role={role}
             className={classes(
-                "@container border-t border-border [header+&]:border-t-0",
+                "border-t border-border [header+&]:border-t-0",
                 className,
             )}
         >
             <Field.Root
                 className={classes(
-                    "grid items-center gap-x-6 gap-y-2.5 px-gutter py-3",
-                    columns,
+                    "items-center gap-x-6 gap-y-2.5 px-gutter py-3",
+                    frame,
                     dimmed && "opacity-55",
                 )}
             >
-                <div className="min-w-0">
+                <div className={classes("min-w-0", words)}>
                     <div className="text-sm font-medium break-words">
                         {title}
                     </div>

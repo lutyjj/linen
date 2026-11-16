@@ -8,6 +8,7 @@ import {
     CardBody,
     CardHead,
     Chip,
+    CopyValue,
     Count,
     DisclosurePanel,
     EmptyState,
@@ -27,7 +28,7 @@ import { Specimen, Stack } from "./Specimen";
 export function LayoutSection() {
     const [weekly, setWeekly] = useState(true);
     const [writing, setWriting] = useState(false);
-    const [theme, setTheme] = useState<"system" | "light" | "dark">("system");
+    const [density, setDensity] = useState("comfortable");
     const [name, setName] = useState("Quarterly report");
 
     return (
@@ -98,24 +99,23 @@ export function LayoutSection() {
 
             <Specimen
                 title="A setting is a row"
-                rule="A setting's name, what it does, and its control at the end of the row while the row has room, below the words once it does not. A switch keeps the end of the row at every width."
+                rule="A setting's name, what it does, and its control at the end of the row while the control fits beside the words, below them once it does not, so a wide control never squeezes them. A switch keeps the end of the row at every width."
                 framed={false}
             >
                 <Card>
-                    <CardHead title="Appearance" />
+                    <CardHead title="Reports" />
                     <SettingRow
-                        title="Theme"
-                        description="Auto follows this device. Kept in this browser."
+                        title="Density"
+                        description="How close the rows of a report sit."
                     >
                         <SegmentedControl
-                            label="Theme"
-                            value={theme}
+                            label="Density"
+                            value={density}
                             options={[
-                                { value: "system", label: "Auto" },
-                                { value: "light", label: "Light" },
-                                { value: "dark", label: "Dark" },
+                                { value: "comfortable", label: "Comfortable" },
+                                { value: "compact", label: "Compact" },
                             ]}
-                            onValueChange={setTheme}
+                            onValueChange={setDensity}
                         />
                     </SettingRow>
                     <SettingToggle
@@ -132,6 +132,15 @@ export function LayoutSection() {
                             }, 1600);
                         }}
                     />
+                    <SettingRow
+                        title="Export from a terminal"
+                        description="Tonight's report, with a token from Access tokens."
+                    >
+                        <CopyValue
+                            value='curl -H "Authorization: Bearer $REPORTS_TOKEN" https://reports.example.com/api/exports/nightly'
+                            label="Export command"
+                        />
+                    </SettingRow>
                     <SettingRow title="Role">
                         <Chip size="row">Administrator</Chip>
                     </SettingRow>
