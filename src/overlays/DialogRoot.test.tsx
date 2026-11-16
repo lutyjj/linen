@@ -57,3 +57,21 @@ it("an open dialog is closed, and so leaves with its own exit, before the part a
     watch.disconnect();
     expect(closed.length).toBeGreaterThan(0);
 });
+
+it("keeps the words it was open with while it leaves", async () => {
+    // The caller forgets what the dialog was about the moment it closes.
+    const asking = (subject?: string) => (
+        <ConfirmDialog
+            open={subject !== undefined}
+            onOpenChange={() => undefined}
+            title={`Delete ${subject ?? ""}?`}
+            confirmLabel="Delete"
+            onConfirm={() => undefined}
+        />
+    );
+    const { rerender } = render(asking("Atlas"));
+    rerender(asking());
+    expect(screen.getByText("Delete Atlas?")).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText("Delete Atlas?")).toBeNull());
+    expect(screen.queryByText("Delete ?")).toBeNull();
+});
