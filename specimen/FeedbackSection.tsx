@@ -152,7 +152,7 @@ export function FeedbackSection() {
 
             <Specimen
                 title="Gauges"
-                rule="A gauge shows a value on a bounded scale: an empty track with its zones in a line under it, and a fill in the colour of each zone it reaches, with a mark where the value was held or a threshold is set. At its lowest it is empty. Gauges read together stand close, lined up. A live gauge follows its value without rendering anything around it. In a row of a list, a compact gauge is its bar alone."
+                rule="A gauge shows a value on a bounded scale: an empty track and a fill in the ink of each zone it reaches. A value held is a block on the bar; a threshold set is a line that stands past its edges, so the two read apart where they stand close. At its lowest it is empty. Gauges read together stand close, lined up. A live gauge follows its value without rendering anything around it. In a row of a list, a compact gauge is its bar alone."
             >
                 <div className="flex max-w-md flex-col gap-5">
                     <Gauge
@@ -176,6 +176,38 @@ export function FeedbackSection() {
                             { from: 30, to: 40, tone: "warn" },
                         ]}
                     />
+                    <Gauges label="Worker load">
+                        {[
+                            { label: "First", value: 0.97, high: 1 },
+                            { label: "Second", value: 0.93, high: 0.955 },
+                        ].map((worker) => (
+                            <Gauge
+                                key={worker.label}
+                                label={worker.label}
+                                value={worker.value}
+                                format={(value) =>
+                                    `${Math.round(value * 100)}%`
+                                }
+                                zones={[
+                                    { from: 0, to: 0.8, tone: "positive" },
+                                    { from: 0.8, to: 0.95, tone: "warn" },
+                                    { from: 0.95, to: 1, tone: "danger" },
+                                ]}
+                                marks={[
+                                    {
+                                        value: worker.high,
+                                        kind: "held",
+                                        label: "Highest",
+                                    },
+                                    {
+                                        value: 0.95,
+                                        kind: "set",
+                                        label: "Limit",
+                                    },
+                                ]}
+                            />
+                        ))}
+                    </Gauges>
                     <Gauges label="Disk activity">
                         <Gauge
                             label="Read"
