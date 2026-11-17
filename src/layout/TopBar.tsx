@@ -145,7 +145,8 @@ function Divider() {
 
 /**
  * Sticky chrome keeps the full name; actions wrap below it only where the
- * title would be left less than its share of the line.
+ * title and what reads beside it would be left less than their share of the
+ * line, or less than their own width where that is narrower.
  *
  * A screen beneath another, such as one record of a list, names the screens
  * above it in a trail, which takes the lead's place before the title.
@@ -183,11 +184,12 @@ export function TopBar({
                     trail?.length ? "py-1.5" : "py-2",
                 )}
             >
-                {/* The name keeps a share of the line: the actions stand
-                    beside it while that much is left. A trail stands over
-                    the title; what reads beside the title moves below it
-                    first. */}
-                <div className="flex max-w-full min-w-0 flex-[1_1_12rem] flex-col">
+                {/* The name and what reads beside it keep a share of the
+                    line, or their own width where that is less: the actions
+                    stand beside them while that much is left. A trail stands
+                    over the title; past that share, what reads beside the
+                    title moves below it first. */}
+                <div className="flex max-w-max min-w-0 flex-[1_1_12rem] flex-col">
                     {trail?.length ? <Trail crumbs={trail} /> : null}
                     <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
                         {trail?.length ? null : lead}

@@ -1,5 +1,5 @@
 import { Collapsible } from "@base-ui/react/collapsible";
-import { Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import {
@@ -64,6 +64,37 @@ export function LayoutSection() {
                         <RaisedChoice />
                     </SettingRow>
                 </Card>
+            </Specimen>
+
+            <Specimen
+                title="A screen's actions"
+                rule="The actions stand beside the title while the title and what reads beside it keep their own width, up to a share of the line, and wrap below it past that. Narrow the window to a phone's width: a short title keeps them beside it."
+                framed={false}
+            >
+                {["Reports", "Quarterly reports for every region"].map(
+                    (title) => (
+                        <div
+                            key={title}
+                            className="overflow-hidden rounded-card border border-border"
+                        >
+                            <TopBar title={title}>
+                                <IconButton aria-label="Previous week">
+                                    <ChevronLeft
+                                        aria-hidden="true"
+                                        className="size-4"
+                                    />
+                                </IconButton>
+                                <Button>9 March</Button>
+                                <IconButton aria-label="Next week">
+                                    <ChevronRight
+                                        aria-hidden="true"
+                                        className="size-4"
+                                    />
+                                </IconButton>
+                            </TopBar>
+                        </div>
+                    ),
+                )}
             </Specimen>
 
             <Specimen
