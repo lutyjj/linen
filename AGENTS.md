@@ -66,7 +66,7 @@ After changing `pnpm-lock.yaml`, update the `pnpmDeps` hash in `flake.nix` as it
 ## Verification and completion
 
 - `pnpm run check` must pass before work is complete. A change to the release assembly (`flake.nix`, `tsdown.config.ts`, `package.json`, the lockfile) also needs `nix flake check`. Report the commands and their results, including checks that failed or could not run.
-- Look at every component you change in the specimen, with Motion, with `linen/still` and on Preact, in both themes and at desk and phone widths. Tailwind drops a class it does not know without an error, so only the drawn page shows a misspelt utility. A new component or state gets its sample in the specimen.
+- Look at every component you change in the specimen, with Motion, with `linen/still` and on Preact, in both themes and on each screen `LANGUAGE.md` names, at its check sizes. Tailwind drops a class it does not know without an error, so only the drawn page shows a misspelt utility. A new component or state gets its sample in the specimen.
 - Every component test runs with Motion, with `linen/still` and on Preact; a Motion prop that reaches the page fails the run. A component test moves through `src/test/memoryNavigation.tsx`, and only `linen/react-router`'s own tests use React Router.
 - A change that adds weight to `consumer/`'s pages raises `budget.json` in the same commit and says why.
 - Add tests where they protect behaviour an app relies on. Assert through roles, names and what a person sees, with expectations derived from the contract; a class name is an assertion only where the stylesheet keys on it. Tests own their clocks and fixtures.
