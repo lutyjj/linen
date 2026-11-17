@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.3](https://github.com/lutyjj/linen/compare/v0.7.2...v0.7.3) (2026-11-17)
+
+
+### Bug Fixes
+
+* a gauge reads at a glance, its held and set marks apart ([#24](https://github.com/lutyjj/linen/issues/24)) ([04500c0](https://github.com/lutyjj/linen/commit/04500c045d03e1c4b190ccf36aaa8334ab10d246))
+* a secret shown once wears the well a value to copy whole wears ([#22](https://github.com/lutyjj/linen/issues/22)) ([6b85c34](https://github.com/lutyjj/linen/commit/6b85c3445a1492410ea69a1d247f494cd391e3a5))
+
 ## [0.7.2](https://github.com/lutyjj/linen/compare/v0.7.1...v0.7.2) (2026-11-17)
 
 
