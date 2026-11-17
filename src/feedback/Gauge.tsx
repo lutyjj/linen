@@ -38,13 +38,12 @@ const ZONE_INK: Record<Tone, string> = {
 };
 
 /**
- * A layer across the scale, each zone in its colour and the rest in `rest`:
- * always an image, so it can stand in `background-image`.
+ * The fill's layer across the scale, each zone in its ink and the rest in
+ * `rest`: always an image, so it can stand in `background-image`.
  */
 function stripes(
     zones: readonly GaugeZone[],
     at: (value: number) => number,
-    colour: Record<Tone, string>,
     rest: string,
 ): string {
     if (zones.length === 0) return `linear-gradient(${rest}, ${rest})`;
@@ -54,34 +53,57 @@ function stripes(
         const from = at(zone.from) * 100;
         const to = at(zone.to) * 100;
         if (from > reached) stops.push(`${rest} ${reached}% ${from}%`);
-        stops.push(`${colour[zone.tone]} ${from}% ${to}%`);
+        stops.push(`${ZONE_INK[zone.tone]} ${from}% ${to}%`);
         reached = to;
     }
     if (reached < 100) stops.push(`${rest} ${reached}% 100%`);
     return `linear-gradient(to right, ${stops.join(", ")})`;
 }
 
+/**
+ * Held and set marks differ in shape, so they read apart where they stand
+ * close: a held value is a block inside the bar, in the text's ink, its
+ * whole width on the bar at either end of the scale; a set point is a thin
+ * line that stands past the bar's edges. In a compact bar both stay inside
+ * it.
+ *
+ * Each mark moves on a transform, so a value it follows many times a second
+ * costs no layout: a box as wide as the scale the block can travel slides by
+ * the share of it the value has reached, and its parent clips what slides
+ * past the bar.
+ */
 function Mark({
     mark,
     at,
+    small,
 }: {
     mark: GaugeMark;
     at: (value: number) => number;
+    small: boolean;
 }) {
     const place = useRef<HTMLSpanElement>(null);
     useFollow(mark.value, (value) => {
         place.current?.style.setProperty("--at", String(at(value)));
     });
+    const held = mark.kind === "held";
     return (
         <span
             ref={place}
             aria-hidden="true"
-            className="absolute inset-0 translate-x-[calc(var(--at,0)*100%)]"
+            className={classes(
+                "absolute inset-y-0 left-0 translate-x-[calc(var(--at,0)*100%)]",
+                held ? (small ? "right-0.5" : "right-1") : "right-0",
+            )}
         >
             <span
                 className={classes(
-                    "absolute inset-y-0 left-0 w-0.5 -translate-x-1/2",
-                    mark.kind === "held" ? "bg-text" : "bg-text-muted",
+                    "absolute inset-y-0 left-0",
+                    held
+                        ? classes("bg-text", small ? "w-0.5" : "w-1")
+                        : classes(
+                              "w-0.5 -translate-x-1/2 rounded-full bg-text-muted",
+                              !small && "-my-1",
+                          ),
                 )}
             />
         </span>
@@ -91,16 +113,15 @@ function Mark({
 /**
  * A value on a bounded scale, such as a level, a load or a fill: its name,
  * a bar that fills toward the end of the scale, and the value in words.
- * The bar wears the colour of each zone it reaches, a line under it shows
- * where the zones lie, and marks stand on it where the value was held or
- * where a threshold is set. It is a meter to assistive technology.
+ * The bar wears the ink of each zone it reaches, and marks stand on it
+ * where the value was held or where a threshold is set. It is a meter to
+ * assistive technology.
  *
  * A value that changes on its own (`Readable`) is followed without
  * rendering, so a gauge can follow a value many times a second inside a
  * screen that does not render for it. Two or more read together stand in
- * `Gauges`. A `compact` gauge, for a row of a list, is its bar alone, thin
- * and without the line of its zones; its name and its value in words are
- * the meter's, read out but not shown.
+ * `Gauges`. A `compact` gauge, for a row of a list, is its bar alone, thin;
+ * its name and its value in words are the meter's, read out but not shown.
  */
 export function Gauge({
     label,
@@ -142,8 +163,7 @@ export function Gauge({
         if (words.current !== null) words.current.textContent = format(number);
     });
     const style = {
-        "--fill": stripes(zones, at, ZONE_INK, "var(--color-accent)"),
-        "--zones": stripes(zones, at, ZONE_INK, "transparent"),
+        "--fill": stripes(zones, at, "var(--color-accent)"),
     } as CSSProperties;
     // The words take the room of the widest value the scale can show, so
     // the bar keeps its length as they change.
@@ -161,7 +181,7 @@ export function Gauge({
             className={classes(
                 small
                     ? "block"
-                    : "grid grid-cols-subgrid col-span-3 items-center text-xs",
+                    : "grid grid-cols-subgrid col-span-3 items-center text-sm",
                 className,
             )}
         >
@@ -171,23 +191,41 @@ export function Gauge({
             >
                 {label}
             </span>
-            {/* The track is the scale, empty, its zones a line under it;
-                only the fill, in the ink of each zone it reaches, is the
-                value, so a gauge at its lowest reads as empty. */}
-            <span className="flex flex-col gap-0.5">
-                <span
-                    className={classes(
-                        "relative overflow-hidden rounded-full bg-sunken",
-                        small ? "h-1" : "h-2",
-                    )}
-                >
+            {/* The track is the scale, empty; only the fill, in the ink of
+                each zone it reaches, is the value, so a gauge at its lowest
+                reads as empty. Held marks lie inside the track's clip; set
+                marks stand over it in a layer that clips only its sides, so
+                they pass the track's top and bottom and nothing reaches past
+                its ends. No mark takes a pointer. */}
+            <span className={classes("relative block", small ? "h-1" : "h-3")}>
+                <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-full bg-border">
                     <span className="absolute inset-0 bg-(image:--fill) [clip-path:inset(0_calc((1_-_var(--level,0))_*_100%)_0_0)]" />
-                    {marks.map((mark, index) => (
-                        <Mark key={index} mark={mark} at={at} />
-                    ))}
+                    {marks.map(
+                        (mark, index) =>
+                            mark.kind === "held" && (
+                                <Mark
+                                    key={index}
+                                    mark={mark}
+                                    at={at}
+                                    small={small}
+                                />
+                            ),
+                    )}
                 </span>
-                {zones.length > 0 && !small && (
-                    <span className="h-0.5 rounded-full bg-(image:--zones)" />
+                {marks.some((mark) => mark.kind === "set") && (
+                    <span className="pointer-events-none absolute inset-0 overflow-x-clip">
+                        {marks.map(
+                            (mark, index) =>
+                                mark.kind === "set" && (
+                                    <Mark
+                                        key={index}
+                                        mark={mark}
+                                        at={at}
+                                        small={small}
+                                    />
+                                ),
+                        )}
+                    </span>
                 )}
             </span>
             {!small && (
@@ -195,7 +233,7 @@ export function Gauge({
                     ref={words}
                     aria-hidden="true"
                     style={{ minWidth: `${room}ch` }}
-                    className="text-right text-text tabular-nums"
+                    className="text-right font-medium text-text tabular-nums"
                 />
             )}
         </div>
@@ -230,7 +268,7 @@ export function Gauges({
         <div role="group" aria-labelledby={name} className={className}>
             <div
                 id={name}
-                className={compact ? "sr-only" : "mb-1.5 text-xs font-medium"}
+                className={compact ? "sr-only" : "mb-2 text-sm font-medium"}
             >
                 {label}
             </div>
@@ -256,7 +294,7 @@ function GaugeRows({
                 className={
                     compact
                         ? "flex flex-col gap-0.5"
-                        : "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2.5 gap-y-1"
+                        : "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1.5"
                 }
             >
                 {children}
