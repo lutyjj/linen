@@ -15,13 +15,12 @@ import {
     NumberField,
     OptionCards,
     PromptDialog,
-    ShownOnce,
     Status,
     TextField,
     useToast,
 } from "../src";
 import { wandering } from "./live";
-import { Group, Sample, Samples, Specimen, Stack } from "./Specimen";
+import { Sample, Samples, Specimen, Stack } from "./Specimen";
 
 const [READ, WRITE] = wandering([60, 30], 0, 200);
 /** Projects in a list, each with its own disk activity. */
@@ -479,23 +478,6 @@ export function FeedbackSection() {
                         </Button>
                     </Sample>
                 </Samples>
-            </Specimen>
-
-            <Specimen
-                title="Shown once"
-                rule="A secret the server keeps only a hash of is on screen once. It says so, and offers the one control that takes it."
-            >
-                <Group name="A new token">
-                    <ShownOnce
-                        what="Token"
-                        label="Access token"
-                        secret="tok_example_000000000000000000000000"
-                        copyLabel="Copy token"
-                        lost="If it is lost, revoke it and make another."
-                    >
-                        Give it to the script that will use it.
-                    </ShownOnce>
-                </Group>
             </Specimen>
         </Stack>
     );

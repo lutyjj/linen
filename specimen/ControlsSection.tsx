@@ -3,6 +3,9 @@ import { useState } from "react";
 
 import {
     Button,
+    Card,
+    CardBody,
+    CardHead,
     CellInput,
     CellText,
     Checkbox,
@@ -19,6 +22,7 @@ import {
     SegmentedControl,
     Select,
     SelectToggle,
+    ShownOnce,
     Switch,
     TextField,
 } from "../src";
@@ -410,6 +414,47 @@ export function ControlsSection() {
                         value="https://api.example.com/v1"
                     />
                 </div>
+            </Specimen>
+
+            <Specimen
+                title="Shown once"
+                rule="A secret the server keeps only a hash of is on screen once. It says so in a description's words, sits in the well a value to copy whole wears, and offers a button that says what it copies."
+                framed={false}
+            >
+                <Card>
+                    <CardHead
+                        title="Access tokens"
+                        description="A script reads reports with a token of its own."
+                    />
+                    <CardBody>
+                        <ShownOnce
+                            what="New token"
+                            label="Access token"
+                            secret="tok_example_000000000000000000000000"
+                            copyLabel="Copy token"
+                            lost="If it is lost, revoke it and make another."
+                        >
+                            Give it to the script that will use it.
+                        </ShownOnce>
+                    </CardBody>
+                </Card>
+                <Card>
+                    <CardHead
+                        title="Invitations"
+                        description="A person joins the project with a code that works once."
+                    />
+                    <CardBody>
+                        <ShownOnce
+                            what="Invitation code"
+                            label="Invitation code"
+                            secret="K7Q2-9XPL"
+                            copies="Join Atlas at https://example.com/join with the code K7Q2-9XPL."
+                            copyLabel="Copy invitation"
+                        >
+                            Send the invitation to the person joining.
+                        </ShownOnce>
+                    </CardBody>
+                </Card>
             </Specimen>
         </Stack>
     );

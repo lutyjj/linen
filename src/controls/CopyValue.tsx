@@ -36,6 +36,24 @@ function Refused({ className }: { className?: string }) {
     );
 }
 
+/** A value and the control that copies it, in a row that wraps. */
+const WELL_ROW_CLASS = "flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1";
+
+/**
+ * The sunken well a value to take whole is set in, in mono at a control's
+ * height, selected whole at a press.
+ */
+function Well({ label, children }: { label: string; children: string }) {
+    return (
+        <code
+            aria-label={label}
+            className="min-h-(--height-control) min-w-0 flex-1 rounded-input bg-sunken px-2.5 py-1.5 font-mono text-xs/5 break-words select-all"
+        >
+            {children}
+        </code>
+    );
+}
+
 /**
  * The control that puts a value on the clipboard, named for what it takes,
  * and the words that ask for the value by hand where the browser refuses.
@@ -88,29 +106,20 @@ export function CopyValue({
     className?: string;
 }) {
     return (
-        <span
-            className={classes(
-                "flex min-w-0 flex-wrap items-start gap-x-2 gap-y-1",
-                className,
-            )}
-        >
-            <code
-                aria-label={label}
-                className="min-h-(--height-control) min-w-0 flex-1 rounded-input bg-sunken px-2.5 py-1.5 font-mono text-xs/5 break-words select-all"
-            >
-                {value}
-            </code>
+        <span className={classes(WELL_ROW_CLASS, className)}>
+            <Well label={label}>{value}</Well>
             <CopyButton value={value} label={label} />
         </span>
     );
 }
 
 /**
- * A secret shown once and never again, with the words that carry it and the
- * one control that takes them: a key or a code the other side keeps only a
- * hash of, so what is on screen is the only copy there will ever be. What
- * losing it means is said under the words above it, in the app's words
- * where the default does not fit.
+ * A secret shown once and never again: a key or a code the other side keeps
+ * only a hash of, so what is on screen is the only copy there will ever be.
+ * It reads as a setting does, its name over what to do with it and what
+ * losing it means, then the secret in a `CopyValue`'s well beside a button
+ * that says what it copies, since the clipboard may take more than the
+ * secret.
  */
 export function ShownOnce({
     what,
@@ -122,7 +131,7 @@ export function ShownOnce({
     className,
     children,
 }: {
-    /** What was made, named as the section names it. */
+    /** What was made, named as the section names it, over the words. */
     what: string;
     /** The accessible name of the secret itself, for reading it back. */
     label: string;
@@ -144,27 +153,27 @@ export function ShownOnce({
     const { copying, copy } = useCopy(copies ?? secret);
 
     return (
-        <div className={className}>
-            <p className="mb-2 text-xs text-text-secondary">
-                {children} {lost ?? words.shownOnce}
-            </p>
-            {copies !== undefined && (
-                <p className="mb-3 text-sm break-words select-all">{copies}</p>
+        <div
+            className={classes(
+                "flex max-w-[60ch] min-w-0 flex-col gap-2.5 text-sm",
+                className,
             )}
-            <p className="mb-3 text-sm">
-                <span className="text-text-secondary">{what}:</span>{" "}
-                <code
-                    aria-label={label}
-                    className="font-mono break-all select-all"
-                >
-                    {secret}
-                </code>
-            </p>
-            <div className="flex flex-wrap items-center gap-3">
+        >
+            <div>
+                <p className="font-medium break-words">{what}</p>
+                <p className="mt-0.5 text-text-secondary">
+                    {children} {lost ?? words.shownOnce}
+                </p>
+            </div>
+            {copies !== undefined && (
+                <p className="break-words select-all">{copies}</p>
+            )}
+            <div className={WELL_ROW_CLASS}>
+                <Well label={label}>{secret}</Well>
                 <Button onClick={copy}>
                     {copying === "copied" ? words.copied : copyLabel}
                 </Button>
-                {copying === "by hand" && <Refused />}
+                {copying === "by hand" && <Refused className="basis-full" />}
             </div>
         </div>
     );

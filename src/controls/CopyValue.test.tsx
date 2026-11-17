@@ -42,6 +42,32 @@ it("asks for the text to be taken by hand where the browser refuses", async () =
     );
 });
 
+it("shows the secret whole under its name and copies it", async () => {
+    const writeText = vi.fn(() => Promise.resolve());
+    const user = userEvent.setup();
+    clipboard(writeText);
+    render(
+        <ShownOnce
+            what="New token"
+            label="Access token"
+            secret="tok_example_0000"
+            copyLabel="Copy token"
+        >
+            Give it to the script.
+        </ShownOnce>,
+    );
+
+    expect(screen.getByText("New token")).toBeVisible();
+    expect(screen.getByLabelText("Access token")).toHaveTextContent(
+        /^tok_example_0000$/,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Copy token" }));
+
+    expect(writeText).toHaveBeenCalledWith("tok_example_0000");
+    expect(screen.getByRole("button", { name: ENGLISH.copied })).toBeVisible();
+});
+
 it("puts what the button names on the clipboard, in the app's words", async () => {
     const writeText = vi.fn(() => Promise.resolve());
     const user = userEvent.setup();
