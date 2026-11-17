@@ -62,8 +62,8 @@ function stripes(
 
 /**
  * Held and set marks differ in shape, so they read apart where they stand
- * close: a held value is a block inside the bar, in the text's ink, its
- * whole width on the bar at either end of the scale; a set point is a thin
+ * close: a held value is a block inside the bar, in the text's ink, that
+ * takes the bar's rounded end at either end of the scale; a set point is a thin
  * line that stands past the bar's edges. In a compact bar both stay inside
  * it.
  *
