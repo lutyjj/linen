@@ -1,6 +1,6 @@
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
-import type { ReactNode } from "react";
+import { type ReactNode, useId } from "react";
 
 import { type Choice } from "../foundation/choice";
 import { classes } from "../foundation/classes";
@@ -47,6 +47,7 @@ export function OptionCards<Value extends string>({
     onValueChange: (value: Value) => void;
     className?: string;
 }) {
+    const id = useId();
     return (
         <RadioGroup
             aria-label={label}
@@ -55,10 +56,14 @@ export function OptionCards<Value extends string>({
             onValueChange={(next) => onValueChange(next as Value)}
             className={classes("grid gap-2 sm:grid-cols-2", className)}
         >
-            {options.map((option) => (
+            {options.map((option, index) => (
                 <Radio.Root
                     key={option.value}
                     value={option.value}
+                    // Its own words and line, which inside a field win over
+                    // the field's name that Base UI would give every card.
+                    aria-labelledby={`${id}-${index}`}
+                    aria-describedby={`${id}-${index}-description`}
                     disabled={option.disabled}
                     className={classes(
                         "cursor-pointer rounded-button border px-3 py-2 text-left",
@@ -72,6 +77,7 @@ export function OptionCards<Value extends string>({
                     )}
                 >
                     <span
+                        id={`${id}-${index}`}
                         className={classes(
                             "flex items-center gap-1.5 text-sm font-medium",
                             option.value === value ? "text-accent" : "",
@@ -80,7 +86,10 @@ export function OptionCards<Value extends string>({
                         {option.value === suggested && suggestedMark}
                         {option.label}
                     </span>
-                    <span className="block text-xs text-text-secondary">
+                    <span
+                        id={`${id}-${index}-description`}
+                        className="block text-xs text-text-secondary"
+                    >
                         {option.description}
                     </span>
                 </Radio.Root>

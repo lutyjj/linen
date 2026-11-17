@@ -45,12 +45,15 @@ export function SegmentedControl<Value extends string>({
                 className,
             )}
         >
-            {options.map((option) => {
+            {options.map((option, index) => {
                 const active = option.value === value;
                 return (
                     <Radio.Root
                         key={option.value}
                         value={option.value}
+                        // Its own words, which inside a field win over the
+                        // field's name that Base UI would give every option.
+                        aria-labelledby={`${group}-${index}`}
                         disabled={option.disabled}
                         data-label={option.label}
                         className={classes(
@@ -64,7 +67,9 @@ export function SegmentedControl<Value extends string>({
                         )}
                     >
                         {active && <ChosenMark group={group} radius="input" />}
-                        <span className="relative">{option.label}</span>
+                        <span id={`${group}-${index}`} className="relative">
+                            {option.label}
+                        </span>
                     </Radio.Root>
                 );
             })}

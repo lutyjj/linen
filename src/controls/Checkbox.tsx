@@ -1,5 +1,5 @@
 import { Checkbox as BaseCheckbox } from "@base-ui/react/checkbox";
-import { type ReactNode, useRef } from "react";
+import { type ReactNode, useId, useRef } from "react";
 
 import { classes } from "../foundation/classes";
 
@@ -53,12 +53,16 @@ export function Checkbox({
     "aria-label"?: string;
     children?: ReactNode;
 }) {
+    const words = useId();
     const box = (
         <BaseCheckbox.Root
             checked={checked}
             onCheckedChange={onCheckedChange}
             disabled={disabled}
             aria-label={ariaLabel}
+            // Named by its words, which inside a field win over the field's
+            // name that Base UI would give every box.
+            aria-labelledby={children === undefined ? undefined : words}
             className={classes(
                 BOX_CLASS,
                 // Held in its words, the box dims with them.
@@ -73,6 +77,7 @@ export function Checkbox({
     if (children === undefined) return box;
     return (
         <label
+            id={words}
             className={classes(
                 "inline-flex w-full cursor-pointer items-center gap-2 text-left text-sm has-data-[disabled]:cursor-default has-data-[disabled]:opacity-50",
                 secondary ? "text-text-secondary hover:text-text" : "",

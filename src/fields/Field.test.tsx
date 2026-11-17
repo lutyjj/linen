@@ -5,6 +5,8 @@ import { useState } from "react";
 import { expect, it } from "vitest";
 
 import { Button } from "../controls/Button";
+import { OptionCards } from "../controls/OptionCards";
+import { SegmentedControl } from "../controls/SegmentedControl";
 import { Field } from "./Field";
 import { Form, type FormErrors } from "./Form";
 import { SearchSelect } from "./SearchSelect";
@@ -169,4 +171,43 @@ it("holds only its control to a stated width, never its name or its messages", (
         screen.getByText("Where the service listens."),
     );
     expect(held).not.toContainElement(screen.getByText("Port"));
+});
+
+it("leaves each option of a group its own name, and describes it by its line and the field's hint", () => {
+    render(
+        <>
+            <Field label="Export format" hint="How the file is written.">
+                <SegmentedControl
+                    label="Export format"
+                    value="csv"
+                    options={[
+                        { value: "csv", label: "CSV" },
+                        { value: "json", label: "JSON" },
+                    ]}
+                    onValueChange={() => undefined}
+                />
+            </Field>
+            <Field label="Its fate" hint="Pick one.">
+                <OptionCards
+                    label="Its fate"
+                    value={undefined}
+                    options={[
+                        {
+                            value: "keep",
+                            label: "Keep it",
+                            description: "Nothing changes.",
+                        },
+                    ]}
+                    onValueChange={() => undefined}
+                />
+            </Field>
+        </>,
+    );
+    expect(
+        screen.getByRole("radio", { name: "CSV" }),
+    ).toHaveAccessibleDescription("How the file is written.");
+    expect(screen.getByRole("radio", { name: "JSON" })).toBeInTheDocument();
+    expect(
+        screen.getByRole("radio", { name: "Keep it" }),
+    ).toHaveAccessibleDescription("Nothing changes. Pick one.");
 });

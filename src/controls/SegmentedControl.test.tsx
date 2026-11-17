@@ -1,3 +1,4 @@
+import { Field } from "@base-ui/react/field";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -40,6 +41,28 @@ describe("one choice from a small fixed set", () => {
         const onChange = harness("grid");
         await userEvent.click(screen.getByRole("radio", { name: "Grid" }));
         expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it("names each option by its own words inside a field, and the group by the field", () => {
+        render(
+            <Field.Root>
+                <Field.Label nativeLabel={false} render={<div />}>
+                    Layout
+                </Field.Label>
+                <SegmentedControl
+                    label="Arrangement"
+                    value="grid"
+                    options={OPTIONS}
+                    onValueChange={() => undefined}
+                />
+            </Field.Root>,
+        );
+        expect(
+            screen.getByRole("radiogroup", { name: "Layout" }),
+        ).toBeInTheDocument();
+        expect(screen.getByRole("radio", { name: "Grid" })).toBeInTheDocument();
+        expect(screen.getByRole("radio", { name: "List" })).toBeInTheDocument();
+        expect(screen.queryByRole("radio", { name: "Layout" })).toBeNull();
     });
 
     it("is one stop on the Tab key, and the arrow keys move the choice", async () => {
