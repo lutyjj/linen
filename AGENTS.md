@@ -76,6 +76,8 @@ After changing `pnpm-lock.yaml`, update the `pnpmDeps` hash in `flake.nix` as it
 
 Commit messages are Conventional Commits, `type: subject` in the present tense. Reviews use Conventional Comments: `label (decoration): subject`, such as `issue: ...` or `suggestion (non-blocking): ...`.
 
+A release is the pull request Release Please keeps, which gathers every change on `main` since the last one. Merge it when an app needs what `main` holds or a body of work is done, never after each fix: each release costs every app a bump.
+
 Prose in documentation and comments states what is true now, for a stranger. No em dashes, attribution trailers, filler or change-history narration; history belongs in commit messages. Keep comments short and delete any the code already says.
 
 Record durable lessons in their owning code, test, automation or documentation. Add a rule here only when it applies across the repository and fills a gap; revise an existing rule when it already covers the lesson.
