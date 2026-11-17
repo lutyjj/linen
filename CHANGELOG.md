@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.2](https://github.com/lutyjj/linen/compare/v0.7.1...v0.7.2) (2026-11-17)
+
+
+### Bug Fixes
+
+* a short title keeps its actions beside it on a phone ([8958bf6](https://github.com/lutyjj/linen/commit/8958bf65d7bd26d60fbf1dfe2bf9c71f92665648))
+
 ## [0.7.1](https://github.com/lutyjj/linen/compare/v0.7.0...v0.7.1) (2026-11-17)
 
 
