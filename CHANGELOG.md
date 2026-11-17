@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/lutyjj/linen/compare/v0.7.0...v0.7.1) (2026-11-17)
+
+
+### Bug Fixes
+
+* an option or a box keeps its own name, and a card's line describes it ([a366459](https://github.com/lutyjj/linen/commit/a366459147f7ffc1258a1a804efc19c1758da29a))
+
 ## [0.7.0](https://github.com/lutyjj/linen/compare/v0.6.0...v0.7.0) (2026-11-16)
 
 
