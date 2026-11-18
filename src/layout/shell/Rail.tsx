@@ -4,6 +4,7 @@ import { m } from "motion/react";
 import { createContext, type ReactNode, use, useState } from "react";
 
 import { classes } from "../../foundation/classes";
+import { keep, readKept } from "../../foundation/kept";
 import {
     OPEN_TRIGGER_CLASS,
     POPUP_CLASS,
@@ -28,22 +29,11 @@ import {
  * refuses storage keeps it for the page's life.
  */
 function useCompactRail(key: string): [boolean, (compact: boolean) => void] {
-    const [compact, setCompact] = useState(() => {
-        try {
-            return localStorage.getItem(key) === "compact";
-        } catch {
-            return false;
-        }
-    });
+    const [compact, setCompact] = useState(() => readKept(key) === "compact");
     return [
         compact,
         (next) => {
-            try {
-                if (next) localStorage.setItem(key, "compact");
-                else localStorage.removeItem(key);
-            } catch {
-                // Kept for this page only.
-            }
+            keep(key, next ? "compact" : null);
             setCompact(next);
         },
     ];
@@ -91,7 +81,7 @@ function RailLabel({
 }
 
 /** A row's icon and words, which fold into a tip with the rail. */
-export function RailRow({
+function RailRow({
     icon: Icon,
     label,
     children,
@@ -205,7 +195,6 @@ export function RailChoice({
     return (
         <Popover.Root>
             <Popover.Trigger
-                render={<button />}
                 className={classes(railItemClass(false), OPEN_TRIGGER_CLASS)}
             >
                 <RailRow icon={icon} label={label} />

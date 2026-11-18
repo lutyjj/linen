@@ -19,12 +19,10 @@ export interface Section {
 }
 
 /**
- * Secondary navigation inside one screen: a rail of sections, one concern each.
- *
- * A few top-level screens, none more than two deep, need no breadcrumbs. Where
- * a screen holds more than one concern, this is the hierarchy: the sidebar says
- * which screen, this says which part of it, and the two together are the whole
- * of "where am I".
+ * Secondary navigation inside one screen: its sections, one concern each, in
+ * a bar under the top bar. Where a screen holds more than one concern, the
+ * shell's places say which screen and this says which part of it; a screen
+ * beneath another names the screens above it in its top bar's trail.
  *
  * Each section is a route rather than an anchor, so it is linkable, it survives
  * a reload, and the browser's back button steps through the sections a person
@@ -33,10 +31,12 @@ export interface Section {
 export function SectionNav({
     label,
     sections,
+    className,
 }: {
-    /** Names this rail, since a screen's sidebar is a navigation too. */
+    /** Names these sections apart from the shell's places, a navigation too. */
     label: string;
     sections: readonly Section[];
+    className?: string;
 }) {
     const marks = useId();
     const group = useRef<HTMLDivElement>(null);
@@ -52,9 +52,12 @@ export function SectionNav({
         <nav
             ref={rail}
             aria-label={label}
-            className="sticky top-[calc(var(--inset-top)+var(--height-conditions,0px)+var(--height-topbar,0px))] z-4 border-b border-border bg-bg"
+            className={classes(
+                "sticky top-[calc(var(--inset-top)+var(--height-conditions,0px)+var(--height-topbar,0px))] z-4 border-b border-border bg-bg",
+                className,
+            )}
         >
-            {/* A single scrolling rail on phones; wider layouts can wrap. */}
+            {/* One row that scrolls on a phone; wider screens wrap. */}
             {/* It scrolls, so Motion is told to measure the mark inside it
                 rather than as though the scroll had moved it. */}
             <m.div
@@ -80,13 +83,13 @@ export function SectionNav({
     );
 }
 
-/** A section of the rail, which wears the chosen mark while it is current. */
+/** A section, which wears the chosen mark while it is current. */
 function SectionLink({
     href,
     label,
     marks,
 }: Section & {
-    /** The rail's own id, which its chosen mark travels within. */
+    /** The bar's own id, which its chosen mark travels within. */
     marks: string;
 }) {
     const { Link } = useNavigation();

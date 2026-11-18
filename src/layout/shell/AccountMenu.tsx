@@ -47,7 +47,6 @@ export function AccountMenu({
     return (
         <Popover.Root>
             <Popover.Trigger
-                render={<button />}
                 aria-label={label}
                 className={classes(
                     railItemClass(false),

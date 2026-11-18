@@ -1,15 +1,22 @@
 import { useCallback, useSyncExternalStore } from "react";
 
+import { keep, readKept } from "./foundation/kept";
 import { crossFade } from "./motion/crossFade";
 
 /** What the person asked for, which is not the same as what is on screen. */
 export type ThemePreference = "system" | "light" | "dark";
 
+/** Every preference, in the order a choice of them offers them. */
 export const THEME_PREFERENCES: readonly ThemePreference[] = [
     "system",
     "light",
     "dark",
 ];
+
+/** A pinned preference, or the system's where none is. */
+function pinned(value: string | null | undefined): ThemePreference {
+    return value === "light" || value === "dark" ? value : "system";
+}
 
 export interface ThemeStore {
     /** The preference in force on this page. */
@@ -43,32 +50,10 @@ export function createThemeStore({
 }): ThemeStore {
     const listeners = new Set<() => void>();
 
-    /*
-     * The preference lives on the root and is kept in storage where the
-     * browser allows; a browser that refuses storage keeps it for the page's
-     * life.
-     */
+    /* The preference in force is the root's `data-theme`; `keep` stores it
+     * in this browser. */
     function current(): ThemePreference {
-        const value = document.documentElement.dataset.theme;
-        return value === "light" || value === "dark" ? value : "system";
-    }
-
-    function keep(preference: ThemePreference): void {
-        try {
-            if (preference === "system") localStorage.removeItem(key);
-            else localStorage.setItem(key, preference);
-        } catch {
-            // Kept for this page only.
-        }
-    }
-
-    function read(): ThemePreference {
-        try {
-            const value = localStorage.getItem(key);
-            return value === "light" || value === "dark" ? value : "system";
-        } catch {
-            return "system";
-        }
+        return pinned(document.documentElement.dataset.theme);
     }
 
     function apply(preference: ThemePreference): void {
@@ -77,7 +62,7 @@ export function createThemeStore({
         } else {
             document.documentElement.dataset.theme = preference;
         }
-        keep(preference);
+        keep(key, preference === "system" ? null : preference);
         if (bar === undefined) return;
         for (const meta of document.querySelectorAll<HTMLMetaElement>(
             'meta[name="theme-color"]',
@@ -92,7 +77,7 @@ export function createThemeStore({
         }
     }
 
-    apply(read());
+    apply(pinned(readKept(key)));
 
     const subscribe = (listener: () => void) => {
         listeners.add(listener);

@@ -4,16 +4,22 @@ import {
     createThemeStore,
     type PhoneNav,
     SegmentedControl,
+    THEME_PREFERENCES,
     type ThemePreference,
 } from "../src";
 
 const { useTheme } = createThemeStore({ key: "linen:theme" });
 
-const THEMES: { value: ThemePreference; label: string }[] = [
-    { value: "system", label: "Auto" },
-    { value: "light", label: "Light" },
-    { value: "dark", label: "Dark" },
-];
+const THEME_LABELS: Record<ThemePreference, string> = {
+    system: "Auto",
+    light: "Light",
+    dark: "Dark",
+};
+
+const THEMES = THEME_PREFERENCES.map((value) => ({
+    value,
+    label: THEME_LABELS[value],
+}));
 
 /** Hues the specimen can be seen in. */
 const HUES = [

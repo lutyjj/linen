@@ -72,12 +72,7 @@ export { SettingNote, SettingRow, SettingToggle } from "./layout/Setting";
 export { AccountMenu, MenuChoice } from "./layout/shell/AccountMenu";
 export { type PhoneNav } from "./layout/shell/PhoneNav";
 export { type Home, type Place } from "./layout/shell/places";
-export {
-    RailChoice,
-    railItemClass,
-    RailRow,
-    useRailCompact,
-} from "./layout/shell/Rail";
+export { RailChoice } from "./layout/shell/Rail";
 export { Shell } from "./layout/shell/Shell";
 export { type Crumb, TitleField, TopBar, TopBarLead } from "./layout/TopBar";
 export { LinenProvider } from "./LinenProvider";
