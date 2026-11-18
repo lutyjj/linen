@@ -27,6 +27,14 @@ export function Card({
     );
 }
 
+/**
+ * A card's title, a count beside it, what the card is for, and its actions.
+ *
+ * The actions stand beside the title while the title and its count keep
+ * their own width beside them, and go under the description once they would
+ * not, so wide actions never squeeze the title. The description takes the
+ * head's width either way.
+ */
 export function CardHead({
     title,
     aside,
@@ -46,7 +54,10 @@ export function CardHead({
     aside?: ReactNode;
     description?: ReactNode;
     className?: string;
-    /** The card's actions. */
+    /**
+     * The card's actions, controls no taller than `--height-control`, since a
+     * taller one would reach the description under it.
+     */
     children?: ReactNode;
 }) {
     return (
@@ -56,18 +67,28 @@ export function CardHead({
                 className,
             )}
         >
-            <div className="grid grid-cols-1 items-center gap-x-4 gap-y-1.5 md:gap-y-2 @min-[36rem]:grid-cols-[minmax(0,1fr)_auto]">
-                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-1">
-                    <h2 className="text-md font-semibold">{title}</h2>
-                    {aside}
+            <div className="flex flex-wrap items-start gap-x-4 gap-y-1.5 md:gap-y-2">
+                <div className="min-w-0 grow">
+                    {/* The words are narrower than the head only while the
+                        actions stand beside them (100cqw - 100% is more than
+                        nothing). The title's row then takes a control's
+                        height, the band the actions are centred in, so its
+                        line is centred on theirs. */}
+                    <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-1 py-[min((var(--height-control)-var(--text-md--line-height))/2,100cqw-100%)]">
+                        <h2 className="text-md font-semibold">{title}</h2>
+                        {aside}
+                    </div>
+                    {/* The description reaches under the actions and lends
+                        the words none of its width, so the title alone
+                        decides whether the actions fit beside it. */}
+                    {description !== undefined && (
+                        <p className="-me-[calc(100cqw-100%)] mt-1.5 max-w-[70ch] text-sm text-text-secondary [contain:inline-size] md:mt-2">
+                            {description}
+                        </p>
+                    )}
                 </div>
-                {description !== undefined && (
-                    <p className="max-w-[70ch] text-sm text-text-secondary @min-[36rem]:col-span-2 @min-[36rem]:row-start-2">
-                        {description}
-                    </p>
-                )}
                 {children !== undefined && (
-                    <Actions className="min-w-0 @min-[36rem]:col-start-2 @min-[36rem]:row-start-1 @min-[36rem]:justify-end">
+                    <Actions className="min-h-(--height-control) min-w-0">
                         {children}
                     </Actions>
                 )}

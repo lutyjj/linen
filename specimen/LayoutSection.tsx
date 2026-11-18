@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import {
+    Actions,
     Button,
     Card,
     CardBody,
@@ -15,6 +16,7 @@ import {
     FormBand,
     IconButton,
     PickerMark,
+    SearchField,
     SegmentedControl,
     SettingNote,
     SettingRow,
@@ -32,6 +34,9 @@ export function LayoutSection() {
     const [density, setDensity] = useState("comfortable");
     const [format, setFormat] = useState("csv");
     const [name, setName] = useState("Quarterly report");
+    const [query, setQuery] = useState("");
+    const [status, setStatus] = useState("all");
+    const [period, setPeriod] = useState("week");
 
     return (
         <Stack>
@@ -136,7 +141,7 @@ export function LayoutSection() {
 
             <Specimen
                 title="A card and its head"
-                rule="One concern per card. The head holds its title, a count beside it, what it is for, and its actions, which sit beside the title while there is room and under the words once there is not. Every title and value inside starts on the gutter."
+                rule="One concern per card. The head holds its title, a count beside it, what it is for, and its actions, which sit beside the title while the title keeps its own width beside them, and under what the card is for once it would not. Every title and value inside starts on the gutter."
                 framed={false}
             >
                 <Card>
@@ -157,6 +162,62 @@ export function LayoutSection() {
                     </FormBand>
                     <CardBody className="text-sm text-text-secondary">
                         A sunken band holds a form opened inside the card.
+                    </CardBody>
+                </Card>
+                <Card>
+                    <CardHead
+                        title="Scheduled exports"
+                        aside={<Count>48</Count>}
+                        description="Every report a schedule has written, newest first."
+                    >
+                        <SearchField
+                            label="Search exports"
+                            placeholder="Search exports"
+                            value={query}
+                            onValueChange={setQuery}
+                        />
+                        <SegmentedControl
+                            label="Status"
+                            value={status}
+                            options={[
+                                { value: "all", label: "All" },
+                                { value: "written", label: "Written" },
+                                { value: "failed", label: "Failed" },
+                            ]}
+                            onValueChange={setStatus}
+                        />
+                        <SegmentedControl
+                            label="Period"
+                            value={period}
+                            options={[
+                                { value: "week", label: "Week" },
+                                { value: "month", label: "Month" },
+                                { value: "quarter", label: "Quarter" },
+                                { value: "year", label: "Year" },
+                            ]}
+                            onValueChange={setPeriod}
+                        />
+                        <Actions className="flex-nowrap">
+                            <IconButton aria-label="Previous period">
+                                <ChevronLeft
+                                    aria-hidden="true"
+                                    className="size-4"
+                                />
+                            </IconButton>
+                            <Button>9 March</Button>
+                            <IconButton aria-label="Next period">
+                                <ChevronRight
+                                    aria-hidden="true"
+                                    className="size-4"
+                                />
+                            </IconButton>
+                        </Actions>
+                        <Button>Download all</Button>
+                        <Button variant="primary">New export</Button>
+                    </CardHead>
+                    <CardBody className="text-sm text-text-secondary">
+                        Actions too wide to stand beside the title go under what
+                        the card is for, as on a phone.
                     </CardBody>
                 </Card>
             </Specimen>
