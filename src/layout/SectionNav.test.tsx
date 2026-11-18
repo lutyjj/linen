@@ -30,6 +30,27 @@ it("marks the section the router is on", () => {
     ).not.toHaveAttribute("aria-current");
 });
 
+it("marks a screen's first section only at the screen's own address", () => {
+    const report = [
+        { href: "/reports", label: "Overview", exact: true },
+        { href: "/reports/schedules", label: "Schedules" },
+    ];
+    render(
+        <LinenProvider
+            navigation={memoryNavigation("/reports/schedules").navigation}
+        >
+            <SectionNav label="Settings" sections={report} />
+        </LinenProvider>,
+    );
+    expect(sections().getByRole("link", { name: "Schedules" })).toHaveAttribute(
+        "aria-current",
+        "page",
+    );
+    expect(
+        sections().getByRole("link", { name: "Overview" }),
+    ).not.toHaveAttribute("aria-current");
+});
+
 it("marks the section of the page's own address where the app has no router", () => {
     window.history.pushState({}, "", "/settings/profile");
     try {

@@ -16,6 +16,9 @@ export interface Section {
     /** A path from the root, such as `/settings/people`. */
     href: string;
     label: string;
+    /** Where the section is current only on its own address, as a screen's
+     * first section at the screen's own address is. */
+    exact?: boolean;
 }
 
 /**
@@ -87,13 +90,14 @@ export function SectionNav({
 function SectionLink({
     href,
     label,
+    exact = false,
     marks,
 }: Section & {
     /** The bar's own id, which its chosen mark travels within. */
     marks: string;
 }) {
     const { Link } = useNavigation();
-    const current = useCurrent(href);
+    const current = useCurrent(href, exact);
     return (
         <Link
             href={href}
