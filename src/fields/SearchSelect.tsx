@@ -12,8 +12,11 @@ import {
 import { CONTROL_CLASS, Field } from "./Field";
 import { PICKER_CLASS, PickerMark } from "./Select";
 
-/** The search box at the top of a picker's list. */
-const POPUP_SEARCH_CLASS = `${CONTROL_CLASS} mb-1 w-full outline-none`;
+/**
+ * The search box at the top of a picker's list, ringed while it has the
+ * focus, as every field is.
+ */
+const POPUP_SEARCH_CLASS = `${CONTROL_CLASS} mb-1 w-full`;
 
 /**
  * One value out of a list nobody can scan, such as the world's time zones,
