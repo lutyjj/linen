@@ -74,6 +74,10 @@ export function buttonClass(variant: ButtonVariant = "default"): string {
 export const LINK_CLASS =
     "font-medium text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-current";
 
+function held(ariaDisabled: ButtonProps["aria-disabled"]): boolean {
+    return ariaDisabled === true || ariaDisabled === "true";
+}
+
 export function Button({
     variant = "default",
     busy = false,
@@ -89,9 +93,10 @@ export function Button({
             aria-busy={busy || undefined}
             aria-disabled={busy || rest["aria-disabled"]}
             onClick={(event) => {
-                // A press while it waits starts nothing, a form's submit
+                // A press while it waits, or on a button the caller marked
+                // disabled for good, starts nothing, a form's submit
                 // included; the button keeps the focus it has.
-                if (busy) {
+                if (busy || held(rest["aria-disabled"])) {
                     event.preventDefault();
                     return;
                 }

@@ -276,12 +276,14 @@
 /* A control answers the hand (the pointer's hand, a hover, a press) only
  * while it takes a press: `pressable:` comes before each of those classes,
  * at no more weight than the class itself, so a caller's `hover:` still
- * wins. One that takes no press, natively disabled or marked so by Base UI,
- * is `inactive:` and wears `dimmed`: at half its ink its words in the text's
- * ink keep 3:1 or more against their ground in both themes, less than muted
- * text keeps, and the arrow shows over all it holds. */
-@custom-variant pressable (:where(&:not(:disabled, [data-disabled])));
-@custom-variant inactive (&:is(:disabled, [data-disabled]));
+ * wins. One busy with an answer takes none, and shows the pointer `thinking`
+ * gives it. One that takes no press for good, natively disabled, marked so
+ * by Base UI or by `aria-disabled`, is `inactive:` and wears `dimmed`: at
+ * half its ink its words in the text's ink keep 3:1 or more against their
+ * ground in both themes, less than muted text keeps, and the arrow shows
+ * over all it holds. */
+@custom-variant pressable (:where(&:not(:disabled, [data-disabled], [aria-disabled="true"], [aria-busy="true"])));
+@custom-variant inactive (&:is(:disabled, [data-disabled], [aria-disabled="true"]:not([aria-busy="true"])));
 
 @utility dimmed {
     opacity: 50%;

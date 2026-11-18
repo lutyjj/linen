@@ -36,3 +36,17 @@ it("takes no second press while what it started is under way", async () => {
     expect(submitted).toHaveBeenCalledTimes(1);
     expect(save).not.toHaveAttribute("aria-busy");
 });
+
+it("takes no press while the caller marks it disabled and keeps its focus", async () => {
+    const pressed = vi.fn();
+    render(
+        <Button aria-disabled onClick={pressed}>
+            Publish
+        </Button>,
+    );
+    const publish = screen.getByRole("button", { name: "Publish" });
+    await userEvent.click(publish);
+    expect(pressed).not.toHaveBeenCalled();
+    expect(publish).toHaveFocus();
+    expect(publish).toHaveAttribute("aria-disabled", "true");
+});
