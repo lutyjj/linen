@@ -9,6 +9,7 @@ import {
 
 import { classes } from "../foundation/classes";
 import type { Tone } from "../foundation/tone";
+import { useWords } from "../foundation/words";
 import { isReadable, type Live, useFollow } from "./live";
 
 /** A stretch of the scale that means something, such as too loud. */
@@ -26,8 +27,20 @@ export interface GaugeZone {
 export interface GaugeMark {
     value: Live<number>;
     kind: "held" | "set";
-    /** What it is, for a reader who cannot see it. */
+    /**
+     * What it is, read out before its value after the gauge's, such as
+     * `Peak` in `-12 dB, Peak -3 dB`.
+     */
     label: string;
+}
+
+/**
+ * Whether a mark stands on the bar at a share of the scale: a value held at
+ * the lowest reached nothing, so it draws nothing and is not read out, as the
+ * fill at its lowest is empty.
+ */
+function stands(mark: GaugeMark, share: number): boolean {
+    return mark.kind === "set" || share > 0;
 }
 
 const ZONE_INK: Record<Tone, string> = {
@@ -64,24 +77,26 @@ function stripes(
  * Held and set marks differ in shape, so they read apart where they stand
  * close: a held value is a block inside the bar, in the text's ink, that
  * takes the bar's rounded end at the top of the scale and draws nothing at
- * its lowest, where the value reached nothing, as the fill does; a set point
- * is a thin line that stands past the bar's edges. In a compact bar both stay
- * inside it.
+ * its lowest; a set point is a thin line that stands past the bar's edges. In
+ * a compact bar both stay inside it.
  *
  * Each mark moves on a transform, so a value it follows many times a second
  * costs no layout: a box as wide as the scale the block can travel slides by
  * the share of it the value has reached, and its parent clips what slides
  * past the bar. A held block leaves and returns at the lowest by its
- * visibility, which costs no layout either.
+ * visibility, which costs no layout either. Each value it follows is handed
+ * on to `heard`, so the gauge reads it out.
  */
 function Mark({
     mark,
     at,
     small,
+    heard,
 }: {
     mark: GaugeMark;
     at: (value: number) => number;
     small: boolean;
+    heard: (value: number) => void;
 }) {
     const place = useRef<HTMLSpanElement>(null);
     const held = mark.kind === "held";
@@ -89,7 +104,8 @@ function Mark({
         const element = place.current;
         if (element === null) return;
         element.style.setProperty("--at", String(at(value)));
-        if (held) element.style.visibility = at(value) === 0 ? "hidden" : "";
+        element.style.visibility = stands(mark, at(value)) ? "" : "hidden";
+        heard(value);
     });
     return (
         <span
@@ -120,7 +136,7 @@ function Mark({
  * a bar that fills toward the end of the scale, and the value in words.
  * The bar wears the ink of each zone it reaches, and marks stand on it
  * where the value was held or where a threshold is set. It is a meter to
- * assistive technology.
+ * assistive technology, whose value in words names the marks on the bar.
  *
  * A value that changes on its own (`Readable`) is followed without
  * rendering, so a gauge can follow a value many times a second inside a
@@ -146,7 +162,10 @@ export function Gauge({
     max?: number;
     zones?: readonly GaugeZone[];
     marks?: readonly GaugeMark[];
-    /** The value in words, as it is shown and read out, such as `-12 dB`. */
+    /**
+     * The value in words, as it is shown and read out, such as `-12 dB`;
+     * each mark's value is said the same way.
+     */
     format?: (value: number) => string;
     /** Alone, the bar for a row of a list; in `Gauges`, theirs decides. */
     compact?: boolean;
@@ -155,18 +174,43 @@ export function Gauge({
     const name = useId();
     const rows = use(InRows);
     const small = rows === null ? compact : rows === "compact";
+    const words = useWords();
     const meter = useRef<HTMLDivElement>(null);
-    const words = useRef<HTMLSpanElement>(null);
+    const shown = useRef<HTMLSpanElement>(null);
+    // The last value followed and each mark's, so that a change to any of
+    // them reads all of them out again.
+    const followed = useRef<{ value?: number; marks: (number | undefined)[] }>({
+        marks: [],
+    });
     const at = (number: number) =>
         Math.min(1, Math.max(0, (number - min) / (max - min || 1)));
+    const readOut = () => {
+        const number = followed.current.value;
+        if (number === undefined) return;
+        const said = marks.flatMap((mark, index) => {
+            const reached = followed.current.marks[index];
+            return reached === undefined || !stands(mark, at(reached))
+                ? []
+                : [{ label: mark.label, value: format(reached) }];
+        });
+        meter.current?.setAttribute(
+            "aria-valuetext",
+            words.gaugeReading(format(number), said),
+        );
+    };
     useFollow(value, (number) => {
         const element = meter.current;
         if (element === null) return;
+        followed.current.value = number;
         element.style.setProperty("--level", String(at(number)));
         element.setAttribute("aria-valuenow", String(number));
-        element.setAttribute("aria-valuetext", format(number));
-        if (words.current !== null) words.current.textContent = format(number);
+        if (shown.current !== null) shown.current.textContent = format(number);
+        readOut();
     });
+    const heard = (index: number) => (number: number) => {
+        followed.current.marks[index] = number;
+        readOut();
+    };
     const style = {
         "--fill": stripes(zones, at, "var(--color-accent)"),
     } as CSSProperties;
@@ -181,7 +225,6 @@ export function Gauge({
             aria-valuemin={min}
             aria-valuemax={max}
             aria-valuenow={isReadable(value) ? undefined : value}
-            aria-valuetext={isReadable(value) ? undefined : format(value)}
             style={style}
             className={classes(
                 small
@@ -213,6 +256,7 @@ export function Gauge({
                                     mark={mark}
                                     at={at}
                                     small={small}
+                                    heard={heard(index)}
                                 />
                             ),
                     )}
@@ -227,6 +271,7 @@ export function Gauge({
                                         mark={mark}
                                         at={at}
                                         small={small}
+                                        heard={heard(index)}
                                     />
                                 ),
                         )}
@@ -235,7 +280,7 @@ export function Gauge({
             </span>
             {!small && (
                 <span
-                    ref={words}
+                    ref={shown}
                     aria-hidden="true"
                     style={{ minWidth: `${room}ch` }}
                     className="text-right font-medium text-text tabular-nums"
