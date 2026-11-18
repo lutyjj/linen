@@ -68,8 +68,8 @@ const FRAME: Record<ChipFrame, string> = {
 };
 
 const UNDER_HAND: Record<ChipFrame, string> = {
-    rest: "hover:border-(--chip-strong) data-[popup-open]:border-(--chip-strong)",
-    hover: "hover:border-(--chip-border) hover:bg-(--chip-surface) focus-visible:border-(--chip-border) focus-visible:bg-(--chip-surface) data-[popup-open]:border-(--chip-border) data-[popup-open]:bg-(--chip-surface)",
+    rest: "pressable:hover:border-(--chip-strong) data-[popup-open]:border-(--chip-strong)",
+    hover: "pressable:hover:border-(--chip-border) pressable:hover:bg-(--chip-surface) focus-visible:border-(--chip-border) focus-visible:bg-(--chip-surface) data-[popup-open]:border-(--chip-border) data-[popup-open]:bg-(--chip-surface)",
 };
 
 export interface ChipStyle {
@@ -149,7 +149,7 @@ export function ChipTrigger({
         <button
             type="button"
             className={classes(
-                "cursor-pointer",
+                "pressable:cursor-pointer inactive:dimmed",
                 chip,
                 UNDER_HAND[shown],
                 className,

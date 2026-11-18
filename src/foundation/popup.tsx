@@ -21,7 +21,7 @@ export const POSITIONER_CLASS = "z-50";
 
 /** One choice in a popup's list, highlighted and disabled the same way in every picker. */
 export const OPTION_CLASS =
-    "cursor-pointer rounded-input px-2 py-1.5 data-[highlighted]:bg-accent-weak data-[highlighted]:text-accent data-[disabled]:cursor-default data-[disabled]:opacity-50";
+    "rounded-input px-2 py-1.5 pressable:cursor-pointer data-[highlighted]:bg-accent-weak data-[highlighted]:text-accent inactive:dimmed";
 
 /**
  * Renders a Base UI part that leaves with an exit, a popup, a dialog or a

@@ -161,7 +161,7 @@
     .press {
         transition: scale var(--motion-state);
 
-        &:not(:disabled) {
+        @variant pressable {
             @variant hover {
                 --hand: 6%;
             }

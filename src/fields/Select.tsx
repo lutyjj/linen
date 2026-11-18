@@ -27,7 +27,7 @@ export function PickerMark() {
 }
 
 /** A picker's trigger: its value at the start, its mark at the end. */
-export const PICKER_CLASS = `${CONTROL_CLASS} group/picker inline-flex cursor-pointer items-center justify-between gap-1.5 text-left select-none`;
+export const PICKER_CLASS = `${CONTROL_CLASS} group/picker inline-flex pressable:cursor-pointer items-center justify-between gap-1.5 text-left select-none`;
 
 function isGroup(entry: Choice | ChoiceGroup): entry is ChoiceGroup {
     return "choices" in entry;

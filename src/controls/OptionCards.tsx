@@ -71,14 +71,13 @@ export function OptionCards<Value extends string>({
                     }
                     disabled={option.disabled}
                     className={classes(
-                        "cursor-pointer rounded-button border px-3 py-2 text-left",
-                        "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-45",
+                        "rounded-button border px-3 py-2 text-left pressable:cursor-pointer inactive:dimmed",
                         "data-[checked]:border-accent data-[checked]:bg-accent-weak",
                         // A suggestion wears the ink's tint until the question
                         // is answered.
                         option.value === suggested
-                            ? "data-[unchecked]:border-accent/40 data-[unchecked]:bg-accent-weak/60 data-[unchecked]:hover:border-accent"
-                            : "data-[unchecked]:border-border-strong data-[unchecked]:bg-surface data-[unchecked]:hover:border-accent data-[unchecked]:hover:bg-accent-weak",
+                            ? "data-[unchecked]:border-accent/40 data-[unchecked]:bg-accent-weak/60 pressable:data-[unchecked]:hover:border-accent"
+                            : "data-[unchecked]:border-border-strong data-[unchecked]:bg-surface pressable:data-[unchecked]:hover:border-accent pressable:data-[unchecked]:hover:bg-accent-weak",
                     )}
                 >
                     <span

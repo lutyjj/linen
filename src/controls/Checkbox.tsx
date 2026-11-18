@@ -6,7 +6,10 @@ import { isContent } from "../foundation/slot";
 
 /** The box, marked in the ink while ticked or mixed. */
 const BOX_CLASS =
-    "inline-flex size-4 shrink-0 cursor-pointer items-center justify-center rounded-check border border-border-strong bg-surface align-[-2px] text-bg data-[checked]:border-accent data-[checked]:bg-accent data-[indeterminate]:border-accent data-[indeterminate]:bg-accent data-[disabled]:cursor-default";
+    "inline-flex size-4 shrink-0 items-center justify-center rounded-check border border-border-strong bg-surface align-[-2px] text-bg data-[checked]:border-accent data-[checked]:bg-accent data-[indeterminate]:border-accent data-[indeterminate]:bg-accent";
+
+/** A box that stands alone answers the hand and dims itself. */
+const ALONE_CLASS = "pressable:cursor-pointer inactive:dimmed";
 
 /** A tick, or a dash while the box is mixed. */
 function Mark({ indeterminate = false }: { indeterminate?: boolean }) {
@@ -67,8 +70,8 @@ export function Checkbox({
             aria-labelledby={alone ? undefined : words}
             className={classes(
                 BOX_CLASS,
-                // Held in its words, the box dims with them.
-                alone ? classes("data-[disabled]:opacity-50", className) : "",
+                // Held in its words, the box answers and dims with them.
+                alone && classes(ALONE_CLASS, className),
             )}
         >
             <Mark />
@@ -79,8 +82,9 @@ export function Checkbox({
         <label
             id={words}
             className={classes(
-                "inline-flex w-full cursor-pointer items-center gap-2 text-left text-sm has-data-[disabled]:cursor-default has-data-[disabled]:opacity-50",
-                secondary ? "text-text-secondary hover:text-text" : "",
+                "inline-flex w-full items-center gap-2 text-left text-sm not-has-data-[disabled]:cursor-pointer has-data-[disabled]:dimmed",
+                secondary &&
+                    "text-text-secondary not-has-data-[disabled]:hover:text-text",
                 className,
             )}
         >
@@ -126,7 +130,8 @@ export function SelectToggle({
             onCheckedChange={(next) => onCheckedChange(next, shifted.current)}
             className={classes(
                 BOX_CLASS,
-                "relative after:absolute after:-inset-2 data-[disabled]:opacity-45",
+                ALONE_CLASS,
+                "relative after:absolute after:-inset-2",
             )}
         >
             <Mark indeterminate={indeterminate} />

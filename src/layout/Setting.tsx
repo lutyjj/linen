@@ -30,7 +30,11 @@ export function SettingRow({
 }: {
     title: ReactNode;
     description?: ReactNode;
-    /** For a setting that applies only while another one is on. */
+    /**
+     * For a setting that applies only while another one is on: its words
+     * dim, and its control dims only if it is disabled, so the two never
+     * stack.
+     */
     dimmed?: boolean;
     /** `listitem`, where the rows are a list of like things. */
     role?: "listitem";
@@ -79,7 +83,11 @@ export function SettingToggle({
     disabled?: boolean;
     /** The change is being written (`Switch`). */
     busy?: boolean;
-    /** For a setting that applies only while another one is on. */
+    /**
+     * For a setting that applies only while another one is on: its words
+     * dim, and its control dims only if it is disabled, so the two never
+     * stack.
+     */
     dimmed?: boolean;
     /** `listitem`, where the rows are a list of like things. */
     role?: "listitem";
@@ -139,13 +147,9 @@ function SettingLayout({
     return (
         <SettlingItem role={role} className={classes(BAND_CLASS, className)}>
             <Field.Root
-                className={classes(
-                    "items-center gap-x-4 gap-y-2",
-                    frame,
-                    dimmed && "opacity-55",
-                )}
+                className={classes("items-center gap-x-4 gap-y-2", frame)}
             >
-                <div className={classes("min-w-0", words)}>
+                <div className={classes("min-w-0", words, dimmed && "dimmed")}>
                     <div className="text-sm font-medium break-words">
                         {title}
                     </div>

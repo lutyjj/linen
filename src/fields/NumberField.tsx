@@ -16,7 +16,7 @@ import { Field, INPUT_FRAME_CLASS, ValueAndUnit } from "./Field";
  * its own; in a disabled field the frame dims everything once.
  */
 const STEP_CLASS =
-    "flex cursor-pointer py-0.5 text-text-secondary last:pr-0.5 hover:text-text hover:*:bg-sunken active:*:bg-border disabled:cursor-not-allowed not-in-data-disabled:disabled:opacity-50";
+    "flex py-0.5 text-text-secondary last:pr-0.5 pressable:cursor-pointer pressable:hover:text-text pressable:hover:*:bg-text/6 pressable:active:*:bg-text/12 not-in-data-disabled:disabled:dimmed";
 
 /**
  * A number set within a range in steps: its value where every field's value

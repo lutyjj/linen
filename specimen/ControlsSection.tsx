@@ -2,6 +2,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { type ComponentProps, useState } from "react";
 
 import {
+    Actions,
     Button,
     Card,
     CardBody,
@@ -342,9 +343,12 @@ export function ControlsSection() {
                         <Button variant="destructive">Revoke</Button>
                     </Sample>
                     <Sample name="Disabled">
-                        <Button variant="primary" disabled>
-                            Save
-                        </Button>
+                        <Actions>
+                            <Button disabled>Cancel</Button>
+                            <Button variant="primary" disabled>
+                                Save
+                            </Button>
+                        </Actions>
                     </Sample>
                     <Sample name="Busy, pressed to see">
                         <Button variant="primary" busy={saving} onClick={save}>
@@ -454,6 +458,36 @@ export function ControlsSection() {
                             ]}
                             onValueChange={setDensity}
                         />
+                    </Sample>
+                    <Sample name="Disabled">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <Checkbox
+                                checked
+                                disabled
+                                onCheckedChange={() => undefined}
+                            >
+                                Archived
+                            </Checkbox>
+                            <Switch
+                                aria-label="Archived"
+                                checked
+                                disabled
+                                onCheckedChange={() => undefined}
+                            />
+                            <SegmentedControl
+                                label="Density"
+                                value="comfortable"
+                                options={[
+                                    {
+                                        value: "comfortable",
+                                        label: "Comfortable",
+                                    },
+                                    { value: "compact", label: "Compact" },
+                                ]}
+                                disabled
+                                onValueChange={() => undefined}
+                            />
+                        </div>
                     </Sample>
                     <Sample name="Search, as typing pauses">
                         <SearchField

@@ -41,7 +41,7 @@ export function SegmentedControl<Value extends string>({
                 if (next !== value) onValueChange(next as Value);
             }}
             className={classes(
-                "relative isolate inline-flex h-(--height-control) shrink-0 items-stretch rounded-button border border-border-strong bg-surface p-0.5 data-[disabled]:opacity-45",
+                "relative isolate inline-flex h-(--height-control) shrink-0 items-stretch rounded-button border border-border-strong bg-surface p-0.5 inactive:dimmed",
                 className,
             )}
         >
@@ -57,13 +57,14 @@ export function SegmentedControl<Value extends string>({
                         disabled={option.disabled}
                         data-label={option.label}
                         className={classes(
-                            "relative flex cursor-pointer flex-col items-center justify-center rounded-input px-2 text-sm data-[disabled]:cursor-not-allowed",
-                            option.disabled && "opacity-45",
+                            "relative flex flex-col items-center justify-center rounded-input px-2 text-sm pressable:cursor-pointer",
+                            // A disabled group dims as one.
+                            option.disabled && !disabled && "dimmed",
                             CHOSEN_WIDTH_CLASS,
                             chosenLayerClass(active),
                             active
                                 ? "font-medium text-accent"
-                                : "text-text-secondary hover:text-text",
+                                : "text-text-secondary pressable:hover:text-text",
                         )}
                     >
                         {active && <ChosenMark group={group} radius="input" />}

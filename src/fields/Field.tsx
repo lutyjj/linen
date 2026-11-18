@@ -9,8 +9,7 @@ import { isContent } from "../foundation/slot";
  * How every field looks while it takes no input, keyed on a native control's
  * `disabled` and on the `data-disabled` Base UI marks a field's parts with.
  */
-const DISABLED_CLASS =
-    "disabled:cursor-not-allowed disabled:opacity-50 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50";
+const DISABLED_CLASS = "inactive:dimmed";
 
 /**
  * The frame every field wears, wherever it stands: a form, a table cell, a
@@ -23,7 +22,7 @@ const DISABLED_CLASS =
  * input given a height a pixel below a picker's words; an input that meets
  * the floor lays its line where every field's words stand.
  */
-export const CONTROL_CLASS = `min-h-(--height-control) rounded-button border border-border-strong bg-surface px-2.5 text-sm text-text placeholder:text-text-muted hover:border-text-muted data-[popup-open]:border-text-muted aria-[invalid=true]:border-danger ${DISABLED_CLASS}`;
+export const CONTROL_CLASS = `min-h-(--height-control) rounded-button border border-border-strong bg-surface px-2.5 text-sm text-text placeholder:text-text-muted pressable:hover:border-text-muted data-[popup-open]:border-text-muted aria-[invalid=true]:border-danger ${DISABLED_CLASS}`;
 
 /**
  * The same frame around an input and what stands beside it inside, such as
@@ -61,7 +60,7 @@ export function ValueAndUnit({
                 {...input}
                 className={classes(
                     input.className,
-                    "col-start-1 row-start-1 w-0 min-w-full disabled:cursor-not-allowed",
+                    "col-start-1 row-start-1 w-0 min-w-full",
                 )}
             />
             {/* The copy ends in a space: the caret's room, and the space

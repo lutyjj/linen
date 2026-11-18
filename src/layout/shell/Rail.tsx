@@ -52,10 +52,10 @@ export function useRailCompact(): boolean {
 /** Every row of the rail, whether it leads somewhere or does something. */
 export function railItemClass(active: boolean): string {
     return classes(
-        "group/item relative flex h-(--height-control) w-full shrink-0 cursor-pointer items-center gap-2.5 rounded-button px-2 text-left text-sm disabled:cursor-not-allowed disabled:opacity-45",
+        "group/item relative flex h-(--height-control) w-full shrink-0 items-center gap-2.5 rounded-button px-2 text-left text-sm pressable:cursor-pointer inactive:dimmed",
         active
             ? "bg-accent-weak font-medium text-accent"
-            : "text-text-secondary hover:bg-border hover:text-text",
+            : "text-text-secondary pressable:hover:bg-border pressable:hover:text-text",
     );
 }
 
