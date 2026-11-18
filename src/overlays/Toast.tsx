@@ -9,6 +9,7 @@ import {
     useRef,
 } from "react";
 
+import { isContent } from "../foundation/slot";
 import { useWords } from "../foundation/words";
 
 /** How long a toast stands, which is also how long undo is on offer. */
@@ -219,7 +220,7 @@ function ToastSurface({
             data-toast=""
             className="toast relative flex items-center gap-3 overflow-hidden rounded-card bg-text px-3.5 py-2.5 text-sm text-bg shadow-overlay"
         >
-            {message.lead !== undefined && (
+            {isContent(message.lead) && (
                 <span className="-mr-1 flex">{message.lead}</span>
             )}
             <BaseToast.Title key={toast.updateKey} render={<span />}>

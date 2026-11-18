@@ -9,6 +9,7 @@ import {
     POSITIONER_CLASS,
     renderLeaving,
 } from "../../foundation/popup";
+import { isContent } from "../../foundation/slot";
 import { useWords } from "../../foundation/words";
 import { arrive } from "../../motion/arrive";
 import { useCurrent, useNavigation } from "../../navigation/navigation";
@@ -275,13 +276,13 @@ export function Rail({
                         compact && folded && "justify-center",
                     )}
                 >
-                    {sign != null && <HomeLink home={home}>{sign}</HomeLink>}
+                    {isContent(sign) && <HomeLink home={home}>{sign}</HomeLink>}
                     {!folded && (
                         <RailFold compact={compact} setCompact={setChosen} />
                     )}
                 </div>
 
-                {head !== undefined && (
+                {isContent(head) && (
                     <div className={classes(!compact && "pb-3")}>{head}</div>
                 )}
 
@@ -295,7 +296,7 @@ export function Rail({
                     ))}
                 </m.div>
 
-                {foot !== undefined && (
+                {isContent(foot) && (
                     <div className="mt-auto flex flex-col gap-2 border-t border-border pt-3">
                         {foot}
                     </div>

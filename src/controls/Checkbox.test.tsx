@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { expect, it, vi } from "vitest";
 
+import { markup } from "../test/markup";
 import { Checkbox, SelectToggle } from "./Checkbox";
 
 it("is named by its words, and a press on them ticks it", async () => {
@@ -69,4 +70,21 @@ it("selects rows, mixed while some are, and asks for a range with Shift", async 
         [true, false],
         [false, true],
     ]);
+});
+
+it("draws a box whose words are nothing as the box alone", () => {
+    const box = (words?: false) => (
+        <Checkbox
+            aria-label="Archived"
+            checked={false}
+            onCheckedChange={() => undefined}
+            className="ml-2"
+        >
+            {words}
+        </Checkbox>
+    );
+    const { container, rerender } = render(box());
+    const alone = markup(container);
+    rerender(box(false));
+    expect(markup(container)).toBe(alone);
 });

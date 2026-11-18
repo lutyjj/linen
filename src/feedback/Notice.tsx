@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { classes } from "../foundation/classes";
+import { isContent } from "../foundation/slot";
 import { type Tone, TONE_TINT } from "../foundation/tone";
 import { ToneIcon } from "./toneIcon";
 
@@ -41,13 +42,13 @@ export function Notice({
                 <ToneIcon tone={tone} className="mt-0.5" />
                 <div className="min-w-0 flex-[1_1_16rem]">
                     <div className="font-medium break-words">{title}</div>
-                    {description !== undefined && (
+                    {isContent(description) && (
                         <div className="mt-0.5 text-text-secondary">
                             {description}
                         </div>
                     )}
                 </div>
-                {action !== undefined && (
+                {isContent(action) && (
                     <div className="ml-auto flex shrink-0 items-center gap-2 self-center">
                         {action}
                     </div>

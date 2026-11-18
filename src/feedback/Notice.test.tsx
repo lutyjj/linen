@@ -31,3 +31,19 @@ it("says what it means under its sentence, and offers its one action", () => {
         screen.getByRole("button", { name: "Make another" }),
     ).toBeInTheDocument();
 });
+
+it("draws a notice whose description or action is nothing as one without them", () => {
+    const { container, rerender } = render(
+        <Notice tone="warn" title="The copy is out of date." />,
+    );
+    const notice = container.innerHTML;
+    rerender(
+        <Notice
+            tone="warn"
+            title="The copy is out of date."
+            description={null}
+            action={false}
+        />,
+    );
+    expect(container.innerHTML).toBe(notice);
+});

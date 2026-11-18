@@ -56,3 +56,17 @@ it("hands on the value once it is settled", async () => {
     await user.tab();
     expect(committed).toHaveBeenLastCalledWith(-35);
 });
+
+it("describes its value by no unit that is nothing", () => {
+    render(
+        <NumberField
+            label="Gain"
+            value={3}
+            onValueChange={() => undefined}
+            unit={false}
+        />,
+    );
+    expect(screen.getByRole("textbox", { name: "Gain" })).not.toHaveAttribute(
+        "aria-describedby",
+    );
+});

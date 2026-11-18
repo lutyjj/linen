@@ -125,3 +125,19 @@ it("stands in the shell over every screen's top bar", () => {
     // linen.css keeps what follows a marked bar clear of the bars.
     expect(within(main).getByRole("status")).toHaveAttribute("data-sticky");
 });
+
+it("draws a condition whose description or action is nothing as one without them", () => {
+    const title = "Read only while storage is nearly full.";
+    const { container, rerender } = render(
+        <Conditions conditions={[{ id: "storage", title }]} />,
+    );
+    const band = container.innerHTML;
+    rerender(
+        <Conditions
+            conditions={[
+                { id: "storage", title, description: "", action: false },
+            ]}
+        />,
+    );
+    expect(container.innerHTML).toBe(band);
+});

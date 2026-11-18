@@ -3,7 +3,8 @@ import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 
-import { CellText } from "./TextField";
+import { markup } from "../test/markup";
+import { CellInput, CellText } from "./TextField";
 
 describe("text corrected in place", () => {
     function Harness({
@@ -53,4 +54,11 @@ describe("text corrected in place", () => {
         await userEvent.tab();
         expect(onCommit).not.toHaveBeenCalled();
     });
+});
+
+it("draws a cell whose unit is nothing as a cell without one", () => {
+    const { container, rerender } = render(<CellInput aria-label="Limit" />);
+    const cell = markup(container);
+    rerender(<CellInput aria-label="Limit" unit="" />);
+    expect(markup(container)).toBe(cell);
 });

@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { expect, it } from "vitest";
 
 import { SegmentedControl } from "../controls/SegmentedControl";
+import { markup } from "../test/markup";
 import { SettingRow, SettingToggle } from "./Setting";
 
 it("describes a setting's control by what the setting does", () => {
@@ -33,4 +34,15 @@ it("describes a setting's control by what the setting does", () => {
     expect(
         screen.getByRole("radiogroup", { name: "Density" }),
     ).toHaveAccessibleDescription("How close the rows sit.");
+});
+
+it("draws a setting whose description or control is nothing as one without them", () => {
+    const { container, rerender } = render(<SettingRow title="Density" />);
+    const row = markup(container);
+    rerender(
+        <SettingRow title="Density" description={false}>
+            {false}
+        </SettingRow>,
+    );
+    expect(markup(container)).toBe(row);
 });

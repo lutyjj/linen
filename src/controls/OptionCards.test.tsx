@@ -62,3 +62,20 @@ describe("one answer from a few, each with a line", () => {
         expect(onValueChange).toHaveBeenCalledWith("archive");
     });
 });
+
+it("draws a card whose line is nothing as its words alone, describing nothing", () => {
+    render(
+        <OptionCards
+            label="Its fate"
+            value={undefined}
+            options={[{ value: "keep", label: "Keep it", description: false }]}
+            onValueChange={() => undefined}
+        />,
+    );
+    const card = screen.getByRole("radio", { name: "Keep it" });
+    expect(card).not.toHaveAttribute("aria-describedby");
+    // Its line is required, so there is no card without one to match: the
+    // card holds its words and nothing under them.
+    expect(card.children).toHaveLength(1);
+    expect(card.firstElementChild).toHaveTextContent("Keep it");
+});

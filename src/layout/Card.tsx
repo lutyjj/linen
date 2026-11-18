@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode, Ref } from "react";
 
 import { Actions } from "../controls/Button";
 import { classes } from "../foundation/classes";
+import { isContent } from "../foundation/slot";
 
 /**
  * One concern on the page. Its own edge stands above its first part and
@@ -81,13 +82,13 @@ export function CardHead({
                     {/* The description reaches under the actions and lends
                         the words none of its width, so the title alone
                         decides whether the actions fit beside it. */}
-                    {description !== undefined && (
+                    {isContent(description) && (
                         <p className="-me-[calc(100cqw-100%)] mt-1.5 max-w-[70ch] text-sm text-text-secondary [contain:inline-size] md:mt-2">
                             {description}
                         </p>
                     )}
                 </div>
-                {children !== undefined && (
+                {isContent(children) && (
                     <Actions className="min-h-(--height-control) min-w-0">
                         {children}
                     </Actions>

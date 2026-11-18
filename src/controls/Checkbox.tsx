@@ -2,6 +2,7 @@ import { Checkbox as BaseCheckbox } from "@base-ui/react/checkbox";
 import { type ReactNode, useId, useRef } from "react";
 
 import { classes } from "../foundation/classes";
+import { isContent } from "../foundation/slot";
 
 /** The box, marked in the ink while ticked or mixed. */
 const BOX_CLASS =
@@ -54,6 +55,7 @@ export function Checkbox({
     children?: ReactNode;
 }) {
     const words = useId();
+    const alone = !isContent(children);
     const box = (
         <BaseCheckbox.Root
             checked={checked}
@@ -62,19 +64,17 @@ export function Checkbox({
             aria-label={ariaLabel}
             // Named by its words, which inside a field win over the field's
             // name that Base UI would give every box.
-            aria-labelledby={children === undefined ? undefined : words}
+            aria-labelledby={alone ? undefined : words}
             className={classes(
                 BOX_CLASS,
                 // Held in its words, the box dims with them.
-                children === undefined
-                    ? classes("data-[disabled]:opacity-50", className)
-                    : "",
+                alone ? classes("data-[disabled]:opacity-50", className) : "",
             )}
         >
             <Mark />
         </BaseCheckbox.Root>
     );
-    if (children === undefined) return box;
+    if (alone) return box;
     return (
         <label
             id={words}

@@ -7,6 +7,7 @@ import {
 } from "react";
 
 import { classes } from "../foundation/classes";
+import { isContent } from "../foundation/slot";
 import { CONTROL_CLASS, Field } from "./Field";
 
 /** A text box under its name, with its hint and, once refused, its error. */
@@ -43,7 +44,7 @@ export function CellInput({
     unit,
     ...rest
 }: InputHTMLAttributes<HTMLInputElement> & { unit?: ReactNode }) {
-    if (unit === undefined) {
+    if (!isContent(unit)) {
         return (
             <Input className={classes(CONTROL_CLASS, className)} {...rest} />
         );

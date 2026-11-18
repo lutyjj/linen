@@ -2,6 +2,7 @@ import { Check, Copy } from "lucide-react";
 import { type ReactNode, useState } from "react";
 
 import { classes } from "../foundation/classes";
+import { isContent } from "../foundation/slot";
 import { useWords } from "../foundation/words";
 import { Button, IconButton } from "./Button";
 
@@ -162,7 +163,7 @@ export function ShownOnce({
             <div>
                 <p className="font-medium break-words">{what}</p>
                 <p className="mt-0.5 text-text-secondary">
-                    {children} {lost ?? words.shownOnce}
+                    {children} {isContent(lost) ? lost : words.shownOnce}
                 </p>
             </div>
             {copies !== undefined && (

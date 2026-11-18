@@ -8,6 +8,7 @@ import {
     POSITIONER_CLASS,
     renderLeaving,
 } from "../../foundation/popup";
+import { isContent } from "../../foundation/slot";
 import { railItemClass, useRailCompact } from "./Rail";
 
 /**
@@ -88,18 +89,18 @@ export function AccountMenu({
                             <div className="truncate text-sm font-medium">
                                 {name}
                             </div>
-                            {caption !== undefined && (
+                            {isContent(caption) && (
                                 <div className="text-xs text-text-muted">
                                     {caption}
                                 </div>
                             )}
                         </div>
-                        {children !== undefined && (
+                        {isContent(children) && (
                             <div className="flex flex-col gap-3 px-3 py-3">
                                 {children}
                             </div>
                         )}
-                        {footer !== undefined && (
+                        {isContent(footer) && (
                             <div className="border-t border-border p-2">
                                 {footer}
                             </div>

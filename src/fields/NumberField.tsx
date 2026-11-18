@@ -3,6 +3,7 @@ import { Minus, Plus } from "lucide-react";
 import { type ReactNode, useId } from "react";
 
 import { classes } from "../foundation/classes";
+import { isContent } from "../foundation/slot";
 import { useWords } from "../foundation/words";
 import { CONTROL_CLASS, Field } from "./Field";
 
@@ -103,12 +104,10 @@ export function NumberField({
                         <Minus aria-hidden="true" className="size-3.5" />
                     </BaseNumberField.Decrement>
                     <BaseNumberField.Input
-                        aria-describedby={
-                            unit === undefined ? undefined : unitId
-                        }
+                        aria-describedby={isContent(unit) ? unitId : undefined}
                         className="min-w-0 flex-1 bg-transparent px-2 text-right tabular-nums outline-none"
                     />
-                    {unit !== undefined && (
+                    {isContent(unit) && (
                         <span
                             id={unitId}
                             className="flex shrink-0 items-center pr-2.5 text-text-muted"

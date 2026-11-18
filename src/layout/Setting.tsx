@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import { Switch } from "../controls/Switch";
 import { classes } from "../foundation/classes";
+import { isContent } from "../foundation/slot";
 import { SettlingItem } from "../motion/SettlingRows";
 
 /**
@@ -155,7 +156,7 @@ function SettingLayout({
                     <div className="text-sm font-medium break-words">
                         {title}
                     </div>
-                    {description !== undefined && (
+                    {isContent(description) && (
                         <Field.Description
                             render={<div />}
                             className="mt-0.5 max-w-[60ch] text-sm text-text-secondary"
@@ -164,7 +165,7 @@ function SettingLayout({
                         </Field.Description>
                     )}
                 </div>
-                {children !== undefined && (
+                {isContent(children) && (
                     <div
                         className={classes(
                             "flex min-w-0 flex-wrap items-center gap-2",

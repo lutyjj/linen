@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
 import { ENGLISH } from "../foundation/words";
+import { markup } from "../test/markup";
 import {
     type ToastMessage,
     ToastProvider,
@@ -136,4 +137,16 @@ it("leaves standing what its own action says next", async () => {
 
     expect(region()).toHaveTextContent("Asking again");
     expect(onDismiss).not.toHaveBeenCalled();
+});
+
+it("draws no room for a lead that is nothing", () => {
+    // What the toast holds; its own state moves as it arrives.
+    const held = () =>
+        [...(screen.getByText("Saved").parentElement?.children ?? [])]
+            .map(markup)
+            .join("");
+    say({ text: "Saved" });
+    const toast = held();
+    say({ text: "Saved", lead: false });
+    expect(held()).toBe(toast);
 });

@@ -121,6 +121,21 @@ it("says what losing the secret means in the app's words where it gives them", (
     const said = screen.getByText(/Enter it on the other screen\./);
     expect(said).toHaveTextContent("If it is lost, pairing starts over.");
     expect(said).not.toHaveTextContent(ENGLISH.shownOnce);
+    // Words that are nothing, from a condition, leave the default.
+    rerender(
+        <ShownOnce
+            what="Code"
+            label="Pairing code"
+            secret="4417"
+            copyLabel="Copy code"
+            lost={false}
+        >
+            Enter it on the other screen.
+        </ShownOnce>,
+    );
+    expect(
+        screen.getByText(/Enter it on the other screen\./),
+    ).toHaveTextContent(ENGLISH.shownOnce);
 });
 
 it("asks for the text by hand where the page has no clipboard at all", async () => {

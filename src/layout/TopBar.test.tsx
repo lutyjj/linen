@@ -163,3 +163,15 @@ it("keeps its stack in a box that scrolls and holds nothing on the page clear of
     expect(bar).not.toHaveAttribute("data-sticky");
     expect(conditions).not.toHaveAttribute("data-sticky");
 });
+
+it("keeps no room for actions that are nothing", () => {
+    const { container, rerender } = render(<TopBar title="Reports" />);
+    const bar = container.innerHTML;
+    const editable = false as boolean;
+    rerender(
+        <TopBar title="Reports">
+            {editable && <button type="button">Edit</button>}
+        </TopBar>,
+    );
+    expect(container.innerHTML).toBe(bar);
+});

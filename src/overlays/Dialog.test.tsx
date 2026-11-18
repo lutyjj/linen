@@ -6,6 +6,7 @@ import { expect, it, vi } from "vitest";
 import type { FormErrors } from "../fields/Form";
 import { TextField } from "../fields/TextField";
 import { ENGLISH } from "../foundation/words";
+import { ConfirmDialog } from "./ConfirmDialog";
 import { FormDialog } from "./Dialog";
 
 /** Answers the check that is waiting, when the test says so. */
@@ -56,4 +57,23 @@ it("waits on its confirm, then takes the focus to the field it refused", async (
     const name = screen.getByRole("textbox", { name: "Name" });
     expect(name).toHaveFocus();
     expect(name).toHaveAccessibleDescription("A token already has this name.");
+});
+
+it("describes the dialog by no description that is nothing", () => {
+    render(
+        <ConfirmDialog
+            open
+            onOpenChange={() => undefined}
+            title="Archive the report?"
+            description={false}
+            confirmLabel="Archive"
+            onConfirm={() => undefined}
+        >
+            {false}
+        </ConfirmDialog>,
+    );
+    const dialog = screen.getByRole("alertdialog", {
+        name: "Archive the report?",
+    });
+    expect(dialog).not.toHaveAttribute("aria-describedby");
 });

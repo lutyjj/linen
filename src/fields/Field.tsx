@@ -3,6 +3,7 @@ import { CircleAlert } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { classes } from "../foundation/classes";
+import { isContent } from "../foundation/slot";
 
 /**
  * The frame every field wears, wherever it stands: a form, a table cell, a
@@ -102,7 +103,7 @@ export function Field({
                     </div>
                 )}
             />
-            {hint !== undefined && (
+            {isContent(hint) && (
                 <BaseField.Validity>
                     {/* Base UI describes the control in the order its parts
                         appear; the hint comes again after a refusal, so the

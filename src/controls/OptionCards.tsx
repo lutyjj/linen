@@ -4,6 +4,7 @@ import { type ReactNode, useId } from "react";
 
 import { type Choice } from "../foundation/choice";
 import { classes } from "../foundation/classes";
+import { isContent } from "../foundation/slot";
 
 /** An answer and the line that says what it means. */
 export interface CardOption<
@@ -63,7 +64,11 @@ export function OptionCards<Value extends string>({
                     // Its own words and line, which inside a field win over
                     // the field's name that Base UI would give every card.
                     aria-labelledby={`${id}-${index}`}
-                    aria-describedby={`${id}-${index}-description`}
+                    aria-describedby={
+                        isContent(option.description)
+                            ? `${id}-${index}-description`
+                            : undefined
+                    }
                     disabled={option.disabled}
                     className={classes(
                         "cursor-pointer rounded-button border px-3 py-2 text-left",
@@ -86,12 +91,14 @@ export function OptionCards<Value extends string>({
                         {option.value === suggested && suggestedMark}
                         {option.label}
                     </span>
-                    <span
-                        id={`${id}-${index}-description`}
-                        className="block text-xs text-text-secondary"
-                    >
-                        {option.description}
-                    </span>
+                    {isContent(option.description) && (
+                        <span
+                            id={`${id}-${index}-description`}
+                            className="block text-xs text-text-secondary"
+                        >
+                            {option.description}
+                        </span>
+                    )}
                 </Radio.Root>
             ))}
         </RadioGroup>

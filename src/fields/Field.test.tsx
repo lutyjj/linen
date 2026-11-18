@@ -211,3 +211,10 @@ it("leaves each option of a group its own name, and describes it by its line and
         screen.getByRole("radio", { name: "Keep it" }),
     ).toHaveAccessibleDescription("Nothing changes. Pick one.");
 });
+
+it("describes its control by no hint that is nothing", () => {
+    render(<TextField label="Name" hint={false} />);
+    expect(screen.getByRole("textbox", { name: "Name" })).not.toHaveAttribute(
+        "aria-describedby",
+    );
+});

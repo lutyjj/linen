@@ -6,6 +6,7 @@ import { afterEach, expect, it, vi } from "vitest";
 import { SegmentedControl } from "../../controls/SegmentedControl";
 import { ENGLISH } from "../../foundation/words";
 import { LinenProvider } from "../../LinenProvider";
+import { markup } from "../../test/markup";
 import { memoryNavigation } from "../../test/memoryNavigation";
 import { AccountMenu } from "./AccountMenu";
 import { RailChoice } from "./Rail";
@@ -270,4 +271,52 @@ it("opens a choice of the folded rail under the choice's name", async () => {
         within(choice).getByRole("heading", { name: "Theme" }),
     ).toBeInTheDocument();
     expect(within(choice).getByRole("radio", { name: "Light" })).toBeChecked();
+});
+
+it("draws a rail whose head, foot or mark is nothing as one without them", () => {
+    const at = (nothing?: false) => (
+        <LinenProvider navigation={memoryNavigation().navigation}>
+            <Shell
+                label="Places"
+                places={[{ href: "/", label: "Projects", icon: Folder }]}
+                home={HOME}
+                wordmark="linen"
+                mark={nothing}
+                head={nothing}
+                foot={nothing}
+                storageKey="test:rail"
+                folded
+            >
+                <p>The screen</p>
+            </Shell>
+        </LinenProvider>
+    );
+    const { container, rerender } = render(at());
+    const shell = markup(container);
+    rerender(at(false));
+    expect(markup(container)).toBe(shell);
+});
+
+it("opens an account menu whose caption, choices or way out are nothing as one without them", async () => {
+    const user = userEvent.setup();
+    const menu = async (nothing?: false) => {
+        const view = render(
+            <AccountMenu
+                name="Ada"
+                label="Ada's account"
+                menuLabel="Account"
+                caption={nothing}
+                footer={nothing}
+            >
+                {nothing}
+            </AccountMenu>,
+        );
+        await user.click(screen.getByRole("button", { name: "Ada's account" }));
+        // What the menu holds; the popup's own state moves as it opens.
+        const popup = await screen.findByRole("dialog", { name: "Account" });
+        const drawn = [...popup.children].map(markup).join("");
+        view.unmount();
+        return drawn;
+    };
+    expect(await menu(false)).toBe(await menu());
 });

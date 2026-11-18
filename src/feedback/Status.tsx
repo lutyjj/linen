@@ -7,6 +7,7 @@ import {
     POSITIONER_CLASS,
     renderLeaving,
 } from "../foundation/popup";
+import { isContent } from "../foundation/slot";
 import { type Tone, TONE_INK } from "../foundation/tone";
 
 /**
@@ -107,7 +108,7 @@ export function ExplainedStatus({
     /** Why the state holds, in a sentence or two. */
     description: ReactNode;
 }) {
-    if (isNothing(description)) return <Status {...status} />;
+    if (!isContent(description)) return <Status {...status} />;
     const { look, state } = statusParts(status);
     return (
         <Popover.Root>
@@ -143,19 +144,5 @@ export function ExplainedStatus({
                 </Popover.Positioner>
             </Popover.Portal>
         </Popover.Root>
-    );
-}
-
-/**
- * Whether a node is nothing: none, a boolean, an empty string, or a list of
- * those. Anything else, such as an element or a promise, is content.
- */
-function isNothing(node: ReactNode): boolean {
-    if (Array.isArray(node)) return node.every(isNothing);
-    return (
-        node === null ||
-        node === undefined ||
-        typeof node === "boolean" ||
-        node === ""
     );
 }

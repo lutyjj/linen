@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { classes } from "../foundation/classes";
 import { COLUMN_CLASS } from "../foundation/column";
+import { isContent } from "../foundation/slot";
 import { type Tone, TONE_TINT } from "../foundation/tone";
 import { useStickyBar } from "../foundation/viewport";
 import { ToneIcon } from "./toneIcon";
@@ -95,13 +96,13 @@ export function Conditions({
                                 <span className="font-medium break-words">
                                     {title}
                                 </span>
-                                {description !== undefined && (
+                                {isContent(description) && (
                                     <span className="text-text-secondary">
                                         {description}
                                     </span>
                                 )}
                             </div>
-                            {action !== undefined && (
+                            {isContent(action) && (
                                 <div className="ml-auto flex shrink-0 items-center gap-2">
                                     {action}
                                 </div>

@@ -15,6 +15,7 @@ import {
     POSITIONER_CLASS,
     renderLeaving,
 } from "../foundation/popup";
+import { isContent } from "../foundation/slot";
 import { useStickyBar } from "../foundation/viewport";
 import { useWords } from "../foundation/words";
 import { useNavigation } from "../navigation/navigation";
@@ -208,7 +209,7 @@ export function TopBar({
                         {meta}
                     </div>
                 </div>
-                {children !== undefined && (
+                {isContent(children) && (
                     <div className="ml-auto flex max-w-full shrink-0 flex-wrap items-center justify-end gap-2">
                         {children}
                     </div>
