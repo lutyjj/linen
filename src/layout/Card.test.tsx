@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { expect, it } from "vitest";
 
 import { Button } from "../controls/Button";
-import { CardHead } from "./Card";
+import { CardHead, Nothing } from "./Card";
 
 it("draws a head whose actions or description are nothing as the head without them", () => {
     const plain = render(<CardHead title="Reports" />);
@@ -30,4 +30,16 @@ it("draws a head whose actions or description are nothing as the head without th
 it("draws a description of 0, which is content", () => {
     render(<CardHead title="Reports" description={0} />);
     expect(screen.getByText("0")).toBeVisible();
+});
+
+it("says there is nothing here in one paragraph, with a link in its line", () => {
+    render(
+        <Nothing>
+            No tokens yet. <a href="#new">Make one</a>.
+        </Nothing>,
+    );
+    expect(screen.getByRole("paragraph")).toHaveTextContent(
+        "No tokens yet. Make one.",
+    );
+    expect(screen.getByRole("link", { name: "Make one" })).toBeVisible();
 });

@@ -267,7 +267,7 @@ export function ControlsSection() {
                     </Sample>
                     <Sample name="Selecting rows, a range with Shift">
                         <div className="flex flex-col gap-2 text-sm">
-                            <span className="flex items-center gap-3 text-text-secondary">
+                            <span className="flex items-center gap-2 text-text-secondary">
                                 <SelectToggle
                                     label="Select every project"
                                     checked={picked.length === PROJECTS.length}
@@ -284,7 +284,7 @@ export function ControlsSection() {
                             {PROJECTS.map((project, at) => (
                                 <span
                                     key={project}
-                                    className="flex items-center gap-3"
+                                    className="flex items-center gap-2"
                                 >
                                     <SelectToggle
                                         label={`Select ${project}`}

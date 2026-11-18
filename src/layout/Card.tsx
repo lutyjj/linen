@@ -5,10 +5,28 @@ import { classes } from "../foundation/classes";
 import { isContent } from "../foundation/slot";
 
 /**
- * One concern on the page. Its own edge stands above its first part and
- * below its last, so a part that draws a hairline there, a row above it or
- * a head below it, draws none, nor does the first row of a list
- * (`role="list"`) that is the card's first part.
+ * A part of a card after its head: a row, a body, a form band, a note, or a
+ * row an app builds for a list in a card. It draws the hairline above itself
+ * and holds its contents a gutter from each of its edges. `band` names it to
+ * the card it stands in.
+ */
+export const BAND_CLASS = "band border-t border-border p-gutter";
+
+/**
+ * The words' share of a line they hold with controls that wrap by fit, as a
+ * head's title does with its actions and a setting's words with its control:
+ * 10^9 times the controls' own. Beside the words, the controls' part of the
+ * room left is less than a layout unit, so the last one ends on the line's
+ * edge; on a line of their own, they take all of it.
+ */
+export const WORDS_SHARE_CLASS = "grow-[1e9]";
+
+/**
+ * One concern on the page: its head, then its bands, a hairline between one
+ * and the next. Its own edge stands above its first part and below its last,
+ * and the head draws the hairline under itself, so nothing at the edge or
+ * straight under the head draws one: neither a part there nor a band first
+ * in what stands there, such as a list of rows.
  */
 export function Card({
     className = "",
@@ -19,7 +37,7 @@ export function Card({
         <section
             {...props}
             className={classes(
-                "overflow-hidden rounded-card border border-border bg-surface [&>:first-child]:border-t-0 [&>[role=list]:first-child>:first-child]:border-t-0 [&>:last-child]:border-b-0",
+                "overflow-hidden rounded-card border border-border bg-surface [&>:is(:first-child,header+*)]:border-t-0 [&>:is(:first-child,header+*)>.band:first-child]:border-t-0 [&>:last-child]:border-b-0",
                 className,
             )}
         >
@@ -68,19 +86,15 @@ export function CardHead({
     return (
         <header
             className={classes(
-                "@container border-b border-border bg-surface px-gutter py-2.5 md:py-3",
+                "@container border-b border-border bg-surface p-gutter",
                 className,
             )}
         >
-            <div className="flex flex-wrap items-start gap-x-4 gap-y-1.5 md:gap-y-2">
-                {/* Beside the actions the words take the room left on the
-                    line: the actions' share, one part in 10^9, is less than
-                    a layout unit, so the last action ends at the head's
-                    edge. On a line of their own the actions take all of it. */}
-                <div className="min-w-0 grow-[1e9]">
+            <div className="flex flex-wrap items-start gap-x-4 gap-y-2">
+                <div className={`min-w-0 ${WORDS_SHARE_CLASS}`}>
                     {/* The title's first line is centred in a control's
                         height, the band the actions stand in. */}
-                    <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-1 py-[calc((var(--height-control)-var(--text-md--line-height))/2)]">
+                    <div className="flex min-w-0 flex-wrap items-baseline gap-2 py-[calc((var(--height-control)-var(--text-md--line-height))/2)]">
                         <h2 className="text-md font-semibold">{title}</h2>
                         {aside}
                     </div>
@@ -88,7 +102,7 @@ export function CardHead({
                         the words none of its width, so the title alone
                         decides whether the actions fit beside it. */}
                     {isContent(description) && (
-                        <p className="-me-[calc(100cqw-100%)] mt-1.5 max-w-[70ch] text-sm text-text-secondary [contain:inline-size] md:mt-2">
+                        <p className="-me-[calc(100cqw-100%)] max-w-prose text-sm text-text-secondary [contain:inline-size]">
                             {description}
                         </p>
                     )}
@@ -103,6 +117,11 @@ export function CardHead({
     );
 }
 
+/**
+ * A form opened inside a card, on the sunken ground. Each child is one
+ * block of a column 16px apart: words go in a paragraph, controls in
+ * `Actions`, and a block centred in it takes its width itself.
+ */
 export function FormBand({
     ref,
     className,
@@ -116,7 +135,8 @@ export function FormBand({
         <div
             ref={ref}
             className={classes(
-                "border-b border-border bg-sunken px-gutter py-3",
+                BAND_CLASS,
+                "flex flex-col gap-4 bg-sunken",
                 className,
             )}
         >
@@ -125,6 +145,11 @@ export function FormBand({
     );
 }
 
+/**
+ * What a card says where what it holds has nothing in it, such as a list
+ * with no rows yet: a sentence in a band of its own, which may hold a link.
+ * A screen with nothing on it yet is an `EmptyState`.
+ */
 export function Nothing({
     className,
     children,
@@ -133,12 +158,23 @@ export function Nothing({
     children: ReactNode;
 }) {
     return (
-        <CardBody className={classes("text-sm text-text-secondary", className)}>
+        <p
+            className={classes(
+                BAND_CLASS,
+                "text-sm text-text-secondary",
+                className,
+            )}
+        >
             {children}
-        </CardBody>
+        </p>
     );
 }
 
+/**
+ * What a card holds that is not a row. Each child is one block of a column
+ * 16px apart: words go in a paragraph, controls in `Actions`, and a block
+ * centred in it takes its width itself.
+ */
 export function CardBody({
     className = "",
     children,
@@ -147,7 +183,9 @@ export function CardBody({
     children: ReactNode;
 }) {
     return (
-        <div className={classes("px-gutter py-4", className)}>{children}</div>
+        <div className={classes(BAND_CLASS, "flex flex-col gap-4", className)}>
+            {children}
+        </div>
     );
 }
 

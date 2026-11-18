@@ -91,7 +91,7 @@ export function TasksSection() {
                 title="Progress in place"
                 rule="Something under way says its phase in words over a bar that fills. One that cannot tell how far sends a stretch along the bar."
             >
-                <div className="flex max-w-md flex-col gap-5">
+                <div className="flex max-w-md flex-col gap-4">
                     <Progress
                         label={done < 0.7 ? "Uploading" : "Verifying"}
                         value={done}
@@ -124,14 +124,14 @@ export function TasksSection() {
                 </Card>
                 <Card className="max-w-xl">
                     <CardHead title="On a screen of its own" />
-                    <CardBody className="flex flex-col gap-4">
+                    <CardBody>
                         <Steps label="Setup" steps={SETUP} current={onScreen} />
                         <Swap view={onScreen} stepped>
                             <div className="flex flex-col gap-4">
                                 <p className="text-sm text-text-secondary">
                                     {BODY[onScreen]}
                                 </p>
-                                <Actions>
+                                <Actions className="justify-end">
                                     <Button
                                         onClick={() =>
                                             before === undefined

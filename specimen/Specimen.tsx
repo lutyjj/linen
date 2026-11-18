@@ -23,23 +23,21 @@ export function Specimen({
     children: ReactNode;
 }) {
     return (
-        <section className="flex flex-col gap-3">
-            <header className="flex flex-col gap-1">
+        <section className="flex flex-col gap-4">
+            <header>
                 <h2 className="text-md font-semibold">{title}</h2>
                 {rule !== undefined && (
-                    <p className="max-w-[70ch] text-sm text-text-secondary">
+                    <p className="max-w-prose text-sm text-text-secondary">
                         {rule}
                     </p>
                 )}
             </header>
             {framed ? (
                 <Card>
-                    <CardBody className="flex flex-col gap-5">
-                        {children}
-                    </CardBody>
+                    <CardBody>{children}</CardBody>
                 </Card>
             ) : (
-                <div className="flex flex-col gap-3">{children}</div>
+                <div className="flex flex-col gap-4">{children}</div>
             )}
         </section>
     );
@@ -54,12 +52,7 @@ export function Samples({
     className?: string;
 }) {
     return (
-        <div
-            className={classes(
-                "flex flex-wrap items-start gap-x-6 gap-y-4",
-                className,
-            )}
-        >
+        <div className={classes("flex flex-wrap items-start gap-4", className)}>
             {children}
         </div>
     );
@@ -74,7 +67,7 @@ export function Sample({
     children: ReactNode;
 }) {
     return (
-        <figure className="flex flex-col items-start gap-1.5">
+        <figure className="flex flex-col items-start gap-1">
             <div className="flex min-h-(--height-control) items-center">
                 {children}
             </div>
@@ -92,8 +85,8 @@ export function Group({
     children: ReactNode;
 }) {
     return (
-        <div className="flex flex-col gap-2.5">
-            <h3 className="text-xs font-medium text-text-secondary">{name}</h3>
+        <div className="flex flex-col gap-2">
+            <h3 className="text-sm font-medium">{name}</h3>
             {children}
         </div>
     );

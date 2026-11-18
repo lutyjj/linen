@@ -38,15 +38,17 @@ export function Notice({
                 className,
             )}
         >
-            <div className="flex flex-wrap items-start gap-x-2.5 gap-y-2">
-                <ToneIcon tone={tone} className="mt-0.5" />
-                <div className="min-w-0 flex-[1_1_16rem]">
-                    <div className="font-medium break-words">{title}</div>
-                    {isContent(description) && (
-                        <div className="mt-0.5 text-text-secondary">
-                            {description}
-                        </div>
-                    )}
+            <div className="flex flex-wrap items-start gap-x-4 gap-y-2">
+                <div className="flex min-w-0 flex-[1_1_16rem] gap-2">
+                    <ToneIcon tone={tone} className="mt-0.5" />
+                    <div className="min-w-0">
+                        <div className="font-medium break-words">{title}</div>
+                        {isContent(description) && (
+                            <div className="text-text-secondary">
+                                {description}
+                            </div>
+                        )}
+                    </div>
                 </div>
                 {isContent(action) && (
                     <div className="ml-auto flex shrink-0 items-center gap-2 self-center">

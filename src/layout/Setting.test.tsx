@@ -36,6 +36,18 @@ it("describes a setting's control by what the setting does", () => {
     ).toHaveAccessibleDescription("How close the rows sit.");
 });
 
+it("makes each setting an item of a list where it is handed that role", () => {
+    render(
+        <div role="list" aria-label="Projects">
+            <SettingRow role="listitem" title="Atlas" />
+            <SettingRow role="listitem" title="Harbor" />
+        </div>,
+    );
+    expect(
+        screen.getAllByRole("listitem").map((item) => item.textContent),
+    ).toEqual(["Atlas", "Harbor"]);
+});
+
 it("draws a setting whose description or control is nothing as one without them", () => {
     const { container, rerender } = render(<SettingRow title="Density" />);
     const row = markup(container);

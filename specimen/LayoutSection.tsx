@@ -9,6 +9,7 @@ import {
     CardBody,
     CardHead,
     Chip,
+    Content,
     CopyValue,
     Count,
     DisclosurePanel,
@@ -34,6 +35,7 @@ import { Specimen, Stack } from "./Specimen";
 
 export function LayoutSection() {
     const [weekly, setWeekly] = useState(true);
+    const [charts, setCharts] = useState(true);
     const [writing, setWriting] = useState(false);
     const [density, setDensity] = useState("comfortable");
     const [format, setFormat] = useState("csv");
@@ -192,6 +194,28 @@ export function LayoutSection() {
             </Specimen>
 
             <Specimen
+                title="A screen's content"
+                rule="The content stands as far below the screen's bars as from its sides, its cards one under another."
+                framed={false}
+            >
+                <div className="overflow-hidden rounded-card border border-border bg-bg">
+                    <TopBar title="Reports" />
+                    <Content>
+                        <Card>
+                            <CardHead title="Drafts" aside={<Count>2</Count>} />
+                            <Nothing>
+                                Both wait for this week's figures.
+                            </Nothing>
+                        </Card>
+                        <Card>
+                            <CardHead title="Sent" />
+                            <Nothing>None were sent this week.</Nothing>
+                        </Card>
+                    </Content>
+                </div>
+            </Specimen>
+
+            <Specimen
                 title="A card and its head"
                 rule="One concern per card. The head holds its title, a count beside it, what it is for, and its actions, which sit beside the title while the title keeps its own width beside them, and under what the card is for once it would not. Heads side by side stand in line, with actions or without. Every title and value inside starts on the gutter."
                 framed={false}
@@ -211,6 +235,10 @@ export function LayoutSection() {
                                 placeholder="Nightly export"
                             />
                         </div>
+                        <Actions className="justify-end">
+                            <Button>Cancel</Button>
+                            <Button variant="primary">Create token</Button>
+                        </Actions>
                     </FormBand>
                     <CardBody className="text-sm text-text-secondary">
                         A sunken band holds a form opened inside the card.
@@ -273,7 +301,7 @@ export function LayoutSection() {
                         the card is for, as on a phone.
                     </CardBody>
                 </Card>
-                <div className="grid gap-3 md:grid-cols-2">
+                <div className="grid gap-4 md:grid-cols-2">
                     <Card>
                         <CardHead
                             title="This week"
@@ -332,6 +360,14 @@ export function LayoutSection() {
                                 setWriting(false);
                             }, 1600);
                         }}
+                    />
+                    <SettingToggle
+                        title="Charts in the summary"
+                        description="It applies while the weekly summary is on."
+                        label="Charts in the summary"
+                        checked={charts}
+                        dimmed={!weekly}
+                        onCheckedChange={setCharts}
                     />
                     <SettingRow
                         title="Export from a terminal"

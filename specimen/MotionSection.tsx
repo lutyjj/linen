@@ -3,9 +3,13 @@ import { useState } from "react";
 
 import {
     arrive,
+    BAND_CLASS,
     Button,
     Card,
     CardHead,
+    classes,
+    Fact,
+    Facts,
     SegmentedControl,
     SettlingItem,
     SettlingRows,
@@ -44,16 +48,16 @@ export function MotionSection() {
                                 The project's cover
                             </div>
                         ) : (
-                            <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 rounded-card border border-border p-4 text-sm">
-                                <dt className="text-text-muted">Owner</dt>
-                                <dd>Ada</dd>
-                                <dt className="text-text-muted">Status</dt>
-                                <dd>On track</dd>
-                                <dt className="text-text-muted">Open tasks</dt>
-                                <dd>24</dd>
-                                <dt className="text-text-muted">Last update</dt>
-                                <dd>4 minutes ago</dd>
-                            </dl>
+                            <div className="rounded-card border border-border p-gutter">
+                                <Facts>
+                                    <Fact name="Owner">Ada</Fact>
+                                    <Fact name="Status">On track</Fact>
+                                    <Fact name="Open tasks">24</Fact>
+                                    <Fact name="Last update">
+                                        4 minutes ago
+                                    </Fact>
+                                </Facts>
+                            </div>
                         )}
                     </Swap>
                 </Group>
@@ -85,7 +89,10 @@ export function MotionSection() {
                         {rows.map((name) => (
                             <SettlingItem
                                 key={name}
-                                className="flex items-center justify-between border-t border-border px-gutter py-2.5 text-sm [header+&]:border-t-0"
+                                className={classes(
+                                    BAND_CLASS,
+                                    "flex items-center justify-between text-sm",
+                                )}
                             >
                                 {name}
                                 <Button
@@ -108,7 +115,7 @@ export function MotionSection() {
                 title="Something arrives"
                 rule="A surface that mounts settles once, with a breath of rise; related ones follow a stagger apart."
             >
-                <div key={arrivals} className="flex gap-3">
+                <div key={arrivals} className="flex gap-4">
                     {[0, 1, 2].map((depth) => (
                         <m.div
                             key={depth}

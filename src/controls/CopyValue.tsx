@@ -94,7 +94,8 @@ export function CopyButton({
 /**
  * A value to take whole: an address, a command, a header. It is shown in
  * full, wrapping at its spaces, so it can be read at rest and selected by
- * hand where the browser refuses the clipboard.
+ * hand where the browser refuses the clipboard. It takes the room a row
+ * gives it, so its copy control ends where the row does.
  */
 export function CopyValue({
     value,
@@ -107,7 +108,7 @@ export function CopyValue({
     className?: string;
 }) {
     return (
-        <span className={classes(WELL_ROW_CLASS, className)}>
+        <span className={classes(WELL_ROW_CLASS, "grow", className)}>
             <Well label={label}>{value}</Well>
             <CopyButton value={value} label={label} />
         </span>
@@ -156,13 +157,13 @@ export function ShownOnce({
     return (
         <div
             className={classes(
-                "flex max-w-[60ch] min-w-0 flex-col gap-2.5 text-sm",
+                "flex min-w-0 flex-col gap-2 text-sm",
                 className,
             )}
         >
             <div>
                 <p className="font-medium break-words">{what}</p>
-                <p className="mt-0.5 text-text-secondary">
+                <p className="max-w-prose text-text-secondary">
                     {children} {isContent(lost) ? lost : words.shownOnce}
                 </p>
             </div>

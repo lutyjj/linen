@@ -349,8 +349,8 @@ function GaugeRows({
             <div
                 className={
                     compact
-                        ? "flex flex-col gap-0.5"
-                        : "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1.5"
+                        ? "flex flex-col gap-2"
+                        : "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2"
                 }
             >
                 {children}

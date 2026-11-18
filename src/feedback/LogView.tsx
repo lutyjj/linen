@@ -1,7 +1,7 @@
 import { ArrowDown, Download } from "lucide-react";
 import { type ReactNode, useLayoutEffect, useRef, useState } from "react";
 
-import { Button, IconButton } from "../controls/Button";
+import { Actions, Button, IconButton } from "../controls/Button";
 import { CopyButton } from "../controls/CopyValue";
 import { classes } from "../foundation/classes";
 import { useWords } from "../foundation/words";
@@ -68,28 +68,28 @@ export function LogView({
     return (
         <section
             aria-label={label}
-            className={classes("flex min-w-0 flex-col gap-1.5", className)}
+            className={classes("flex min-w-0 flex-col gap-1", className)}
         >
-            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                <span className="mr-auto text-xs font-medium text-text-secondary">
-                    {label}
-                </span>
-                {actions}
-                <CopyButton
-                    value={text}
-                    label={label}
-                    className="h-(--height-control-inline)"
-                />
-                {filename !== undefined && (
-                    <IconButton
-                        aria-label={`${words.download}: ${filename}`}
-                        title={words.download}
-                        onClick={download}
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                <span className="mr-auto text-sm font-medium">{label}</span>
+                <Actions>
+                    {actions}
+                    <CopyButton
+                        value={text}
+                        label={label}
                         className="h-(--height-control-inline)"
-                    >
-                        <Download aria-hidden="true" className="size-4" />
-                    </IconButton>
-                )}
+                    />
+                    {filename !== undefined && (
+                        <IconButton
+                            aria-label={`${words.download}: ${filename}`}
+                            title={words.download}
+                            onClick={download}
+                            className="h-(--height-control-inline)"
+                        >
+                            <Download aria-hidden="true" className="size-4" />
+                        </IconButton>
+                    )}
+                </Actions>
             </div>
             <div className="relative">
                 <pre

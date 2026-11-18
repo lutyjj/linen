@@ -43,9 +43,9 @@ export function Fact({
     children: ReactNode;
 }) {
     return (
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-0.5 border-t border-border py-2 first:border-t-0 first:pt-0 last:pb-0">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 border-t border-border py-2 first:border-t-0 first:pt-0 last:pb-0">
             <dt className="text-text-secondary">{name}</dt>
-            <dd className="flex min-w-0 items-center gap-x-1.5">
+            <dd className="flex min-h-(--height-control-inline) min-w-0 items-center gap-x-2">
                 <span
                     className={classes(
                         "min-w-0 wrap-anywhere",

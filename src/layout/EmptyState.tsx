@@ -18,10 +18,10 @@ export function EmptyState({
     children?: ReactNode;
 }) {
     return (
-        <Card className={classes("px-6 py-12 text-center", className)}>
+        <Card className={classes("px-gutter py-12 text-center", className)}>
             <h2 className="text-md font-semibold">{title}</h2>
             {isContent(description) && (
-                <p className="mx-auto mt-1 max-w-[65ch] text-sm text-text-secondary">
+                <p className="mx-auto max-w-prose text-sm text-text-secondary">
                     {description}
                 </p>
             )}

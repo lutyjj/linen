@@ -55,8 +55,8 @@ export function Progress({
             ? undefined
             : Math.min(1, Math.max(0, value));
     return (
-        <div className={classes("flex flex-col gap-1.5 text-sm", className)}>
-            <div className="flex items-baseline justify-between gap-3">
+        <div className={classes("flex flex-col gap-1 text-sm", className)}>
+            <div className="flex items-baseline justify-between gap-4">
                 <span id={name} aria-live="polite" className="min-w-0">
                     {label}
                 </span>

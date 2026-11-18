@@ -127,7 +127,7 @@ export function FeedbackSection() {
                 title="A message beside its cause"
                 rule="A message stands beside the act or the fields it is about, on its tone's tint: one sentence, what it means under it, and the one thing to do about it. A failure is read out at once."
             >
-                <div className="flex max-w-2xl flex-col gap-3">
+                <div className="flex max-w-2xl flex-col gap-4">
                     <Notice
                         tone="danger"
                         title="The export did not finish."
@@ -179,7 +179,7 @@ export function FeedbackSection() {
                 title="Gauges"
                 rule="A gauge shows a value on a bounded scale: an empty track and a fill in the ink of each zone it reaches. A value held is a block on the bar, and nothing at the lowest; a threshold set is a line that stands past its edges, so the two read apart where they stand close. At its lowest it is empty. Gauges read together stand close, lined up. A live gauge follows its value without rendering anything around it. In a row of a list, a compact gauge is its bar alone."
             >
-                <div className="flex max-w-md flex-col gap-5">
+                <div className="flex max-w-md flex-col gap-4">
                     <Gauge
                         label="Storage"
                         value={0.82}
@@ -284,7 +284,7 @@ export function FeedbackSection() {
                         {BUSY.map(({ name, channels }) => (
                             <li
                                 key={name}
-                                className="flex items-center gap-3 px-3 py-2.5 text-sm"
+                                className="flex items-center gap-4 p-gutter text-sm"
                             >
                                 <span className="flex-1">{name}</span>
                                 <Gauges

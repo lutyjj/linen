@@ -55,6 +55,7 @@ export { type Tone } from "./foundation/tone";
 export { useNarrow, useWidth } from "./foundation/viewport";
 export { ENGLISH, useWords, type Words } from "./foundation/words";
 export {
+    BAND_CLASS,
     Card,
     CardBody,
     CardHead,
