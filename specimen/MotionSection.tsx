@@ -38,30 +38,24 @@ export function MotionSection() {
                     />
                 </Group>
                 <Group name="A view swaps">
-                    <div className="max-w-md rounded-card border border-border">
-                        <Swap view={view}>
-                            {view === "image" ? (
-                                <div className="grid h-40 place-items-center bg-sunken text-sm text-text-muted">
-                                    The project's cover
-                                </div>
-                            ) : (
-                                <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 p-4 text-sm">
-                                    <dt className="text-text-muted">Owner</dt>
-                                    <dd>Ada</dd>
-                                    <dt className="text-text-muted">Status</dt>
-                                    <dd>On track</dd>
-                                    <dt className="text-text-muted">
-                                        Open tasks
-                                    </dt>
-                                    <dd>24</dd>
-                                    <dt className="text-text-muted">
-                                        Last update
-                                    </dt>
-                                    <dd>4 minutes ago</dd>
-                                </dl>
-                            )}
-                        </Swap>
-                    </div>
+                    <Swap view={view} className="max-w-md">
+                        {view === "image" ? (
+                            <div className="grid h-40 place-items-center rounded-card bg-sunken text-sm text-text-muted">
+                                The project's cover
+                            </div>
+                        ) : (
+                            <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 rounded-card border border-border p-4 text-sm">
+                                <dt className="text-text-muted">Owner</dt>
+                                <dd>Ada</dd>
+                                <dt className="text-text-muted">Status</dt>
+                                <dd>On track</dd>
+                                <dt className="text-text-muted">Open tasks</dt>
+                                <dd>24</dd>
+                                <dt className="text-text-muted">Last update</dt>
+                                <dd>4 minutes ago</dd>
+                            </dl>
+                        )}
+                    </Swap>
                 </Group>
             </Specimen>
 
