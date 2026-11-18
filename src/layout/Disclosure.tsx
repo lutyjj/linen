@@ -15,15 +15,19 @@ export function DisclosurePanel({
     className,
     children,
 }: {
+    /**
+     * The panel's place in the flow, such as a margin, on a frame around the
+     * box that clips, which keeps the focus ring's room (linen.css) and so
+     * stands in something that keeps the room of padding too.
+     */
     className?: string;
     children: ReactNode;
 }) {
     return (
-        <Collapsible.Panel
-            render={renderLeaving}
-            className={classes("panel", className)}
-        >
-            {children}
-        </Collapsible.Panel>
+        <div className={classes("panel-frame", className)}>
+            <Collapsible.Panel render={renderLeaving} className="panel">
+                {children}
+            </Collapsible.Panel>
+        </div>
     );
 }

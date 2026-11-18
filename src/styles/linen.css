@@ -255,13 +255,6 @@
         background: color-mix(in oklch, var(--color-ink) 22%, transparent);
     }
 
-    /* The ink is an affordance colour, so it marks focus rather than
-     * decorating a surface. */
-    :focus-visible {
-        outline: 2px solid var(--color-accent);
-        outline-offset: 1px;
-    }
-
     /* A native control paints its own mark, and the colour it reaches for is
      * the operating system's rather than this one's. */
     input {
@@ -272,6 +265,25 @@
     * {
         scrollbar-color: var(--color-border-strong) transparent;
         scrollbar-width: thin;
+    }
+}
+
+/* The ring the focus wears, in the ink, since it marks an affordance rather
+ * than decorating a surface, just outside the box it marks. A box that clips
+ * keeps the ring's room inside its edge, padded by `--focus-room` within a
+ * margin of minus it, so the ring of what stands at that edge is drawn
+ * whole; the box reaches the room past its slot, so it stands in something
+ * that keeps the room of padding too, as a band and a dialog's body do. */
+@layer base {
+    :root {
+        --focus-width: 2px;
+        --focus-offset: 1px;
+        --focus-room: calc(var(--focus-width) + var(--focus-offset));
+    }
+
+    :focus-visible {
+        outline: var(--focus-width) solid var(--color-accent);
+        outline-offset: var(--focus-offset);
     }
 }
 

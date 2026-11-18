@@ -39,9 +39,9 @@ export function DialogLayout({
             </Dialog.Title>
             {(described || asks) && (
                 // Scrolls once the dialog meets the window's edges, with a
-                // hairline at each edge something lies past (motion.css). Its
-                // padding keeps a focus ring at its sides and foot in view.
-                <div className="dialog-body -mx-1 -mt-px -mb-[calc(--spacing(1)+1px)] min-h-0 overflow-y-auto border-y border-transparent px-1 pb-1">
+                // hairline at each edge something lies past (motion.css). It
+                // keeps the focus ring's room at its sides and foot.
+                <div className="dialog-body -mx-(--focus-room) -mt-px -mb-[calc(var(--focus-room)+1px)] min-h-0 overflow-y-auto border-y border-transparent px-(--focus-room) pb-(--focus-room)">
                     {described && (
                         <Dialog.Description className="mt-1.5 text-sm text-text-secondary">
                             {description}

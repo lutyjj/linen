@@ -124,7 +124,7 @@ function TopNav({
                 </HomeLink>
                 {/* Places that outgrow the phone scroll rather than widen the
                     page, so Motion is told to measure the mark inside the
-                    scroll; the padding keeps a focus ring inside it. The
+                    scroll, and keeps the focus ring's room inside it. The
                     places measure their offsets from the scroller.
 
                     Only where the places are laid out reaches the scroll, not
@@ -138,12 +138,12 @@ function TopNav({
                 <m.div
                     ref={scroller}
                     layoutScroll
-                    className="relative -my-1 -mr-1 min-w-0 flex-1 overflow-x-auto overflow-y-hidden"
+                    className="relative -m-(--focus-room) min-w-0 flex-1 overflow-x-auto overflow-y-hidden"
                 >
                     <m.div
                         {...arrive()}
                         key={placesKey}
-                        className="isolate flex w-max min-w-full items-center justify-end gap-1 overflow-clip p-1"
+                        className="isolate flex w-max min-w-full items-center justify-end gap-1 overflow-clip p-(--focus-room)"
                     >
                         {places.map((place) => (
                             <TopNavLink

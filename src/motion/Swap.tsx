@@ -1,7 +1,6 @@
 import { AnimatePresence, m, useAnimate, useIsPresent } from "motion/react";
 import { type ReactNode, useLayoutEffect, useRef } from "react";
 
-import { classes } from "../foundation/classes";
 import { scrolls } from "../foundation/viewport";
 import { spring } from "./tokens";
 
@@ -14,7 +13,9 @@ import { spring } from "./tokens";
  * jumping, and the views cross-fade inside it.
  *
  * Between swaps the region is as tall as its view, so a row unfolding inside
- * one is that row's own motion and not the region's.
+ * one is that row's own motion and not the region's, and a view's own
+ * margins stay inside it. It keeps the focus ring's room (linen.css), so it
+ * stands in something that keeps the room of padding too.
  */
 export function Swap({
     view,
@@ -34,10 +35,7 @@ export function Swap({
      * a chart and its numbers, keeps it either way.
      */
     stepped?: boolean;
-    /**
-     * The region's place in the flow, such as a margin or a width. Its height
-     * is the swap's, so it takes no padding or border of its own.
-     */
+    /** The swap's place in the flow, such as a margin or a width. */
     className?: string;
     children: ReactNode;
 }) {
@@ -112,18 +110,18 @@ export function Swap({
         return letGo;
     }, [view, stepped, animate, region]);
 
+    // The region clips the views while its height travels, and keeps the
+    // focus ring's room inside its edge (linen.css) as the content's padding,
+    // which the heights it travels between count; the caller's box stands
+    // around it, so a margin or a width it is handed leaves the room whole.
     return (
-        <div
-            ref={region}
-            className={classes(
-                "overflow-clip [overflow-clip-margin:3px]",
-                className,
-            )}
-        >
-            <div ref={content} className="relative">
-                <AnimatePresence initial={false}>
-                    <SwapView key={view}>{children}</SwapView>
-                </AnimatePresence>
+        <div className={className}>
+            <div ref={region} className="-m-(--focus-room) overflow-clip">
+                <div ref={content} className="relative p-(--focus-room)">
+                    <AnimatePresence initial={false}>
+                        <SwapView key={view}>{children}</SwapView>
+                    </AnimatePresence>
+                </div>
             </div>
         </div>
     );
@@ -203,7 +201,11 @@ function SwapView({ children }: { children: ReactNode }) {
             inert={!present}
             aria-hidden={!present || undefined}
             tabIndex={-1}
-            className={present ? "outline-none" : "absolute inset-x-0 top-0"}
+            className={
+                present
+                    ? "outline-none"
+                    : "absolute inset-x-(--focus-room) top-(--focus-room)"
+            }
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: spring("leave") }}

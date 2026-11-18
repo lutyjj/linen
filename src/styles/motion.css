@@ -299,13 +299,19 @@
 
     /* A panel unfolds from the control above it to its own height and folds
      * back faster, inert as it goes. It holds its content's margins, so the
-     * height it travels to is the height it rests at, and the clip margin
-     * keeps a focus ring at its edge whole. */
+     * height it travels to is the height it rests at, and keeps the focus
+     * ring's room (linen.css) inside its edge. Its frame, which takes the
+     * caller's place in the flow, goes with it while it is shut. */
+    .panel-frame:not(:has(> .panel:not([hidden]))) {
+        display: none;
+    }
+
     .panel {
         display: flow-root;
         height: var(--collapsible-panel-height);
+        margin: calc(-1 * var(--focus-room));
+        padding: var(--focus-room);
         overflow: clip;
-        overflow-clip-margin: 3px;
         transition:
             height var(--motion-enter),
             opacity var(--motion-enter);
