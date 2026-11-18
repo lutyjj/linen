@@ -87,7 +87,7 @@ export function AccountMenu({
                         className={classes(POPUP_CLASS, "w-64 p-0")}
                     >
                         <Popover.Arrow className="absolute" />
-                        <div className="border-b border-border px-3 py-2.5">
+                        <div className="border-b border-border p-3">
                             <div className="truncate text-sm font-medium">
                                 {name}
                             </div>
@@ -98,7 +98,7 @@ export function AccountMenu({
                             )}
                         </div>
                         {isContent(children) && (
-                            <div className="flex flex-col gap-3 px-3 py-3">
+                            <div className="flex flex-col gap-4 p-3">
                                 {children}
                             </div>
                         )}
@@ -127,7 +127,7 @@ export function MenuChoice({
     return (
         <div
             className={classes(
-                "flex flex-col gap-1.5 [&_[role=radio]]:flex-1 [&>[role=radiogroup]]:flex",
+                "flex flex-col gap-1 [&_[role=radio]]:flex-1 [&>[role=radiogroup]]:flex",
                 className,
             )}
         >

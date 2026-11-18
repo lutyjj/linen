@@ -64,7 +64,7 @@ function TabLink({ href, label, icon: Icon, exact = false, badge }: Place) {
             href={href}
             aria-current={current ? "page" : undefined}
             className={classes(
-                "relative flex flex-1 flex-col items-center justify-center gap-0.5 text-3xs",
+                "relative flex flex-1 flex-col items-center justify-center gap-2 text-3xs",
                 current ? "font-medium text-accent" : "text-text-secondary",
             )}
         >

@@ -124,7 +124,7 @@ function RailBadge({ active, count }: { active: boolean; count: string }) {
             className={classes(
                 compact
                     ? "absolute top-1 right-1 size-2 rounded-full"
-                    : "rounded-input px-1.25 text-2xs text-bg",
+                    : "min-w-4 rounded-input px-1 text-center text-2xs text-bg",
                 active ? "bg-accent" : "bg-warn",
             )}
         >
@@ -221,7 +221,7 @@ export function RailChoice({
                         render={renderLeaving}
                         className={classes(
                             POPUP_CLASS,
-                            "flex flex-col gap-1.5 p-2",
+                            "flex flex-col gap-1 p-2",
                         )}
                     >
                         <Popover.Arrow className="absolute" />
@@ -271,7 +271,7 @@ export function Rail({
             <nav
                 aria-label={label}
                 className={classes(
-                    "sticky top-0 z-20 -mt-(--inset-top) hidden h-dvh w-(--width-rail) flex-col gap-0.5 border-r border-border bg-sunken px-3 pt-[calc(var(--inset-top)+--spacing(5))] pb-5 md:flex",
+                    "sticky top-0 z-20 -mt-(--inset-top) hidden h-dvh w-(--width-rail) flex-col gap-1 border-r border-border bg-sunken px-3 pt-[calc(var(--inset-top)+--spacing(5))] pb-5 md:flex",
                     compact && "w-(--width-rail-compact)",
                 )}
             >
@@ -279,7 +279,7 @@ export function Rail({
                     word where it can, so the whole of it stays in the rail. */}
                 <div
                     className={classes(
-                        "flex min-h-(--height-control) items-center justify-between gap-2 pb-4",
+                        "flex min-h-(--height-control) items-center justify-between gap-2 pb-3",
                         !compact && "pl-2",
                         compact && folded && "justify-center",
                     )}
@@ -301,7 +301,7 @@ export function Rail({
                 <m.div
                     {...arrive()}
                     key={placesKey}
-                    className="flex flex-col gap-0.5"
+                    className="flex flex-col gap-1"
                 >
                     {places.map((place) => (
                         <RailLink key={place.href} {...place} />
