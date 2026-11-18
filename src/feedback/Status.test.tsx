@@ -51,3 +51,27 @@ it("explains a state it offers no action for to the pointer, a press and the key
         await screen.findByRole("dialog", { name: "Read only" }),
     ).toHaveAccessibleDescription(why);
 });
+
+it("is a plain status when its description is nothing", () => {
+    const plain = render(<Status tone="warn">Read only</Status>);
+    const status = plain.container.innerHTML;
+    plain.unmount();
+    for (const nothing of [
+        undefined,
+        null,
+        false,
+        true,
+        "",
+        [],
+        [[null, ""], false],
+    ]) {
+        const { container, unmount } = render(
+            <ExplainedStatus tone="warn" description={nothing}>
+                Read only
+            </ExplainedStatus>,
+        );
+        expect(screen.queryByRole("button")).toBeNull();
+        expect(container.innerHTML).toBe(status);
+        unmount();
+    }
+});
