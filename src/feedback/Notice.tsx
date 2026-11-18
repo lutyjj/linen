@@ -32,7 +32,7 @@ export function Notice({
         <div
             role={tone === "danger" ? "alert" : "status"}
             className={classes(
-                "@container rounded-button px-3 py-2.5 text-sm",
+                "rounded-button px-3 py-2.5 text-sm",
                 TONE_TINT[tone],
                 className,
             )}
