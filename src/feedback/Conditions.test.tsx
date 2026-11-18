@@ -122,4 +122,6 @@ it("stands in the shell over every screen's top bar", () => {
     ).toBeTruthy();
     // The top bar sticks beneath the conditions, which say how tall they are.
     expect(main.style.getPropertyValue("--height-conditions")).not.toBe("");
+    // linen.css keeps what follows a marked bar clear of the bars.
+    expect(within(main).getByRole("status")).toHaveAttribute("data-sticky");
 });

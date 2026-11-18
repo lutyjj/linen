@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { expect, it } from "vitest";
 
+import { Conditions } from "../feedback/Conditions";
 import { ENGLISH } from "../foundation/words";
 import { LinenProvider } from "../LinenProvider";
 import { memoryNavigation } from "../test/memoryNavigation";
@@ -126,4 +127,39 @@ it("edits a title in place, as a field named for what it holds", async () => {
     await userEvent.type(field, " report");
     expect(field).toHaveValue("Quarterly report");
     expect(screen.getByRole("heading", { level: 1 })).toContainElement(field);
+});
+
+it("marks itself a bar stuck to the page and says its height while it stands there", () => {
+    const { unmount } = render(<TopBar title="Projects" />);
+    const bar = screen.getByRole("banner");
+    const place = bar.parentElement;
+    // linen.css keeps what follows a marked bar clear of the bars.
+    expect(bar).toHaveAttribute("data-sticky");
+    expect(place?.style.getPropertyValue("--height-topbar")).not.toBe("");
+    unmount();
+    expect(place?.style.getPropertyValue("--height-topbar")).toBe("");
+});
+
+it("keeps its stack in a box that scrolls and holds nothing on the page clear of it", () => {
+    render(
+        <div style={{ overflowY: "auto" }}>
+            <div>
+                <Conditions
+                    conditions={[{ id: "contact", title: "Contact is lost" }]}
+                />
+                <TopBar title="Projects" />
+            </div>
+        </div>,
+    );
+    const bar = screen.getByRole("banner");
+    const conditions = screen.getByRole("status");
+    // The top bar sticks beneath the conditions inside the box.
+    expect(
+        bar.parentElement?.style.getPropertyValue("--height-conditions"),
+    ).not.toBe("");
+    expect(
+        bar.parentElement?.style.getPropertyValue("--height-topbar"),
+    ).not.toBe("");
+    expect(bar).not.toHaveAttribute("data-sticky");
+    expect(conditions).not.toHaveAttribute("data-sticky");
 });

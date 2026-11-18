@@ -113,12 +113,23 @@ export function useVisibleViewport(): (element: HTMLElement | null) => void {
 }
 
 /**
- * Sets the custom property `name` to the height of the element the returned
- * ref is on, on the element it stands in, for the chrome that sticks beneath
- * it on the same screen. A bar whose contents wrap grows, so it follows the
- * height, and it goes with the element.
+ * Whether a box scrolls what overflows it, as one that hides it does too:
+ * what sticks inside it sticks to it.
  */
-export function usePublishedHeight<Measured extends HTMLElement>(name: string) {
+export function scrolls(box: Element): boolean {
+    return /auto|scroll|hidden/.test(getComputedStyle(box).overflowY);
+}
+
+/**
+ * A bar stuck to the top of what scrolls it, as the app's conditions, the
+ * top bar and the sections are. On the element it stands in, the custom
+ * property `name` follows the bar's height, for the bars stuck beneath it.
+ * While no box that scrolls stands between the bar and the page, the bar
+ * also wears `data-sticky`, so what stands below it comes to rest clear of
+ * it (linen.css); it looks again as the bar's size changes, not as a box
+ * around it changes alone.
+ */
+export function useStickyBar<Measured extends HTMLElement>(name: string) {
     const measured = useRef<Measured>(null);
     useLayoutEffect(() => {
         const element = measured.current;
@@ -126,11 +137,17 @@ export function usePublishedHeight<Measured extends HTMLElement>(name: string) {
         if (element == null || screen == null) return;
         const observer = new ResizeObserver(() => {
             screen.style.setProperty(name, `${element.offsetHeight}px`);
+            let box: Element | null = screen;
+            while (box && box !== document.body && !scrolls(box)) {
+                box = box.parentElement;
+            }
+            element.toggleAttribute("data-sticky", box === document.body);
         });
         observer.observe(element);
         return () => {
             observer.disconnect();
             screen.style.removeProperty(name);
+            element.removeAttribute("data-sticky");
         };
     }, [name]);
     return measured;

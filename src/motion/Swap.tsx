@@ -2,6 +2,7 @@ import { AnimatePresence, m, useAnimate, useIsPresent } from "motion/react";
 import { type ReactNode, type Ref, useLayoutEffect, useRef } from "react";
 
 import { classes } from "../foundation/classes";
+import { scrolls } from "../foundation/viewport";
 import { spring } from "./tokens";
 
 /**
@@ -117,11 +118,12 @@ export function Swap({
  * Brings the start of a view that arrives into sight where whatever it
  * scrolls in has left it above, as the end of a long form leaves a short
  * result. Focus alone would not: it centres a view taller than its room.
+ * On a page, the bars stuck to its top stand in the view's scroll margin.
  */
 function showStart(view: HTMLElement) {
-    let top = 0;
+    let top = parseFloat(getComputedStyle(view).scrollMarginTop) || 0;
     for (let box = view.parentElement; box; box = box.parentElement) {
-        if (/auto|scroll|hidden/.test(getComputedStyle(box).overflowY)) {
+        if (scrolls(box)) {
             top = Math.max(top, box.getBoundingClientRect().top);
         }
     }

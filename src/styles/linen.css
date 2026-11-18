@@ -202,6 +202,26 @@
     --inset-tabbar: var(--height-tabbar);
 }
 
+/* What stands below the bars stuck to a screen's top (the app's conditions,
+ * the top bar, the sections) comes to rest at their foot when a link, a
+ * scrollIntoView or the focus scrolls to it; each bar says how tall it is on
+ * the element it stands in. A scroll padding on the page would hold the bars
+ * and the popups over them to it too, so a focus or a highlight there would
+ * scroll the page. The margin holds in every box between a target and the
+ * page, so a box that scrolls inside a screen takes it off what it scrolls,
+ * as `**:scroll-mt-0` on the box does from the utilities layer. */
+@layer base {
+    :where([data-sticky] ~ *, [data-sticky] ~ * *):not(
+        [data-sticky],
+        [data-sticky] *
+    ) {
+        scroll-margin-top: calc(
+            var(--inset-top) + var(--height-conditions, 0px) +
+                var(--height-topbar, 0px) + var(--height-sectionnav, 0px)
+        );
+    }
+}
+
 /* Which half of every `light-dark()` above is in force.
  *
  * The page follows prefers-color-scheme, and data-theme overrides it in both

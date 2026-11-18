@@ -3,6 +3,7 @@ import { useEffect, useId, useRef } from "react";
 
 import { classes } from "../foundation/classes";
 import { COLUMN_CLASS } from "../foundation/column";
+import { useStickyBar } from "../foundation/viewport";
 import {
     CHOSEN_WIDTH_CLASS,
     chosenLayerClass,
@@ -38,6 +39,8 @@ export function SectionNav({
 }) {
     const marks = useId();
     const group = useRef<HTMLDivElement>(null);
+    // Its height, for what scrolls beneath it.
+    const rail = useStickyBar<HTMLElement>("--height-sectionnav");
     const pathname = useNavigation().usePathname();
     useEffect(() => {
         group.current
@@ -46,6 +49,7 @@ export function SectionNav({
     }, [group, pathname]);
     return (
         <nav
+            ref={rail}
             aria-label={label}
             className="sticky top-[calc(var(--inset-top)+var(--height-conditions,0px)+var(--height-topbar,var(--height-toolbar)))] z-4 border-b border-border bg-bg"
         >

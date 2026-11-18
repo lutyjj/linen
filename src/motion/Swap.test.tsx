@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import { expect, it } from "vitest";
+import { afterEach, expect, it, vi } from "vitest";
 
 import { MotionProvider } from "./MotionProvider";
 import { Swap } from "./Swap";
@@ -128,4 +128,38 @@ it("makes the view that leaves inert and unread from its first frame of leaving"
     expect(leaving).not.toBeInTheDocument();
     expect(screen.queryByText("The project's cover")).toBeNull();
     expect(screen.getByText("Owner: Ada")).toBeInTheDocument();
+});
+
+afterEach(() => {
+    vi.restoreAllMocks();
+    document.getElementById("bars")?.remove();
+});
+
+/**
+ * Swaps to the code with every element's start at `top`, under bars that
+ * leave a view a 100 px scroll margin, and says whether the view arriving
+ * was brought into sight.
+ */
+async function arriveAt(top: number) {
+    const bars = document.createElement("style");
+    bars.id = "bars";
+    bars.textContent = "[tabindex='-1'] { scroll-margin-top: 100px; }";
+    document.head.append(bars);
+    vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue({
+        top,
+    } as DOMRect);
+    const shown = vi.spyOn(Element.prototype, "scrollIntoView");
+    const user = userEvent.setup();
+    render(<Invitation stepped />);
+    await user.click(screen.getByRole("button", { name: "Create" }));
+    expect(arrived("The code is K7Q2.")).toHaveFocus();
+    return shown.mock.calls.length > 0;
+}
+
+it("brings the start of a view that arrives out from under the bars", async () => {
+    expect(await arriveAt(40)).toBe(true);
+});
+
+it("leaves a view that arrives in sight below the bars where it is", async () => {
+    expect(await arriveAt(140)).toBe(false);
 });

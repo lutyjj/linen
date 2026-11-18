@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import {
+    Actions,
     Button,
     Card,
     CardBody,
@@ -15,6 +16,7 @@ import {
     Progress,
     SettingRow,
     Steps,
+    Swap,
 } from "../src";
 import { Sample, Samples, Specimen, Stack } from "./Specimen";
 
@@ -22,7 +24,7 @@ const SETUP = [
     { id: "address", label: "Address" },
     { id: "secret", label: "Secret" },
     { id: "test", label: "Test" },
-];
+] as const;
 
 const BODY: Record<string, string> = {
     address: "Where the webhook is sent.",
@@ -44,6 +46,7 @@ export function TasksSection() {
     const [level, setLevel] = useState<number | null>(-18);
     const [done, setDone] = useState(0.35);
     const [step, setStep] = useState<string | null>(null);
+    const [onScreen, setOnScreen] = useState<string>(SETUP[1].id);
     const [lines, setLines] = useState(() =>
         Array.from({ length: 12 }, (_, at) => line(at)),
     );
@@ -59,6 +62,9 @@ export function TasksSection() {
     const at = SETUP.findIndex((one) => one.id === step);
     const next = SETUP[at + 1];
     const back = SETUP[at - 1];
+    const here = SETUP.findIndex((one) => one.id === onScreen);
+    const following = SETUP[here + 1];
+    const before = SETUP[here - 1];
 
     return (
         <Stack>
@@ -95,26 +101,64 @@ export function TasksSection() {
             <Specimen
                 title="A task of known steps"
                 rule="A task of known steps shows each done, the one under way and the ones to come, with Back, Cancel and the next step as its buttons. It can open at any step, as a task resumed later does, in a dialog or on a screen of its own."
+                framed={false}
             >
-                <Samples>
-                    <Sample name="From the start">
-                        <Button onClick={() => setStep("address")}>
-                            Add a webhook
-                        </Button>
-                    </Sample>
-                    <Sample name="Resumed">
-                        <Button onClick={() => setStep("test")}>
-                            Finish setting up
-                        </Button>
-                    </Sample>
-                </Samples>
+                <Card className="max-w-xl">
+                    <CardHead title="In a dialog" />
+                    <CardBody>
+                        <Samples>
+                            <Sample name="From the start">
+                                <Button onClick={() => setStep("address")}>
+                                    Add a webhook
+                                </Button>
+                            </Sample>
+                            <Sample name="Resumed">
+                                <Button onClick={() => setStep("test")}>
+                                    Finish setting up
+                                </Button>
+                            </Sample>
+                        </Samples>
+                    </CardBody>
+                </Card>
                 <Card className="max-w-xl">
                     <CardHead title="On a screen of its own" />
                     <CardBody className="flex flex-col gap-4">
-                        <Steps label="Setup" steps={SETUP} current="secret" />
-                        <p className="text-sm text-text-secondary">
-                            {BODY.secret}
-                        </p>
+                        <Steps label="Setup" steps={SETUP} current={onScreen} />
+                        <Swap view={onScreen} stepped>
+                            <div className="flex flex-col gap-4">
+                                <p className="text-sm text-text-secondary">
+                                    {BODY[onScreen]}
+                                </p>
+                                <Actions>
+                                    <Button
+                                        onClick={() => setOnScreen(SETUP[0].id)}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    {before !== undefined && (
+                                        <Button
+                                            onClick={() =>
+                                                setOnScreen(before.id)
+                                            }
+                                        >
+                                            Back
+                                        </Button>
+                                    )}
+                                    <Button
+                                        variant="primary"
+                                        onClick={() =>
+                                            setOnScreen(
+                                                (following ?? SETUP[0]).id,
+                                            )
+                                        }
+                                    >
+                                        {following === undefined
+                                            ? "Finish"
+                                            : "Next"}
+                                    </Button>
+                                </Actions>
+                            </div>
+                        </Swap>
                     </CardBody>
                 </Card>
                 <DialogRoot
