@@ -186,6 +186,7 @@ export function FeedbackSection() {
                             { from: 0, to: 30, tone: "accent" },
                             { from: 30, to: 40, tone: "warn" },
                         ]}
+                        marks={[{ value: 40, kind: "set", label: "Limit" }]}
                     />
                     <Gauges label="Worker load">
                         {[
@@ -296,6 +297,11 @@ export function FeedbackSection() {
                                                     value: channel?.high ?? 0,
                                                     kind: "held",
                                                     label: "Highest",
+                                                },
+                                                {
+                                                    value: 160,
+                                                    kind: "set",
+                                                    label: "Limit",
                                                 },
                                             ]}
                                         />
