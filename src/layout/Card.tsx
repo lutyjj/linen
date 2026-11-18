@@ -33,8 +33,9 @@ export function Card({
  *
  * The actions stand beside the title while the title and its count keep
  * their own width beside them, and go under the description once they would
- * not, so wide actions never squeeze the title. The description takes the
- * head's width either way.
+ * not, so wide actions never squeeze the title. Under it they take the whole
+ * line, so a control among them that grows, such as a search, fills it. The
+ * description takes the head's width either way.
  */
 export function CardHead({
     title,
@@ -69,7 +70,11 @@ export function CardHead({
             )}
         >
             <div className="flex flex-wrap items-start gap-x-4 gap-y-1.5 md:gap-y-2">
-                <div className="min-w-0 grow">
+                {/* Beside the actions the words take the room left on the
+                    line: the actions' share, one part in 10^9, is less than
+                    a layout unit, so the last action ends at the head's
+                    edge. On a line of their own the actions take all of it. */}
+                <div className="min-w-0 grow-[1e9]">
                     {/* The words are narrower than the head only while the
                         actions stand beside them (100cqw - 100% is more than
                         nothing). The title's row then takes a control's
@@ -89,7 +94,7 @@ export function CardHead({
                     )}
                 </div>
                 {isContent(children) && (
-                    <Actions className="min-h-(--height-control) min-w-0">
+                    <Actions className="min-h-(--height-control) min-w-0 grow">
                         {children}
                     </Actions>
                 )}

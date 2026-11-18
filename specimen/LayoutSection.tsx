@@ -175,6 +175,7 @@ export function LayoutSection() {
                             placeholder="Search exports"
                             value={query}
                             onValueChange={setQuery}
+                            className="grow"
                         />
                         <SegmentedControl
                             label="Status"
