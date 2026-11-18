@@ -154,7 +154,7 @@ export function Field({
                 </div>
             )}
             <BaseField.Error
-                className="mt-1 flex items-start gap-1 text-xs text-danger"
+                className="mt-1 flex max-w-prose items-start gap-1 text-xs text-danger"
                 render={({ children: error, ...props }) => (
                     <div {...props} data-message>
                         <CircleAlert
@@ -174,7 +174,7 @@ export function Field({
                         <BaseField.Description
                             key={String(validity.valid === false)}
                             data-message
-                            className="mt-1 text-xs text-text-secondary"
+                            className="mt-1 max-w-prose text-xs text-text-secondary"
                         >
                             {hint}
                         </BaseField.Description>
