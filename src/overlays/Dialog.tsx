@@ -43,7 +43,7 @@ export function DialogLayout({
                 // keeps the focus ring's room at its sides and foot.
                 <div className="dialog-body -mx-(--focus-room) -mt-px -mb-[calc(var(--focus-room)+1px)] min-h-0 overflow-y-auto border-y border-transparent px-(--focus-room) pb-(--focus-room)">
                     {described && (
-                        <Dialog.Description className="mt-1.5 text-sm text-text-secondary">
+                        <Dialog.Description className="text-sm text-text-secondary">
                             {description}
                         </Dialog.Description>
                     )}
@@ -54,7 +54,7 @@ export function DialogLayout({
                     )}
                 </div>
             )}
-            <Actions className="mt-5 shrink-0 justify-end">{actions}</Actions>
+            <Actions className="mt-4 shrink-0 justify-end">{actions}</Actions>
         </div>
     );
 }
