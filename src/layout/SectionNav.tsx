@@ -10,6 +10,7 @@ import {
     ChosenMark,
 } from "../motion/ChosenMark";
 import { useCurrent, useNavigation } from "../navigation/navigation";
+import { placeClass } from "./shell/places";
 
 export interface Section {
     /** A path from the root, such as `/settings/people`. */
@@ -96,12 +97,10 @@ function SectionLink({
             data-label={label}
             aria-current={current ? "page" : undefined}
             className={classes(
-                "relative flex shrink-0 flex-col items-center rounded-button px-2.5 py-1.5 text-sm whitespace-nowrap",
+                placeClass(current),
+                "relative shrink-0 flex-col justify-center gap-0 whitespace-nowrap",
                 CHOSEN_WIDTH_CLASS,
                 chosenLayerClass(current),
-                current
-                    ? "font-medium text-accent"
-                    : "text-text-secondary hover:bg-border hover:text-text",
             )}
         >
             {current && <ChosenMark group={marks} radius="button" />}

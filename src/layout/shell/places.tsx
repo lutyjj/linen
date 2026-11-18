@@ -51,6 +51,21 @@ export function HomeLink({
     );
 }
 
+/**
+ * A place in navigation, in the rail, the phone's top bar or a screen's
+ * sections: at rest, under a pointer and current. Its icon stands in the
+ * row's inset on both sides. The current place's fill is the caller's, a
+ * mark that slides between places or the row's own.
+ */
+export function placeClass(current: boolean): string {
+    return classes(
+        "flex h-(--height-control) items-center gap-2 rounded-button px-2 text-sm",
+        current
+            ? "font-medium text-accent"
+            : "text-text-secondary pressable:hover:bg-border pressable:hover:text-text",
+    );
+}
+
 export interface PlaceList {
     /** Names the navigation, apart from a screen's own section navigation. */
     label: string;

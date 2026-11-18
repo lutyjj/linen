@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import { classes } from "../../foundation/classes";
 import {
+    OPEN_TRIGGER_CLASS,
     POPUP_CLASS,
     POSITIONER_CLASS,
     renderLeaving,
@@ -50,7 +51,8 @@ export function AccountMenu({
                 aria-label={label}
                 className={classes(
                     railItemClass(false),
-                    "h-10 data-[popup-open]:bg-border data-[popup-open]:text-text",
+                    OPEN_TRIGGER_CLASS,
+                    "h-10",
                     compact ? "justify-center px-0" : "pl-1",
                 )}
             >

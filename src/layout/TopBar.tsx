@@ -12,6 +12,7 @@ import { buttonClass } from "../controls/Button";
 import { classes } from "../foundation/classes";
 import { COLUMN_CLASS, WIDE_COLUMN_CLASS } from "../foundation/column";
 import {
+    OPEN_TRIGGER_CLASS,
     POPUP_CLASS,
     POSITIONER_CLASS,
     renderLeaving,
@@ -110,7 +111,10 @@ function Folded({ crumbs }: { crumbs: readonly Crumb[] }) {
         <Popover.Root open={open} onOpenChange={setOpen}>
             <Popover.Trigger
                 aria-label={words.foldedSteps}
-                className="-my-1 flex size-(--height-control-inline) shrink-0 cursor-pointer items-center justify-center rounded-input hover:bg-border hover:text-text data-[popup-open]:bg-border data-[popup-open]:text-text"
+                className={classes(
+                    "-my-1 flex size-(--height-control-inline) shrink-0 cursor-pointer items-center justify-center rounded-input hover:bg-border hover:text-text",
+                    OPEN_TRIGGER_CLASS,
+                )}
             >
                 <Ellipsis aria-hidden="true" className="size-3.5" />
             </Popover.Trigger>

@@ -15,7 +15,13 @@ import {
     useMotionLink,
     useNavigation,
 } from "../../navigation/navigation";
-import { type Home, HomeLink, type Place, type PlaceList } from "./places";
+import {
+    type Home,
+    HomeLink,
+    type Place,
+    placeClass,
+    type PlaceList,
+} from "./places";
 
 /**
  * Where a phone shows the places: a tab bar along the bottom, within the
@@ -188,11 +194,9 @@ function TopNavLink({
             href={href}
             aria-current={current ? "page" : undefined}
             className={classes(
-                "relative flex h-(--height-control) shrink-0 items-center gap-1.5 rounded-button px-2 text-sm whitespace-nowrap",
+                placeClass(current),
+                "relative shrink-0 whitespace-nowrap",
                 chosenLayerClass(current),
-                current
-                    ? "font-medium text-accent"
-                    : "text-text-secondary hover:bg-border hover:text-text",
             )}
         >
             {current && <ChosenMark group={group} radius="button" />}

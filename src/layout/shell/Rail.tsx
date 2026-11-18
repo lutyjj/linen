@@ -5,6 +5,7 @@ import { createContext, type ReactNode, use, useState } from "react";
 
 import { classes } from "../../foundation/classes";
 import {
+    OPEN_TRIGGER_CLASS,
     POPUP_CLASS,
     POSITIONER_CLASS,
     renderLeaving,
@@ -13,7 +14,13 @@ import { isContent } from "../../foundation/slot";
 import { useWords } from "../../foundation/words";
 import { arrive } from "../../motion/arrive";
 import { useCurrent, useNavigation } from "../../navigation/navigation";
-import { type Home, HomeLink, type Place, type PlaceList } from "./places";
+import {
+    type Home,
+    HomeLink,
+    type Place,
+    placeClass,
+    type PlaceList,
+} from "./places";
 
 /**
  * Whether the rail is folded to its icons. A preference of this browser, like
@@ -49,13 +56,15 @@ export function useRailCompact(): boolean {
     return use(RailContext);
 }
 
-/** Every row of the rail, whether it leads somewhere or does something. */
+/**
+ * Every row of the rail, whether it leads somewhere or does something, worn
+ * as a place is. The current one is filled where it stands.
+ */
 export function railItemClass(active: boolean): string {
     return classes(
-        "group/item relative flex h-(--height-control) w-full shrink-0 items-center gap-2.5 rounded-button px-2 text-left text-sm pressable:cursor-pointer inactive:dimmed",
-        active
-            ? "bg-accent-weak font-medium text-accent"
-            : "text-text-secondary pressable:hover:bg-border pressable:hover:text-text",
+        placeClass(active),
+        "group/item relative w-full shrink-0 text-left pressable:cursor-pointer inactive:dimmed",
+        active && "bg-accent-weak",
     );
 }
 
@@ -197,10 +206,7 @@ export function RailChoice({
         <Popover.Root>
             <Popover.Trigger
                 render={<button />}
-                className={classes(
-                    railItemClass(false),
-                    "data-[popup-open]:bg-border data-[popup-open]:text-text",
-                )}
+                className={classes(railItemClass(false), OPEN_TRIGGER_CLASS)}
             >
                 <RailRow icon={icon} label={label} />
             </Popover.Trigger>

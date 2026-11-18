@@ -171,8 +171,8 @@
     --height-sections: 44px;
     --width-rail: 220px;
     /* The rail folded to its icons: one control-height square inside the
-     * rail's own 12px gutters. */
-    --width-rail-compact: 56px;
+     * rail's own 12px gutters and its hairline. */
+    --width-rail-compact: 57px;
     /* The phone's tab bar, excluding the safe-area inset it adds beneath
      * itself. */
     --height-tabbar: 56px;

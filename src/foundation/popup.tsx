@@ -19,6 +19,10 @@ export const POPUP_CLASS =
  */
 export const POSITIONER_CLASS = "z-50";
 
+/** A control whose popup is open holds the fill a pointer gives it. */
+export const OPEN_TRIGGER_CLASS =
+    "data-[popup-open]:bg-border data-[popup-open]:text-text";
+
 /** One choice in a popup's list, highlighted and disabled the same way in every picker. */
 export const OPTION_CLASS =
     "rounded-input px-2 py-1.5 pressable:cursor-pointer data-[highlighted]:bg-accent-weak data-[highlighted]:text-accent inactive:dimmed";
