@@ -9,11 +9,13 @@ import { DialogRoot, DialogShell } from "./DialogRoot";
 
 /**
  * What every dialog lays out the same way: its title, what it is about, what
- * it asks, and its actions at the end, the one it exists for last. In a
- * window too short for all of it, the title and the actions keep their places
- * and what lies between them scrolls. Its parts stand in the dialog's column,
- * so an element placed around it, such as a `Form`, is `flex min-h-0
- * flex-col`.
+ * it asks, and its actions at the end, the one it exists for last. A dialog
+ * holds one, since its title names the dialog: one that moves on to another
+ * view keeps it, its title and actions changing with the view and its body
+ * swapping with `Swap`. It keeps to the room its `DialogShell` gives,
+ * whatever stands between them, such as a `Form` or an app's own wrapper: in
+ * a window too short for all of it, the title and the actions keep their
+ * places and what lies between them scrolls.
  */
 export function DialogLayout({
     title,
@@ -27,7 +29,7 @@ export function DialogLayout({
     actions: ReactNode;
 }) {
     return (
-        <>
+        <div className="flex max-h-(--dialog-room) flex-col">
             <Dialog.Title className="shrink-0 text-md font-semibold">
                 {title}
             </Dialog.Title>
@@ -47,7 +49,7 @@ export function DialogLayout({
                 </div>
             )}
             <Actions className="mt-5 shrink-0 justify-end">{actions}</Actions>
-        </>
+        </div>
     );
 }
 
@@ -112,7 +114,6 @@ export function FormDialog({
             <DialogShell open={open} width={width}>
                 <Form
                     errors={errors}
-                    className="flex min-h-0 flex-col"
                     onSubmit={() => {
                         if (!disabled) return wait(onConfirm());
                     }}

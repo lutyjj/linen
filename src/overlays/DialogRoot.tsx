@@ -60,10 +60,10 @@ export function DialogRoot({
  * dialog radius. What the dialog asks is the caller's; how one sits on the
  * screen, and how it arrives and leaves (motion.css), is not. It stands in
  * the part of the window a person can see, an on-screen keyboard's room
- * taken out, and never grows past it: `DialogLayout` scrolls what lies
- * between the title and the actions. Its child is a `DialogLayout`, or an
- * element around one that is `flex min-h-0 flex-col`, as `FormDialog`'s
- * `Form` is, so the bound reaches the layout.
+ * taken out, and never grows past it: its `DialogLayout` keeps to the room
+ * it gives, `--dialog-room`, whatever stands between them, such as a `Form`
+ * or an app's own wrapper, and scrolls what lies between the title and the
+ * actions.
  *
  * A dialog keeps the words it was open with while it leaves. Its caller often
  * forgets what the dialog was about the moment it closes, and a title that
@@ -89,14 +89,17 @@ export function DialogShell({
     return (
         <Dialog.Portal>
             <Dialog.Backdrop className="dialog-backdrop fixed inset-0 z-40 bg-scrim" />
+            {/* The viewport is the container the room is measured in: 100cqh
+                is its height inside its padding, and the popup takes its own
+                padding and border from it. */}
             <Dialog.Viewport
                 ref={visible}
-                className="fixed inset-x-0 top-(--visible-top,0px) z-50 flex h-(--visible-height,100dvh) items-center justify-center px-4 pt-[calc(var(--inset-top)+--spacing(4))] pb-[calc(env(safe-area-inset-bottom)+--spacing(4))]"
+                className="@container-size fixed inset-x-0 top-(--visible-top,0px) z-50 flex h-(--visible-height,100dvh) items-center justify-center px-4 pt-[calc(var(--inset-top)+--spacing(4))] pb-[calc(env(safe-area-inset-bottom)+--spacing(4))]"
             >
                 <Dialog.Popup
                     render={renderLeaving}
                     style={{ width: `min(${width}, 100%)` }}
-                    className="dialog flex max-h-full flex-col rounded-dialog border border-border bg-surface p-5 shadow-overlay outline-none"
+                    className="dialog rounded-dialog border border-border bg-surface p-5 shadow-overlay outline-none [--dialog-room:calc(100cqh-2*(--spacing(5)+1px))]"
                 >
                     {open ? children : said.current}
                 </Dialog.Popup>

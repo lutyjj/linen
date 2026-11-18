@@ -5,8 +5,14 @@ import {
     Checkbox,
     Conditions,
     ConfirmDialog,
+    DialogCancel,
+    DialogLayout,
+    DialogRoot,
+    DialogShell,
     Elapsed,
     ExplainedStatus,
+    Field,
+    Form,
     FormDialog,
     type FormErrors,
     Gauge,
@@ -15,7 +21,9 @@ import {
     NumberField,
     OptionCards,
     PromptDialog,
+    ShownOnce,
     Status,
+    Swap,
     TextField,
     useToast,
 } from "../src";
@@ -60,6 +68,12 @@ const mbps = (value: number) => `${Math.round(value)} MB/s`;
 /** A write that takes a moment. */
 const pause = (ms: number) =>
     new Promise<void>((resolve) => setTimeout(resolve, ms));
+/**
+ * Takes the focus to the first control of a view that arrives, what the
+ * person does next, before the one that held it leaves.
+ */
+const focusFirstControl = (view: HTMLElement | null) =>
+    view?.querySelector("button")?.focus();
 
 export function FeedbackSection() {
     const toast = useToast();
@@ -73,6 +87,12 @@ export function FeedbackSection() {
     const [scheduling, setScheduling] = useState(false);
     const [every, setEvery] = useState<number | null>(24);
     const [parts, setParts] = useState<string[]>(PARTS.slice(0, 3));
+    const [inviting, setInviting] = useState(false);
+    const [invitee, setInvitee] = useState("");
+    const [access, setAccess] = useState<"view" | "edit">("view");
+    const [days, setDays] = useState<number | null>(7);
+    const [sending, setSending] = useState(false);
+    const [code, setCode] = useState<string>();
 
     return (
         <Stack>
@@ -315,7 +335,7 @@ export function FeedbackSection() {
 
             <Specimen
                 title="Dialogs"
-                rule="A dialog is modal and alone: it rises in the middle of the page with its scrim and says what the act does before it is done. Destructive acts confirm; acts that can be put back exactly take a toast's undo instead."
+                rule="A dialog is modal and alone: it rises in the middle of the page with its scrim and says what the act does before it is done. Destructive acts confirm; acts that can be put back exactly take a toast's undo instead. One that goes on to show what it made keeps its place: its title, description and actions change, and its body swaps."
             >
                 <Samples>
                     <Sample name="Confirm">
@@ -351,6 +371,17 @@ export function FeedbackSection() {
                     <Sample name="Taller than the window">
                         <Button onClick={() => setScheduling(true)}>
                             Schedule an export
+                        </Button>
+                    </Sample>
+                    <Sample name="Then what it made">
+                        <Button
+                            onClick={() => {
+                                setInvitee("");
+                                setCode(undefined);
+                                setInviting(true);
+                            }}
+                        >
+                            Invite someone
                         </Button>
                     </Sample>
                 </Samples>
@@ -496,6 +527,120 @@ export function FeedbackSection() {
                         />
                     </div>
                 </FormDialog>
+                <DialogRoot
+                    open={inviting}
+                    onOpenChange={setInviting}
+                    busy={sending}
+                >
+                    <DialogShell open={inviting}>
+                        <Form
+                            onSubmit={async () => {
+                                setSending(true);
+                                await pause(1200);
+                                setSending(false);
+                                setCode("K7Q2-9XPL");
+                            }}
+                        >
+                            <DialogLayout
+                                title={
+                                    code === undefined
+                                        ? "Invite someone to Atlas"
+                                        : `Invitation for ${invitee.trim()}`
+                                }
+                                description={
+                                    code === undefined
+                                        ? "They join with a code that works once."
+                                        : `They join as ${access === "view" ? "a viewer" : "an editor"} within ${days === 1 ? "a day" : `${days} days`}.`
+                                }
+                                actions={
+                                    code === undefined ? (
+                                        <>
+                                            <DialogCancel disabled={sending} />
+                                            <Button
+                                                type="submit"
+                                                variant="primary"
+                                                disabled={
+                                                    invitee.trim() === "" ||
+                                                    days === null
+                                                }
+                                                busy={sending}
+                                            >
+                                                Create invitation
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <DialogCancel label="Done" />
+                                    )
+                                }
+                            >
+                                <Swap
+                                    view={code === undefined ? "form" : "code"}
+                                >
+                                    {code === undefined ? (
+                                        <div className="flex flex-col gap-4">
+                                            <TextField
+                                                label="Name"
+                                                hint="Who it is for, so you know whose code it is."
+                                                value={invitee}
+                                                onChange={(event) =>
+                                                    setInvitee(
+                                                        event.target.value,
+                                                    )
+                                                }
+                                            />
+                                            <Field label="What they can do">
+                                                <OptionCards
+                                                    label="What they can do"
+                                                    value={access}
+                                                    options={[
+                                                        {
+                                                            value: "view",
+                                                            label: "View",
+                                                            description:
+                                                                "They see its tasks and files.",
+                                                        },
+                                                        {
+                                                            value: "edit",
+                                                            label: "Edit",
+                                                            description:
+                                                                "They change them too.",
+                                                        },
+                                                    ]}
+                                                    onValueChange={setAccess}
+                                                />
+                                            </Field>
+                                            <NumberField
+                                                label="Works for"
+                                                value={days}
+                                                onValueChange={setDays}
+                                                min={1}
+                                                max={30}
+                                                unit="days"
+                                                width={160}
+                                            />
+                                            <TextField
+                                                label="A note for them"
+                                                hint="Shown when they join."
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div ref={focusFirstControl}>
+                                            <ShownOnce
+                                                what="Invitation code"
+                                                label="Invitation code"
+                                                secret={code}
+                                                copies={`Join Atlas at https://example.com/join with the code ${code}.`}
+                                                copyLabel="Copy invitation"
+                                            >
+                                                Send it to {invitee.trim()}.
+                                            </ShownOnce>
+                                        </div>
+                                    )}
+                                </Swap>
+                            </DialogLayout>
+                        </Form>
+                    </DialogShell>
+                </DialogRoot>
             </Specimen>
 
             <Specimen

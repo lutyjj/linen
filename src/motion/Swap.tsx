@@ -50,6 +50,10 @@ export function Swap({
         const to = content.current?.offsetHeight;
         if (from === undefined || to === undefined || from === to) return;
         const swap = ++swaps.current;
+        // Held at once rather than from the animation's first frame, so
+        // nothing around the region, such as a centred dialog, moves in
+        // between and shifts the view leaving out of place.
+        region.current.style.height = `${from}px`;
         void animate(region.current, { height: [from, to] }, spring("enter"))
             // A later swap owns the height from here.
             .then(() => {
