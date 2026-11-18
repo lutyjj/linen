@@ -51,7 +51,7 @@ export function SectionNav({
         <nav
             ref={rail}
             aria-label={label}
-            className="sticky top-[calc(var(--inset-top)+var(--height-conditions,0px)+var(--height-topbar,var(--height-toolbar)))] z-4 border-b border-border bg-bg"
+            className="sticky top-[calc(var(--inset-top)+var(--height-conditions,0px)+var(--height-topbar,0px))] z-4 border-b border-border bg-bg"
         >
             {/* A single scrolling rail on phones; wider layouts can wrap. */}
             {/* It scrolls, so Motion is told to measure the mark inside it

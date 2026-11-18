@@ -1,5 +1,11 @@
 import { Collapsible } from "@base-ui/react/collapsible";
-import { ChevronLeft, ChevronRight, PanelLeft, Trash2 } from "lucide-react";
+import {
+    ChevronLeft,
+    ChevronRight,
+    Download,
+    PanelLeft,
+    Trash2,
+} from "lucide-react";
 import { useState } from "react";
 
 import {
@@ -32,6 +38,21 @@ import {
 } from "../src";
 import { HueChoice, PhoneNavChoice, RaisedChoice, ThemeChoice } from "./frame";
 import { Specimen, Stack } from "./Specimen";
+
+/** What the nightly export wrote over a month, newest first. */
+const WRITTEN = Array.from({ length: 30 }, (_, day) => {
+    const date = new Date(Date.UTC(2026, 2, 9 - day));
+    const stamp = date.toISOString().slice(5, 10).replace("-", "");
+    return {
+        file: `export-${stamp}.csv`,
+        written: date.toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "long",
+            timeZone: "UTC",
+        }),
+        size: `${(2 + ((day * 7) % 10) / 10).toFixed(1)} MB`,
+    };
+});
 
 export function LayoutSection() {
     const [weekly, setWeekly] = useState(true);
@@ -324,6 +345,70 @@ export function LayoutSection() {
                         <Nothing>None were closed.</Nothing>
                     </Card>
                 </div>
+            </Specimen>
+
+            <Specimen
+                title="A box that scrolls"
+                rule="A table or a list with a bound scrolls in a box of its own, which says so with data-scroll-box. What it scrolls comes to rest at the box's edge, below a sticky heading whose height the box keeps as its scroll padding, and a row the focus reaches comes to rest clear of the screen's bars. Scroll until the box's top is under the bars, then tab through its rows."
+                framed={false}
+            >
+                <Card>
+                    <CardHead
+                        title="Nightly export"
+                        aside={<Count>{WRITTEN.length}</Count>}
+                        description="Every file it wrote, newest first."
+                    />
+                    <div
+                        data-scroll-box
+                        className="max-h-80 overflow-y-auto scroll-pt-9"
+                    >
+                        <table className="w-full border-separate border-spacing-0 text-sm">
+                            <thead className="text-left text-xs text-text-muted">
+                                <tr className="[&>th]:sticky [&>th]:top-0 [&>th]:h-9 [&>th]:border-b [&>th]:border-border [&>th]:bg-surface [&>th]:px-gutter [&>th]:font-medium">
+                                    <th>Written</th>
+                                    <th className="w-full">File</th>
+                                    <th className="hidden text-right sm:table-cell">
+                                        Size
+                                    </th>
+                                    <th className="w-0">
+                                        <span className="sr-only">
+                                            Download
+                                        </span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {WRITTEN.map(({ file, written, size }) => (
+                                    <tr
+                                        key={file}
+                                        className="[&>td]:border-b [&>td]:border-border [&>td]:p-gutter last:[&>td]:border-b-0"
+                                    >
+                                        <td className="whitespace-nowrap">
+                                            {written}
+                                        </td>
+                                        <td className="font-mono text-xs text-text-secondary">
+                                            {file}
+                                        </td>
+                                        <td className="hidden text-right whitespace-nowrap text-text-muted tabular-nums sm:table-cell">
+                                            {size}
+                                        </td>
+                                        <td>
+                                            <IconButton
+                                                aria-label={`Download ${file}`}
+                                                className="h-(--height-control-inline)"
+                                            >
+                                                <Download
+                                                    aria-hidden="true"
+                                                    className="size-4"
+                                                />
+                                            </IconButton>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </Card>
             </Specimen>
 
             <Specimen

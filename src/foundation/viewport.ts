@@ -120,14 +120,67 @@ export function scrolls(box: Element): boolean {
     return /auto|scroll|hidden/.test(getComputedStyle(box).overflowY);
 }
 
+/** The bars that stand now, each with the property that says its height. */
+const bars = new Map<HTMLElement, string>();
+
+/** Whether the key last pressed was Tab, which moves the focus in turn. */
+let tabbed = false;
+
+function noteKey({ key }: KeyboardEvent) {
+    tabbed = key === "Tab";
+}
+
+/** Whether a focus target stands inside a box that scrolls in a screen. */
+function inBox(target: EventTarget | null): target is Element {
+    return (
+        target instanceof Element &&
+        target.parentElement?.closest("[data-scroll-box]") != null
+    );
+}
+
+function unpad() {
+    document.documentElement.style.removeProperty("scroll-padding-top");
+}
+
+/**
+ * While the focus is inside a box that scrolls inside a screen
+ * (`data-scroll-box`), the room of the bars stuck to the page is the page's
+ * scroll padding, so the focus comes to rest clear of them; elsewhere the
+ * page has none, so the bars and the popups over them move nothing. Where
+ * the Tab key goes, a browser may scroll before it tells of the focus, as
+ * Chromium does, so a focus the Tab key brings into a box is brought into
+ * view once more with the padding; every other focus stays as it came.
+ * LANGUAGE.md says what this leaves short.
+ */
+function enter({ target }: FocusEvent) {
+    const byTab = tabbed;
+    tabbed = false;
+    if (!inBox(target)) return unpad();
+    const root = document.documentElement;
+    const entering = root.style.scrollPaddingTop === "";
+    let foot = 0;
+    for (const bar of bars.keys()) {
+        if (!bar.hasAttribute("data-sticky")) continue;
+        const top = parseFloat(getComputedStyle(bar).top) || 0;
+        foot = Math.max(foot, top + bar.offsetHeight);
+    }
+    root.style.scrollPaddingTop = `${foot}px`;
+    if (entering && byTab) target.scrollIntoView({ block: "nearest" });
+}
+
+function leave({ relatedTarget }: FocusEvent) {
+    if (!inBox(relatedTarget)) unpad();
+}
+
 /**
  * A bar stuck to the top of what scrolls it, as the app's conditions, the
  * top bar and the sections are. On the element it stands in, the custom
- * property `name` follows the bar's height, for the bars stuck beneath it.
- * While no box that scrolls stands between the bar and the page, the bar
- * also wears `data-sticky`, so what stands below it comes to rest clear of
- * it (linen.css); it looks again as the bar's size changes, not as a box
- * around it changes alone.
+ * property `name` follows the bar's height, for the bars stuck beneath it,
+ * and stays while another bar of the name stands there, as the next screen's
+ * does while this one leaves. While no box that scrolls stands between the
+ * bar and the page, the bar also wears `data-sticky`, so what stands below
+ * it comes to rest clear of it (linen.css); it looks again as the bar's size
+ * changes, not as a box around it changes alone.
  */
 export function useStickyBar<Measured extends HTMLElement>(name: string) {
     const measured = useRef<Measured>(null);
@@ -135,6 +188,12 @@ export function useStickyBar<Measured extends HTMLElement>(name: string) {
         const element = measured.current;
         const screen = element?.parentElement;
         if (element == null || screen == null) return;
+        if (bars.size === 0) {
+            document.addEventListener("keydown", noteKey, true);
+            document.addEventListener("focusin", enter);
+            document.addEventListener("focusout", leave);
+        }
+        bars.set(element, name);
         const observer = new ResizeObserver(() => {
             screen.style.setProperty(name, `${element.offsetHeight}px`);
             let box: Element | null = screen;
@@ -146,8 +205,22 @@ export function useStickyBar<Measured extends HTMLElement>(name: string) {
         observer.observe(element);
         return () => {
             observer.disconnect();
-            screen.style.removeProperty(name);
+            bars.delete(element);
             element.removeAttribute("data-sticky");
+            const other = [...bars].find(
+                ([bar, said]) => said === name && bar.parentElement === screen,
+            );
+            if (other) {
+                screen.style.setProperty(name, `${other[0].offsetHeight}px`);
+            } else {
+                screen.style.removeProperty(name);
+            }
+            if (bars.size === 0) {
+                document.removeEventListener("keydown", noteKey, true);
+                document.removeEventListener("focusin", enter);
+                document.removeEventListener("focusout", leave);
+                unpad();
+            }
         };
     }, [name]);
     return measured;

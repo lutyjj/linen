@@ -1,7 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 
 import { Conditions } from "../feedback/Conditions";
 import { ENGLISH } from "../foundation/words";
@@ -187,6 +187,78 @@ it("marks itself a bar stuck to the page and says its height while it stands the
     expect(place?.style.getPropertyValue("--height-topbar")).not.toBe("");
     unmount();
     expect(place?.style.getPropertyValue("--height-topbar")).toBe("");
+});
+
+it("keeps saying its height while another top bar stands in its place, as the next screen's does while this one leaves", () => {
+    function Screens({ shown }: { shown: readonly string[] }) {
+        return (
+            <main>
+                {shown.map((title) => (
+                    <TopBar key={title} title={title} />
+                ))}
+            </main>
+        );
+    }
+    const { rerender } = render(<Screens shown={["Projects", "Reports"]} />);
+    const place = screen.getByRole("main");
+    rerender(<Screens shown={["Reports"]} />);
+    expect(place.style.getPropertyValue("--height-topbar")).toBe("0px");
+    rerender(<Screens shown={[]} />);
+    expect(place.style.getPropertyValue("--height-topbar")).toBe("");
+});
+
+/** A top bar 49 px tall, a box that scrolls with two rows, and a control after it. */
+function renderBox() {
+    const view = render(
+        <>
+            <TopBar title="Exports" />
+            <div data-scroll-box>
+                <button type="button">First</button>
+                <button type="button">Second</button>
+            </div>
+            <button type="button">Elsewhere</button>
+        </>,
+    );
+    // jsdom lays nothing out: the bar is given its height here.
+    Object.defineProperty(screen.getByRole("banner"), "offsetHeight", {
+        value: 49,
+    });
+    return view;
+}
+
+it("holds the bars' room as the page's scroll padding while the focus is inside a box that scrolls", () => {
+    const { unmount } = renderBox();
+    const root = document.documentElement;
+    screen.getByRole("button", { name: "Elsewhere" }).focus();
+    expect(root.style.scrollPaddingTop).toBe("");
+    screen.getByRole("button", { name: "First" }).focus();
+    expect(root.style.scrollPaddingTop).toBe("49px");
+    screen.getByRole("button", { name: "Second" }).focus();
+    expect(root.style.scrollPaddingTop).toBe("49px");
+    screen.getByRole("button", { name: "Second" }).blur();
+    expect(root.style.scrollPaddingTop).toBe("");
+    screen.getByRole("button", { name: "First" }).focus();
+    unmount();
+    expect(root.style.scrollPaddingTop).toBe("");
+});
+
+it("brings a focus the Tab key takes into a box into view again, and leaves any other as it came", async () => {
+    renderBox();
+    const shown = vi.spyOn(Element.prototype, "scrollIntoView");
+    screen
+        .getByRole("button", { name: "First" })
+        .focus({ preventScroll: true });
+    expect(shown).not.toHaveBeenCalled();
+    screen.getByRole("button", { name: "Elsewhere" }).focus();
+    await userEvent.tab({ shift: true });
+    await userEvent.tab({ shift: true });
+    expect(screen.getByRole("button", { name: "First" })).toHaveFocus();
+    // Once as the focus entered the box, at Second, and not again at First.
+    expect(shown).toHaveBeenCalledTimes(1);
+    expect(shown.mock.contexts[0]).toBe(
+        screen.getByRole("button", { name: "Second" }),
+    );
+    shown.mockRestore();
 });
 
 it("keeps its stack in a box that scrolls and holds nothing on the page clear of it", () => {
