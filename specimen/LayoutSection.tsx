@@ -13,8 +13,11 @@ import {
     Count,
     DisclosurePanel,
     EmptyState,
+    Fact,
+    Facts,
     FormBand,
     IconButton,
+    Nothing,
     PickerMark,
     SearchField,
     SegmentedControl,
@@ -190,7 +193,7 @@ export function LayoutSection() {
 
             <Specimen
                 title="A card and its head"
-                rule="One concern per card. The head holds its title, a count beside it, what it is for, and its actions, which sit beside the title while the title keeps its own width beside them, and under what the card is for once it would not. Every title and value inside starts on the gutter."
+                rule="One concern per card. The head holds its title, a count beside it, what it is for, and its actions, which sit beside the title while the title keeps its own width beside them, and under what the card is for once it would not. Heads side by side stand in line, with actions or without. Every title and value inside starts on the gutter."
                 framed={false}
             >
                 <Card>
@@ -270,6 +273,29 @@ export function LayoutSection() {
                         the card is for, as on a phone.
                     </CardBody>
                 </Card>
+                <div className="grid gap-3 md:grid-cols-2">
+                    <Card>
+                        <CardHead
+                            title="This week"
+                            description="Tasks closed since Monday."
+                        >
+                            <Button>Export</Button>
+                        </CardHead>
+                        <CardBody>
+                            <Facts>
+                                <Fact name="Closed">12</Fact>
+                                <Fact name="Opened">9</Fact>
+                            </Facts>
+                        </CardBody>
+                    </Card>
+                    <Card>
+                        <CardHead
+                            title="Last week"
+                            description="Tasks closed the week before."
+                        />
+                        <Nothing>None were closed.</Nothing>
+                    </Card>
+                </div>
             </Specimen>
 
             <Specimen

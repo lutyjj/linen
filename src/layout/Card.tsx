@@ -35,7 +35,10 @@ export function Card({
  * their own width beside them, and go under the description once they would
  * not, so wide actions never squeeze the title. Under it they take the whole
  * line, so a control among them that grows, such as a search, fills it. The
- * description takes the head's width either way.
+ * description takes the head's width either way. The title's row is a
+ * control tall in every head, so heads side by side or one under another
+ * keep their titles, descriptions and hairlines in line, with actions or
+ * without.
  */
 export function CardHead({
     title,
@@ -75,12 +78,9 @@ export function CardHead({
                     a layout unit, so the last action ends at the head's
                     edge. On a line of their own the actions take all of it. */}
                 <div className="min-w-0 grow-[1e9]">
-                    {/* The words are narrower than the head only while the
-                        actions stand beside them (100cqw - 100% is more than
-                        nothing). The title's row then takes a control's
-                        height, the band the actions are centred in, so its
-                        line is centred on theirs. */}
-                    <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-1 py-[min((var(--height-control)-var(--text-md--line-height))/2,100cqw-100%)]">
+                    {/* The title's first line is centred in a control's
+                        height, the band the actions stand in. */}
+                    <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-1 py-[calc((var(--height-control)-var(--text-md--line-height))/2)]">
                         <h2 className="text-md font-semibold">{title}</h2>
                         {aside}
                     </div>
