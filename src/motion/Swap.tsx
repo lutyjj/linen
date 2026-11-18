@@ -1,5 +1,5 @@
 import { AnimatePresence, m, useAnimate, useIsPresent } from "motion/react";
-import { type ReactNode, type Ref, useLayoutEffect, useRef } from "react";
+import { type ReactNode, useLayoutEffect, useRef } from "react";
 
 import { classes } from "../foundation/classes";
 import { scrolls } from "../foundation/viewport";
@@ -121,7 +121,7 @@ export function Swap({
             )}
         >
             <div ref={content} className="relative">
-                <AnimatePresence initial={false} mode="popLayout">
+                <AnimatePresence initial={false}>
                     <SwapView key={view}>{children}</SwapView>
                 </AnimatePresence>
             </div>
@@ -196,18 +196,10 @@ function showStart(view: HTMLElement) {
  * focus as a whole, so it can be focused but is no stop of Tab's, and wears
  * no ring: it is no control.
  */
-function SwapView({
-    children,
-    ref,
-}: {
-    children: ReactNode;
-    /** Motion's own, which it hands a child it pops out of the layout. */
-    ref?: Ref<HTMLDivElement>;
-}) {
+function SwapView({ children }: { children: ReactNode }) {
     const present = useIsPresent();
     return (
         <m.div
-            ref={ref}
             inert={!present}
             aria-hidden={!present || undefined}
             tabIndex={-1}
