@@ -34,6 +34,7 @@ import {
     RaisedChoice,
     ThemeChoice,
     useFrame,
+    WordmarkChoice,
 } from "./frame";
 import { LayoutSection } from "./LayoutSection";
 import { MotionSection } from "./MotionSection";
@@ -87,7 +88,7 @@ const PLACES: readonly Place[] = SCREENS.map(({ to, label, icon }) => ({
 
 function Specimen() {
     const pathname = historyNavigation.usePathname();
-    const { phoneNav, raised, setRaised } = useFrame();
+    const { phoneNav, raised, setRaised, wordmark } = useFrame();
     const screen = SCREENS.find((one) => pathname.startsWith(one.to));
     // An address the specimen has no page for opens its first page.
     useLayoutEffect(() => {
@@ -120,7 +121,7 @@ function Specimen() {
             ].slice(0, raised)}
             wordmark={
                 <span className="font-display text-md font-semibold">
-                    linen
+                    {wordmark === "long" ? "linen scheduled exports" : "linen"}
                 </span>
             }
             head={
@@ -144,6 +145,9 @@ function Specimen() {
                         </MenuChoice>
                         <MenuChoice label="Phone navigation">
                             <PhoneNavChoice />
+                        </MenuChoice>
+                        <MenuChoice label="Wordmark">
+                            <WordmarkChoice />
                         </MenuChoice>
                     </AccountMenu>
                 </>

@@ -269,14 +269,20 @@ export function Rail({
                     compact && "w-(--width-rail-compact)",
                 )}
             >
+                {/* A name too long for the line beside the fold wraps, at a
+                    word where it can, so the whole of it stays in the rail. */}
                 <div
                     className={classes(
-                        "flex min-h-(--height-control) items-center justify-between pb-4",
+                        "flex min-h-(--height-control) items-center justify-between gap-2 pb-4",
                         !compact && "pl-2",
                         compact && folded && "justify-center",
                     )}
                 >
-                    {isContent(sign) && <HomeLink home={home}>{sign}</HomeLink>}
+                    {isContent(sign) && (
+                        <HomeLink home={home} className="wrap-anywhere">
+                            {sign}
+                        </HomeLink>
+                    )}
                     {!folded && (
                         <RailFold compact={compact} setCompact={setChosen} />
                     )}

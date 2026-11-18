@@ -58,8 +58,9 @@ export function Shell({
 }: PlaceList & {
     /** Where the wordmark and the mark lead. */
     home: Home;
-    /** The product's name at the head of the full rail, and of the phone's
-     * top bar, which draws it a second time. */
+    /** The product's name at the head of the full rail, where a name too
+     * long for the line beside the fold wraps, and of the phone's top bar,
+     * which draws it a second time. */
     wordmark: ReactNode;
     /** The product's mark alone, at the head of a rail the screen folded. */
     mark?: ReactNode;

@@ -113,7 +113,9 @@ function TopNav({
             className="relative z-20 -mt-(--inset-top) border-b border-border bg-sunken pt-(--inset-top) md:hidden"
         >
             <div className="flex h-(--height-toolbar) items-center gap-3 px-3">
-                <HomeLink home={home}>{wordmark}</HomeLink>
+                <HomeLink home={home} className="shrink-0">
+                    {wordmark}
+                </HomeLink>
                 {/* Places that outgrow the phone scroll rather than widen the
                     page, so Motion is told to measure the mark inside the
                     scroll; the padding keeps a focus ring inside it. The

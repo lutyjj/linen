@@ -28,6 +28,12 @@ const PHONE_NAVS: { value: PhoneNav; label: string }[] = [
     { value: "top", label: "Top" },
 ];
 
+/** How long the app's name at the head of the rail is. */
+const WORDMARKS = [
+    { value: "short", label: "Short" },
+    { value: "long", label: "Long" },
+];
+
 /** How many of the app's conditions the specimen raises on every page. */
 const RAISED = [
     { value: "0", label: "None" },
@@ -42,6 +48,8 @@ interface Frame {
     setPhoneNav: (phoneNav: PhoneNav) => void;
     raised: number;
     setRaised: (raised: number) => void;
+    wordmark: string;
+    setWordmark: (wordmark: string) => void;
 }
 
 const FrameContext = createContext<Frame | null>(null);
@@ -55,13 +63,23 @@ export function FrameProvider({ children }: { children: ReactNode }) {
     const [hue, setHueState] = useState("296");
     const [phoneNav, setPhoneNav] = useState<PhoneNav>("bottom");
     const [raised, setRaised] = useState(0);
+    const [wordmark, setWordmark] = useState("short");
     const setHue = (next: string) => {
         document.documentElement.style.setProperty("--hue", next);
         setHueState(next);
     };
     return (
         <FrameContext
-            value={{ hue, setHue, phoneNav, setPhoneNav, raised, setRaised }}
+            value={{
+                hue,
+                setHue,
+                phoneNav,
+                setPhoneNav,
+                raised,
+                setRaised,
+                wordmark,
+                setWordmark,
+            }}
         >
             {children}
         </FrameContext>
@@ -118,6 +136,18 @@ export function RaisedChoice() {
             value={String(raised)}
             options={RAISED}
             onValueChange={(next) => setRaised(Number(next))}
+        />
+    );
+}
+
+export function WordmarkChoice() {
+    const { wordmark, setWordmark } = useFrame();
+    return (
+        <SegmentedControl
+            label="Wordmark"
+            value={wordmark}
+            options={WORDMARKS}
+            onValueChange={setWordmark}
         />
     );
 }

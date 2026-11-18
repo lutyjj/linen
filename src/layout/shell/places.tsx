@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { classes } from "../../foundation/classes";
 import { useNavigation } from "../../navigation/navigation";
 
 /** A place the navigation leads to. */
@@ -28,9 +29,11 @@ export interface Home {
  */
 export function HomeLink({
     home,
+    className,
     children,
 }: {
     home: Home;
+    className?: string;
     children: ReactNode;
 }) {
     const { Link } = useNavigation();
@@ -38,7 +41,10 @@ export function HomeLink({
         <Link
             href={home.href}
             aria-label={home.label}
-            className="-m-1 flex shrink-0 items-center rounded-button p-1"
+            className={classes(
+                "-m-1 flex items-center rounded-button p-1",
+                className,
+            )}
         >
             {children}
         </Link>

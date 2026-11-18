@@ -36,7 +36,13 @@ import {
     TopBar,
     TopBarLead,
 } from "../src";
-import { HueChoice, PhoneNavChoice, RaisedChoice, ThemeChoice } from "./frame";
+import {
+    HueChoice,
+    PhoneNavChoice,
+    RaisedChoice,
+    ThemeChoice,
+    WordmarkChoice,
+} from "./frame";
 import { Specimen, Stack } from "./Specimen";
 
 /** What the nightly export wrote over a month, newest first. */
@@ -94,6 +100,12 @@ export function LayoutSection() {
                         description="How many of the app's conditions stand at the top of every page."
                     >
                         <RaisedChoice />
+                    </SettingRow>
+                    <SettingRow
+                        title="Wordmark"
+                        description="A name too long for the rail's head wraps beside its fold."
+                    >
+                        <WordmarkChoice />
                     </SettingRow>
                 </Card>
             </Specimen>
