@@ -38,9 +38,9 @@ export interface Words {
     /** A number field's step up and step down. */
     increase: string;
     decrease: string;
-    /** The trail of screens above the one shown, over its title. */
+    /** The trail of screens above the one shown, before its title. */
     breadcrumb: string;
-    /** The button a deep trail folds its outer steps behind. */
+    /** The button a trail folds its outer steps behind. */
     foldedSteps: string;
     /** The question before leaving work that is not saved. */
     leaveUnsaved: string;

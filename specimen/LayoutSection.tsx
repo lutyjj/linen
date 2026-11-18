@@ -1,5 +1,5 @@
 import { Collapsible } from "@base-ui/react/collapsible";
-import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, PanelLeft, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import {
@@ -24,6 +24,7 @@ import {
     TextField,
     TitleField,
     TopBar,
+    TopBarLead,
 } from "../src";
 import { HueChoice, PhoneNavChoice, RaisedChoice, ThemeChoice } from "./frame";
 import { Specimen, Stack } from "./Specimen";
@@ -73,7 +74,7 @@ export function LayoutSection() {
 
             <Specimen
                 title="A screen's actions"
-                rule="The actions stand beside the title while the title and what reads beside it keep their own width, up to a share of the line, and wrap below it past that. Narrow the window to a phone's width: a short title keeps them beside it."
+                rule="The actions stand beside the title while the title and what reads beside it keep their own width, up to a share of the line, and wrap below it past that. Narrow the window to a phone's width: a short title keeps them beside it. A lead the shell hands in stands before the title, and the lead and the actions stand on the title's first line however many it takes."
                 framed={false}
             >
                 {["Reports", "Quarterly reports for every region"].map(
@@ -100,16 +101,38 @@ export function LayoutSection() {
                         </div>
                     ),
                 )}
+                <div className="overflow-hidden rounded-card border border-border">
+                    <TopBarLead
+                        value={
+                            <IconButton aria-label="Folders">
+                                <PanelLeft
+                                    aria-hidden="true"
+                                    className="size-4"
+                                />
+                            </IconButton>
+                        }
+                    >
+                        <TopBar
+                            title="Quarterly reports for every region"
+                            meta={<Chip tone="accent">Draft</Chip>}
+                        >
+                            <Button>Export</Button>
+                        </TopBar>
+                    </TopBarLead>
+                </div>
             </Specimen>
 
             <Specimen
                 title="A screen beneath another"
-                rule="Its top bar names the screens above it in a small trail over the title, each a link. Past two steps the outer ones fold behind one button. An editable name stands where the title does, as wide as its words."
+                rule="A top bar with room, 50rem or more, names the screens above it in a small trail before the title, on the title's line: two steps as links, or the nearest after one button the outer ones fold behind. The trail gives way first when the line is full. In a narrower bar a chevron where the lead stands leads up a level. An editable name stands where the title does, as wide as its words."
                 framed={false}
             >
                 <div className="overflow-hidden rounded-card border border-border">
                     <TopBar
-                        trail={[{ href: "/layout", label: "Reports" }]}
+                        trail={[
+                            { href: "/foundations", label: "Settings" },
+                            { href: "/layout", label: "Reports" },
+                        ]}
                         title={
                             <TitleField
                                 aria-label="Report name"
@@ -134,8 +157,14 @@ export function LayoutSection() {
                             { href: "/controls", label: "Integrations" },
                             { href: "/layout", label: "Webhooks" },
                         ]}
-                        title="Nightly export"
-                    />
+                        title="Nightly export for every region"
+                        meta={<Chip tone="accent">Scheduled</Chip>}
+                    >
+                        <IconButton variant="destructive" aria-label="Delete">
+                            <Trash2 aria-hidden="true" className="size-4" />
+                        </IconButton>
+                        <Button variant="primary">Run now</Button>
+                    </TopBar>
                 </div>
             </Specimen>
 

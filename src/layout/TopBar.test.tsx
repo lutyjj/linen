@@ -24,13 +24,34 @@ it("names the screens above this one in a trail the title ends", () => {
     ).toHaveAttribute("href", "/projects");
     const title = screen.getByRole("heading", { level: 1 });
     expect(title).toHaveTextContent("Atlas");
-    // The title follows the trail, as its last step.
+    // The title follows the trail in the bar, as its last step.
+    expect(screen.getByRole("banner")).toContainElement(trail);
     expect(
         trail.compareDocumentPosition(title) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
 });
 
-it("folds the steps before the nearest two behind one button", async () => {
+it("shows two steps, and folds the outer ones behind one button from three", async () => {
+    const { unmount } = render(
+        <TopBar
+            title="Webhooks"
+            trail={[
+                { href: "/settings", label: "Settings" },
+                { href: "/settings/integrations", label: "Integrations" },
+            ]}
+        />,
+    );
+    const two = screen.getByRole("navigation", { name: ENGLISH.breadcrumb });
+    expect(
+        within(two)
+            .getAllByRole("link")
+            .map((link) => link.textContent),
+    ).toEqual(["Settings", "Integrations"]);
+    expect(
+        within(two).queryByRole("button", { name: ENGLISH.foldedSteps }),
+    ).toBeNull();
+    unmount();
+
     render(
         <>
             <TopBar
@@ -50,7 +71,7 @@ it("folds the steps before the nearest two behind one button", async () => {
     const shown = within(trail)
         .getAllByRole("link")
         .map((link) => link.textContent);
-    expect(shown).toEqual(["Integrations", "Webhooks"]);
+    expect(shown).toEqual(["Webhooks"]);
 
     await userEvent.click(
         within(trail).getByRole("button", { name: ENGLISH.foldedSteps }),
@@ -59,8 +80,10 @@ it("folds the steps before the nearest two behind one button", async () => {
         name: ENGLISH.foldedSteps,
     });
     expect(
-        within(folded).getByRole("link", { name: "Settings" }),
-    ).toHaveAttribute("href", "/settings");
+        within(folded)
+            .getAllByRole("link")
+            .map((link) => link.getAttribute("href")),
+    ).toEqual(["/settings", "/settings/integrations"]);
 });
 
 it("closes the folded steps once one is chosen, where the screen stays", async () => {
@@ -105,6 +128,32 @@ it("keeps the lead before a title whose trail is empty", () => {
         screen.queryByRole("navigation", { name: ENGLISH.breadcrumb }),
     ).toBeNull();
     expect(screen.getByText("Acme")).toBeInTheDocument();
+});
+
+it("leads up a level from where the lead stands, named for the screen above", () => {
+    render(
+        <>
+            <TopBarLead value={<span>Acme</span>}>
+                <TopBar
+                    title="Atlas"
+                    trail={[{ href: "/projects", label: "Projects" }]}
+                />
+            </TopBarLead>
+        </>,
+    );
+    const trail = screen.getByRole("navigation", { name: ENGLISH.breadcrumb });
+    // A phone's way up stands outside the trail, before the title, and the
+    // lead gives it its place.
+    const back = screen
+        .getAllByRole("link", { name: "Projects" })
+        .find((link) => !trail.contains(link));
+    expect(back).toHaveAttribute("href", "/projects");
+    const title = screen.getByRole("heading", { level: 1 });
+    expect(
+        (back?.compareDocumentPosition(title) ?? 0) &
+            Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(screen.queryByText("Acme")).toBeNull();
 });
 
 it("edits a title in place, as a field named for what it holds", async () => {

@@ -1,5 +1,5 @@
 import { Popover } from "@base-ui/react/popover";
-import { Ellipsis } from "lucide-react";
+import { ChevronLeft, Ellipsis } from "lucide-react";
 import {
     type ComponentProps,
     createContext,
@@ -8,6 +8,7 @@ import {
     useState,
 } from "react";
 
+import { buttonClass } from "../controls/Button";
 import { classes } from "../foundation/classes";
 import { COLUMN_CLASS, WIDE_COLUMN_CLASS } from "../foundation/column";
 import {
@@ -35,35 +36,37 @@ export interface Crumb {
     label: string;
 }
 
-/** How many of the nearest steps a trail shows; the ones before them fold. */
-const SHOWN_STEPS = 2;
-
 /**
- * The screens above this one, outermost first, each a link, small and quiet
- * over the title, which ends the trail as the heading it already is. A trail
- * deeper than two steps folds the outer ones behind one button, so it stays
- * one short line at any depth; the outermost is most often the place the
- * navigation already marks.
+ * The screens above this one in a bar 50rem wide or more, outermost first,
+ * small and quiet before the title, which ends the trail as the heading it
+ * already is: two steps as links, or the nearest one after a button the
+ * outer ones fold behind once there are two or more of them. It gives way
+ * before the title's share: it takes the room the title leaves, down to
+ * about the longest word of each step, which ends in an ellipsis there.
  */
 function Trail({ crumbs }: { crumbs: readonly Crumb[] }) {
     const words = useWords();
     const { Link } = useNavigation();
-    const folded = crumbs.slice(0, -SHOWN_STEPS);
-    const shown = crumbs.slice(-SHOWN_STEPS);
+    const folds = crumbs.length > 2;
     return (
-        <nav aria-label={words.breadcrumb} className="min-w-0">
-            <ol className="flex min-w-0 items-center text-xs text-text-muted">
-                {folded.length > 0 && (
-                    <li className="flex shrink-0 items-center">
-                        <Folded crumbs={folded} />
+        // The last slash stands as far from the title as from the step
+        // before it, its own margin rather than the bar's gap.
+        <nav
+            aria-label={words.breadcrumb}
+            className="-mr-3 hidden max-w-max grow basis-0 self-baseline @[50rem]:block"
+        >
+            <ol className="flex items-baseline text-sm text-text-muted">
+                {folds && (
+                    <li className="flex shrink-0 items-center self-center">
+                        <Folded crumbs={crumbs.slice(0, -1)} />
                         <Divider />
                     </li>
                 )}
-                {shown.map((crumb, step) => (
-                    <li key={step} className="flex min-w-0 items-center">
+                {(folds ? crumbs.slice(-1) : crumbs).map((crumb) => (
+                    <li key={crumb.href} className="flex items-baseline">
                         <Link
                             href={crumb.href}
-                            className="truncate rounded-input hover:text-text"
+                            className="line-clamp-1 rounded-input hover:text-text"
                         >
                             {crumb.label}
                         </Link>
@@ -76,7 +79,25 @@ function Trail({ crumbs }: { crumbs: readonly Crumb[] }) {
 }
 
 /**
- * The steps a deep trail folds away, behind one button that opens them as a
+ * The way up a level in a narrower bar, where the lead stands: a
+ * chevron in a control's frame, named for the screen it leads to. The place
+ * above is most often the one the tab bar already marks.
+ */
+function Back({ crumb }: { crumb: Crumb }) {
+    const { Link } = useNavigation();
+    return (
+        <Link
+            href={crumb.href}
+            className={classes(buttonClass(), "aspect-square px-0")}
+        >
+            <ChevronLeft aria-hidden="true" className="size-4" />
+            <span className="sr-only">{crumb.label}</span>
+        </Link>
+    );
+}
+
+/**
+ * The outer steps of a trail, behind one button that opens them as a
  * list of links: a disclosure, as a site's navigation is, rather than a menu
  * of commands. Following one closes the list, as the screen it leads to may
  * be this one with new words.
@@ -131,7 +152,7 @@ function Divider() {
         <svg
             aria-hidden="true"
             viewBox="0 0 16 16"
-            className="mx-0.5 size-3.5 shrink-0 text-border-strong"
+            className="mx-2.5 size-3.5 shrink-0 self-center text-border-strong"
         >
             <path
                 d="M10.5 2.5 5.5 13.5"
@@ -150,7 +171,10 @@ function Divider() {
  * line, or less than their own width where that is narrower.
  *
  * A screen beneath another, such as one record of a list, names the screens
- * above it in a trail, which takes the lead's place before the title.
+ * above it in a trail before the title while the bar is 50rem wide or more,
+ * and leads up a level from the lead's place in a narrower one. The bar
+ * decides from its own width, so it stands where it is given one, as a
+ * block does, and a folded rail gives it the trail sooner.
  *
  * It stands at the top of a screen, and what follows it comes to rest below
  * it when it is scrolled to. Drawn in a box that scrolls, as a sample in a
@@ -174,34 +198,49 @@ export function TopBar({
     children?: ReactNode;
 }) {
     const lead = use(TopBarLead);
+    const nearest = trail?.at(-1);
+    const before = nearest ? <Back crumb={nearest} /> : lead;
     // Its height, for the sections stuck beneath it and what scrolls there.
     const bar = useStickyBar<HTMLElement>("--height-topbar");
     return (
         <header
             ref={bar}
-            className="sticky top-[calc(var(--inset-top)+var(--height-conditions,0px))] z-5 border-b border-border bg-bg"
+            className="@container sticky top-[calc(var(--inset-top)+var(--height-conditions,0px))] z-5 border-b border-border bg-bg"
         >
+            {/* Everything stands on the title's first line, a control's
+                height: the lead and the actions centred on it, the trail on
+                its baseline. */}
             <div
                 className={classes(
                     wide ? WIDE_COLUMN_CLASS : COLUMN_CLASS,
-                    // A trail over the title takes the room of the padding.
-                    "flex min-h-[var(--height-toolbar)] flex-wrap items-center gap-x-3 gap-y-2",
-                    trail?.length ? "py-1.5" : "py-2",
+                    "flex min-h-[var(--height-toolbar)] flex-wrap items-start gap-x-3 gap-y-2 py-2",
                 )}
             >
+                {trail?.length ? <Trail crumbs={trail} /> : null}
                 {/* The name and what reads beside it keep a share of the
-                    line, or their own width where that is less: the actions
-                    stand beside them while that much is left. A trail stands
-                    over the title; past that share, what reads beside the
-                    title moves below it first. */}
-                <div className="flex max-w-max min-w-0 flex-[1_1_12rem] flex-col">
-                    {trail?.length ? <Trail crumbs={trail} /> : null}
+                    line, or their own width where that is less, and grow
+                    before the trail does: the actions stand beside them
+                    while that much is left. A lead or the way up stands
+                    inside that share, so on a phone the name gives way
+                    before the actions wrap and the bar keeps its height.
+                    Past that share, what reads beside the title moves
+                    under it first. */}
+                <div className="flex max-w-max min-w-0 flex-[999_1_12rem] items-start self-baseline">
+                    {isContent(before) && (
+                        <div
+                            className={classes(
+                                "flex h-(--height-control) shrink-0 items-center *:mr-3",
+                                nearest && "@[50rem]:hidden",
+                            )}
+                        >
+                            {before}
+                        </div>
+                    )}
                     <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
-                        {trail?.length ? null : lead}
                         <h1
                             className={classes(
                                 SCREEN_TITLE_CLASS,
-                                "max-w-full min-w-0 break-words",
+                                "min-w-0 py-[calc((var(--height-control)-1lh)/2)] break-words",
                             )}
                         >
                             {title}
@@ -210,7 +249,7 @@ export function TopBar({
                     </div>
                 </div>
                 {isContent(children) && (
-                    <div className="ml-auto flex max-w-full shrink-0 flex-wrap items-center justify-end gap-2">
+                    <div className="ml-auto flex min-h-(--height-control) max-w-full shrink-0 flex-wrap items-center justify-end gap-2">
                         {children}
                     </div>
                 )}
