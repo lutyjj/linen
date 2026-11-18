@@ -13,7 +13,7 @@ export function Kbd({
     return (
         <kbd
             className={classes(
-                "rounded-input border border-b-2 border-border-strong bg-surface px-1.25 py-px font-mono text-2xs text-text-secondary",
+                "rounded-input border border-b-2 border-border-strong bg-surface px-1 py-px font-mono text-2xs text-text-secondary",
                 className,
             )}
         >

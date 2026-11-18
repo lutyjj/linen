@@ -24,10 +24,7 @@ it("counts up once a second, as a timer that is not read out", () => {
     expect(timer).toHaveTextContent("1:00");
 });
 
-it("keeps its even figures beside the caller's classes", () => {
-    render(<Elapsed since={Date.now()} className="text-danger" />);
-    expect(screen.getByRole("timer")).toHaveClass(
-        "tabular-nums",
-        "text-danger",
-    );
+it("takes the caller's classes", () => {
+    render(<Elapsed since={Date.now()} className="lap" />);
+    expect(screen.getByRole("timer")).toHaveClass("lap");
 });

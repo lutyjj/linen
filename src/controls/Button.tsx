@@ -58,7 +58,7 @@ export function Actions({
 
 /** `press` answers the hand (motion.css). */
 const BUTTON_CLASS =
-    "press inline-flex h-(--height-control) shrink-0 items-center justify-center gap-1.5 rounded-button border px-3 text-sm font-medium whitespace-nowrap select-none pressable:cursor-pointer inactive:dimmed";
+    "press inline-flex h-(--height-control) shrink-0 items-center justify-center gap-2 rounded-button border px-3 text-sm font-medium whitespace-nowrap select-none pressable:cursor-pointer inactive:dimmed";
 
 /**
  * A button's look for something that is not a button element: a link that

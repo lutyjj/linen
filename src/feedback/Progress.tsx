@@ -1,7 +1,7 @@
 import { type ReactNode, useId, useRef } from "react";
 
 import { classes } from "../foundation/classes";
-import { isReadable, type Live, useFollow } from "./live";
+import { type Live, useFollow } from "./live";
 
 const percent = (value: number) => `${Math.round(value * 100)}%`;
 
@@ -50,10 +50,6 @@ export function Progress({
         element.setAttribute("aria-valuetext", format(done));
         if (words.current !== null) words.current.textContent = format(done);
     });
-    const shown =
-        value === undefined || isReadable(value)
-            ? undefined
-            : Math.min(1, Math.max(0, value));
     return (
         <div className={classes("flex flex-col gap-1 text-sm", className)}>
             <div className="flex items-baseline justify-between gap-4">
@@ -74,8 +70,6 @@ export function Progress({
                 aria-labelledby={name}
                 aria-valuemin={known ? 0 : undefined}
                 aria-valuemax={known ? 1 : undefined}
-                aria-valuenow={shown}
-                aria-valuetext={shown === undefined ? undefined : format(shown)}
                 className="relative h-1.5 overflow-hidden rounded-full bg-sunken"
             >
                 <span

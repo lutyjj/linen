@@ -97,8 +97,8 @@ export function Checkbox({
 /**
  * The control that selects a row, or every row, wherever a list can be acted
  * on in bulk: a checkbox, mixed while some rows are chosen, named by what it
- * selects so the count a selection bar states is reachable by name. Its hit
- * target reaches past the box, so a thumb finds it in a row 36px tall.
+ * selects. Its hit target reaches past the box, so a thumb finds it in a row
+ * 36px tall.
  */
 export function SelectToggle({
     label,

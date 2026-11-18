@@ -10,7 +10,7 @@ import {
 import { classes } from "../foundation/classes";
 import type { Tone } from "../foundation/tone";
 import { useWords } from "../foundation/words";
-import { isReadable, type Live, useFollow } from "./live";
+import { type Live, useFollow } from "./live";
 
 /** A stretch of the scale that means something, such as too loud. */
 export interface GaugeZone {
@@ -225,7 +225,6 @@ export function Gauge({
             aria-labelledby={name}
             aria-valuemin={min}
             aria-valuemax={max}
-            aria-valuenow={isReadable(value) ? undefined : value}
             style={style}
             className={classes(
                 small

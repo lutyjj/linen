@@ -114,7 +114,6 @@ export function ExplainedStatus({
         <Popover.Root>
             <Popover.Trigger
                 openOnHover
-                render={<button type="button" />}
                 className={classes(
                     look,
                     "cursor-help rounded-input underline decoration-dotted underline-offset-2",

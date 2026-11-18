@@ -55,7 +55,10 @@ export function OptionCards<Value extends string>({
             value={value ?? null}
             disabled={disabled}
             onValueChange={(next) => onValueChange(next as Value)}
-            className={classes("grid gap-2 sm:grid-cols-2", className)}
+            className={classes(
+                "grid grid-cols-[repeat(auto-fit,minmax(min(100%,14rem),1fr))] gap-2",
+                className,
+            )}
         >
             {options.map((option, index) => (
                 <Radio.Root

@@ -57,7 +57,7 @@ const TONE: Record<ChipTone, Ink> = {
 
 const SIZE: Record<ChipSize, string> = {
     subject:
-        "-mx-1.5 h-(--height-control-inline) rounded-input px-1.5 text-sm font-medium",
+        "-mx-2 h-(--height-control-inline) rounded-input px-2 text-sm font-medium",
     row: "h-(--height-control-inline) rounded-input px-2 text-xs",
     bar: "h-(--height-control-compact) rounded-button px-2.5 text-sm",
 };
@@ -85,7 +85,7 @@ function chipStyle({ tone = "neutral", size = "bar", frame }: ChipStyle) {
     return {
         frame: shown,
         className: classes(
-            "inline-flex max-w-full min-w-0 items-center gap-1.5 border whitespace-nowrap ",
+            "inline-flex max-w-full min-w-0 items-center gap-2 border whitespace-nowrap",
             ink.text,
             SIZE[size],
             FRAME[shown],
@@ -121,7 +121,7 @@ export function Chip({
                     type="button"
                     aria-label={removeLabel ?? words.remove}
                     onClick={onRemove}
-                    className="cursor-pointer text-sm/none opacity-60 hover:opacity-100"
+                    className="relative cursor-pointer text-sm/none opacity-60 after:absolute after:-inset-2 hover:opacity-100"
                 >
                     ×
                 </button>
