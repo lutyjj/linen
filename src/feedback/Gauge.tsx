@@ -63,14 +63,16 @@ function stripes(
 /**
  * Held and set marks differ in shape, so they read apart where they stand
  * close: a held value is a block inside the bar, in the text's ink, that
- * takes the bar's rounded end at either end of the scale; a set point is a thin
- * line that stands past the bar's edges. In a compact bar both stay inside
- * it.
+ * takes the bar's rounded end at the top of the scale and draws nothing at
+ * its lowest, where the value reached nothing, as the fill does; a set point
+ * is a thin line that stands past the bar's edges. In a compact bar both stay
+ * inside it.
  *
  * Each mark moves on a transform, so a value it follows many times a second
  * costs no layout: a box as wide as the scale the block can travel slides by
  * the share of it the value has reached, and its parent clips what slides
- * past the bar.
+ * past the bar. A held block leaves and returns at the lowest by its
+ * visibility, which costs no layout either.
  */
 function Mark({
     mark,
@@ -82,10 +84,13 @@ function Mark({
     small: boolean;
 }) {
     const place = useRef<HTMLSpanElement>(null);
-    useFollow(mark.value, (value) => {
-        place.current?.style.setProperty("--at", String(at(value)));
-    });
     const held = mark.kind === "held";
+    useFollow(mark.value, (value) => {
+        const element = place.current;
+        if (element === null) return;
+        element.style.setProperty("--at", String(at(value)));
+        if (held) element.style.visibility = at(value) === 0 ? "hidden" : "";
+    });
     return (
         <span
             ref={place}
