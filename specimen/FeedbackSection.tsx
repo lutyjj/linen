@@ -620,14 +620,13 @@ export function FeedbackSection() {
                                         </div>
                                     ) : (
                                         <ShownOnce
-                                            what="Invitation code"
+                                            title="Invitation code"
+                                            description={`Send it to ${invitee.trim()}.`}
                                             label="Invitation code"
                                             secret={code}
                                             copies={`Join Atlas at https://example.com/join with the code ${code}.`}
                                             copyLabel="Copy invitation"
-                                        >
-                                            Send it to {invitee.trim()}.
-                                        </ShownOnce>
+                                        />
                                     )}
                                 </Swap>
                             </DialogLayout>

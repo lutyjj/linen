@@ -48,13 +48,12 @@ it("shows the secret whole under its name and copies it", async () => {
     clipboard(writeText);
     render(
         <ShownOnce
-            what="New token"
+            title="New token"
+            description="Give it to the script."
             label="Access token"
             secret="tok_example_0000"
             copyLabel="Copy token"
-        >
-            Give it to the script.
-        </ShownOnce>,
+        />,
     );
 
     expect(screen.getByText("New token")).toBeVisible();
@@ -75,14 +74,13 @@ it("puts what the button names on the clipboard, in the app's words", async () =
     render(
         <LinenProvider words={{ ...ENGLISH, copied: "Kopiert" }}>
             <ShownOnce
-                what="Code"
+                title="Code"
+                description="Send it on."
                 label="Invitation code"
                 secret="K7Q2"
                 copies="Join with K7Q2"
                 copyLabel="Copy message"
-            >
-                Send it on.
-            </ShownOnce>
+            />
         </LinenProvider>,
     );
 
@@ -95,13 +93,12 @@ it("puts what the button names on the clipboard, in the app's words", async () =
 it("says what losing the secret means in the app's words where it gives them", () => {
     const { rerender } = render(
         <ShownOnce
-            what="Code"
+            title="Code"
+            description="Enter it on the other screen."
             label="Pairing code"
             secret="4417"
             copyLabel="Copy code"
-        >
-            Enter it on the other screen.
-        </ShownOnce>,
+        />,
     );
     expect(
         screen.getByText(/Enter it on the other screen\./),
@@ -109,14 +106,13 @@ it("says what losing the secret means in the app's words where it gives them", (
 
     rerender(
         <ShownOnce
-            what="Code"
+            title="Code"
+            description="Enter it on the other screen."
             label="Pairing code"
             secret="4417"
             copyLabel="Copy code"
             lost="If it is lost, pairing starts over."
-        >
-            Enter it on the other screen.
-        </ShownOnce>,
+        />,
     );
     const said = screen.getByText(/Enter it on the other screen\./);
     expect(said).toHaveTextContent("If it is lost, pairing starts over.");
@@ -124,14 +120,13 @@ it("says what losing the secret means in the app's words where it gives them", (
     // Words that are nothing, from a condition, leave the default.
     rerender(
         <ShownOnce
-            what="Code"
+            title="Code"
+            description="Enter it on the other screen."
             label="Pairing code"
             secret="4417"
             copyLabel="Copy code"
             lost={false}
-        >
-            Enter it on the other screen.
-        </ShownOnce>,
+        />,
     );
     expect(
         screen.getByText(/Enter it on the other screen\./),
@@ -149,13 +144,12 @@ it("asks for the text by hand where the page has no clipboard at all", async () 
         <>
             <CopyValue label="Address" value="https://api.example.com/v1" />
             <ShownOnce
-                what="Token"
+                title="Token"
+                description="Keep it."
                 label="Access token"
                 secret="lin_secret"
                 copyLabel="Copy token"
-            >
-                Keep it.
-            </ShownOnce>
+            />
         </>,
     );
 

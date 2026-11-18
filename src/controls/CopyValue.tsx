@@ -124,17 +124,19 @@ export function CopyValue({
  * secret.
  */
 export function ShownOnce({
-    what,
+    title,
+    description,
     label,
     secret,
     copies,
     copyLabel,
     lost,
     className,
-    children,
 }: {
     /** What was made, named as the section names it, over the words. */
-    what: string;
+    title: ReactNode;
+    /** What to do with it, above the secret. */
+    description: ReactNode;
     /** The accessible name of the secret itself, for reading it back. */
     label: string;
     secret: string;
@@ -148,8 +150,6 @@ export function ShownOnce({
      */
     lost?: ReactNode;
     className?: string;
-    /** What to say about it, above the secret. */
-    children: ReactNode;
 }) {
     const words = useWords();
     const { copying, copy } = useCopy(copies ?? secret);
@@ -162,9 +162,9 @@ export function ShownOnce({
             )}
         >
             <div>
-                <p className="font-medium break-words">{what}</p>
+                <p className="font-medium break-words">{title}</p>
                 <p className="max-w-prose text-text-secondary">
-                    {children} {isContent(lost) ? lost : words.shownOnce}
+                    {description} {isContent(lost) ? lost : words.shownOnce}
                 </p>
             </div>
             {copies !== undefined && (

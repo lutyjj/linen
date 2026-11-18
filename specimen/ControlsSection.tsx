@@ -428,14 +428,13 @@ export function ControlsSection() {
                     />
                     <CardBody>
                         <ShownOnce
-                            what="New token"
+                            title="New token"
+                            description="Give it to the script that will use it."
                             label="Access token"
                             secret="tok_example_000000000000000000000000"
                             copyLabel="Copy token"
                             lost="If it is lost, revoke it and make another."
-                        >
-                            Give it to the script that will use it.
-                        </ShownOnce>
+                        />
                     </CardBody>
                 </Card>
                 <Card>
@@ -445,14 +444,13 @@ export function ControlsSection() {
                     />
                     <CardBody>
                         <ShownOnce
-                            what="Invitation code"
+                            title="Invitation code"
+                            description="Send the invitation to the person joining."
                             label="Invitation code"
                             secret="K7Q2-9XPL"
                             copies="Join Atlas at https://example.com/join with the code K7Q2-9XPL."
                             copyLabel="Copy invitation"
-                        >
-                            Send the invitation to the person joining.
-                        </ShownOnce>
+                        />
                     </CardBody>
                 </Card>
             </Specimen>
