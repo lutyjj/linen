@@ -39,7 +39,6 @@ export function CellSelect({
     value,
     onValueChange,
     disabled,
-    inline = false,
     className = "",
     id,
     name,
@@ -55,11 +54,6 @@ export function CellSelect({
     value: string;
     onValueChange: (value: string) => void;
     disabled?: boolean;
-    /**
-     * Render the popup in place instead of a portal. Required inside another
-     * popup, whose dismissal treats a portalled click as an outside press.
-     */
-    inline?: boolean;
     className?: string;
     id?: string;
     /** The key of its error in its form's `errors`. */
@@ -92,51 +86,6 @@ export function CellSelect({
         </BaseSelect.Item>
     );
 
-    const positioned = (
-        <BaseSelect.Positioner
-            sideOffset={4}
-            align="start"
-            alignItemWithTrigger={false}
-            className={POSITIONER_CLASS}
-        >
-            <BaseSelect.Popup
-                render={renderLeaving}
-                className={classes(
-                    POPUP_CLASS,
-                    "flex max-h-72 min-w-[var(--anchor-width)] flex-col",
-                )}
-            >
-                <BaseSelect.Arrow className="absolute" />
-                {chosen !== undefined && (
-                    <div className="mb-1 shrink-0 border-b border-border pb-1">
-                        {option(chosen)}
-                    </div>
-                )}
-                <div className="min-h-0 flex-1 overflow-y-auto">
-                    {entries.map((entry) => {
-                        if (!isGroup(entry)) {
-                            return entry === chosen ? null : option(entry);
-                        }
-                        const rest = unchosen(entry.choices);
-                        // A heading over nothing would only say the kind is
-                        // empty, which the list already shows.
-                        if (rest.length === 0) return null;
-                        return (
-                            <BaseSelect.Group
-                                key={`group:${entry.label}`}
-                                className="mt-1 border-t border-border pt-1 first:mt-0 first:border-t-0 first:pt-0"
-                            >
-                                <BaseSelect.GroupLabel className="px-2 pt-1 pb-0.5 text-xs text-text-muted">
-                                    {entry.label}
-                                </BaseSelect.GroupLabel>
-                                {rest.map(option)}
-                            </BaseSelect.Group>
-                        );
-                    })}
-                </div>
-            </BaseSelect.Popup>
-        </BaseSelect.Positioner>
-    );
     return (
         <BaseSelect.Root
             items={items}
@@ -163,11 +112,53 @@ export function CellSelect({
                 <BaseSelect.Value className="truncate" />
                 <PickerMark />
             </BaseSelect.Trigger>
-            {inline ? (
-                positioned
-            ) : (
-                <BaseSelect.Portal>{positioned}</BaseSelect.Portal>
-            )}
+            <BaseSelect.Portal>
+                <BaseSelect.Positioner
+                    sideOffset={4}
+                    align="start"
+                    alignItemWithTrigger={false}
+                    className={POSITIONER_CLASS}
+                >
+                    <BaseSelect.Popup
+                        render={renderLeaving}
+                        className={classes(
+                            POPUP_CLASS,
+                            "flex max-h-72 min-w-[var(--anchor-width)] flex-col",
+                        )}
+                    >
+                        <BaseSelect.Arrow className="absolute" />
+                        {chosen !== undefined && (
+                            <div className="mb-1 shrink-0 border-b border-border pb-1">
+                                {option(chosen)}
+                            </div>
+                        )}
+                        <div className="min-h-0 flex-1 overflow-y-auto">
+                            {entries.map((entry) => {
+                                if (!isGroup(entry)) {
+                                    return entry === chosen
+                                        ? null
+                                        : option(entry);
+                                }
+                                const rest = unchosen(entry.choices);
+                                // A heading over nothing would only say the
+                                // kind is empty, which the list already shows.
+                                if (rest.length === 0) return null;
+                                return (
+                                    <BaseSelect.Group
+                                        key={`group:${entry.label}`}
+                                        className="mt-1 border-t border-border pt-1 first:mt-0 first:border-t-0 first:pt-0"
+                                    >
+                                        <BaseSelect.GroupLabel className="px-2 pt-1 pb-0.5 text-xs text-text-muted">
+                                            {entry.label}
+                                        </BaseSelect.GroupLabel>
+                                        {rest.map(option)}
+                                    </BaseSelect.Group>
+                                );
+                            })}
+                        </div>
+                    </BaseSelect.Popup>
+                </BaseSelect.Positioner>
+            </BaseSelect.Portal>
         </BaseSelect.Root>
     );
 }

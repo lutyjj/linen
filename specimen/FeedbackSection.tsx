@@ -21,6 +21,7 @@ import {
     NumberField,
     OptionCards,
     PromptDialog,
+    Select,
     ShownOnce,
     Status,
     Swap,
@@ -53,6 +54,12 @@ const BUSY = [
         ],
     },
 ];
+/** The files an export is written as. */
+const FORMATS = ["CSV", "JSON", "Spreadsheet"].map((format) => ({
+    value: format,
+    label: format,
+}));
+
 const PARTS = [
     "Tasks",
     "Comments",
@@ -80,6 +87,7 @@ export function FeedbackSection() {
     const [removal, setRemoval] = useState<"archive" | "delete">("archive");
     const [scheduling, setScheduling] = useState(false);
     const [every, setEvery] = useState<number | null>(24);
+    const [format, setFormat] = useState("CSV");
     const [parts, setParts] = useState<string[]>(PARTS.slice(0, 3));
     const [inviting, setInviting] = useState(false);
     const [invitee, setInvitee] = useState("");
@@ -480,6 +488,12 @@ export function FeedbackSection() {
                     }}
                 >
                     <TextField label="Name" defaultValue="Nightly export" />
+                    <Select
+                        label="Format"
+                        choices={FORMATS}
+                        value={format}
+                        onValueChange={setFormat}
+                    />
                     <TextField
                         label="Send it to"
                         hint="An address that takes files, such as exports@example.com."
