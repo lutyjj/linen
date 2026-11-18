@@ -34,16 +34,23 @@ export function Fact({
     name,
     mono = false,
     copy,
+    className,
     children,
 }: {
     name: ReactNode;
     mono?: boolean;
     /** What the copy control takes, and its name for it. */
     copy?: { value: string; label: string };
+    className?: string;
     children: ReactNode;
 }) {
     return (
-        <div className="flex flex-wrap items-baseline justify-between gap-x-4 border-t border-border py-2 first:border-t-0 first:pt-0 last:pb-0">
+        <div
+            className={classes(
+                "flex flex-wrap items-baseline justify-between gap-x-4 border-t border-border py-2 first:border-t-0 first:pt-0 last:pb-0",
+                className,
+            )}
+        >
             <dt className="text-text-secondary">{name}</dt>
             <dd className="flex min-h-(--height-control-inline) min-w-0 items-center gap-x-2">
                 <span

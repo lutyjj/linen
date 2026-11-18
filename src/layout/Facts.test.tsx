@@ -32,3 +32,20 @@ it("names each value, and puts a value on the clipboard whole", async () => {
     );
     expect(writeText).toHaveBeenCalledWith("192.0.2.10");
 });
+
+it("sets one fact apart by the caller's class, on the row that holds its name and value", () => {
+    render(
+        <Facts>
+            <Fact name="Version">2.4.1</Fact>
+            <Fact name="Address" className="pinned">
+                192.0.2.10
+            </Fact>
+        </Facts>,
+    );
+    const [version, address] = screen
+        .getAllByRole("term")
+        .map((term) => term.parentElement);
+    expect(address).toHaveClass("pinned");
+    expect(address).toContainElement(screen.getByText("192.0.2.10"));
+    expect(version).not.toHaveClass("pinned");
+});
