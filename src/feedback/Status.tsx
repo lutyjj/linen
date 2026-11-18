@@ -95,8 +95,10 @@ export function Status(props: StatusProps) {
  * A `Status` for a state the person cannot change, which says why, such as
  * what access that only reads allows. Its words, underlined in dots, open
  * the `description` in a popup: under a resting pointer, or at a press or a
- * key, which takes the focus to it so it is read out. It is its own part so
- * an app that only reports states carries no popup.
+ * key, which takes the focus to it so it is read out. A `description` that
+ * is nothing, as `false`, `null` or `""` from a condition is, makes a plain
+ * `Status`. It is its own part so an app that only reports states carries
+ * no popup.
  */
 export function ExplainedStatus({
     description,
@@ -105,6 +107,7 @@ export function ExplainedStatus({
     /** Why the state holds, in a sentence or two. */
     description: ReactNode;
 }) {
+    if (isNothing(description)) return <Status {...status} />;
     const { look, state } = statusParts(status);
     return (
         <Popover.Root>
@@ -140,5 +143,19 @@ export function ExplainedStatus({
                 </Popover.Positioner>
             </Popover.Portal>
         </Popover.Root>
+    );
+}
+
+/**
+ * Whether a node is nothing: none, a boolean, an empty string, or a list of
+ * those. Anything else, such as an element or a promise, is content.
+ */
+function isNothing(node: ReactNode): boolean {
+    if (Array.isArray(node)) return node.every(isNothing);
+    return (
+        node === null ||
+        node === undefined ||
+        typeof node === "boolean" ||
+        node === ""
     );
 }
