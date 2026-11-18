@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.1](https://github.com/lutyjj/linen/compare/v0.8.0...v0.8.1) (2026-11-18)
+
+
+### Bug Fixes
+
+* a card head's actions take the whole line under its words ([14d1c72](https://github.com/lutyjj/linen/commit/14d1c72bf643b21e762ce66626957bd62abef29b))
+* a slot handed nothing draws nothing ([eb00a7a](https://github.com/lutyjj/linen/commit/eb00a7a8c51a089eac14b0a9880abc3cdcb6171e))
+
 ## [0.8.0](https://github.com/lutyjj/linen/compare/v0.7.3...v0.8.0) (2026-11-18)
 
 
