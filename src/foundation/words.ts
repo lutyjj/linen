@@ -27,6 +27,14 @@ export interface Words {
     download: string;
     /** Brings a block of text that grows back to its newest lines. */
     latestLines: string;
+    /**
+     * A gauge's value in words, read out with each mark on its bar by its
+     * label, such as "-12 dB, Peak -3 dB, Limit -6 dB".
+     */
+    gaugeReading: (
+        value: string,
+        marks: readonly { label: string; value: string }[],
+    ) => string;
     /** A number field's step up and step down. */
     increase: string;
     decrease: string;
@@ -60,6 +68,10 @@ export const ENGLISH: Words = {
     done: "done",
     download: "Download",
     latestLines: "Latest lines",
+    gaugeReading: (value, marks) =>
+        [value, ...marks.map((mark) => `${mark.label} ${mark.value}`)].join(
+            ", ",
+        ),
     increase: "Increase",
     decrease: "Decrease",
     breadcrumb: "Breadcrumb",

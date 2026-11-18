@@ -1,6 +1,8 @@
 import { act, render, screen, within } from "@testing-library/react";
 import { expect, it } from "vitest";
 
+import { ENGLISH } from "../foundation/words";
+import { LinenProvider } from "../LinenProvider";
 import { Gauge, Gauges } from "./Gauge";
 import type { Readable } from "./live";
 
@@ -40,8 +42,9 @@ it("is a meter that names its value in words", () => {
     expect(disk).toHaveAttribute("aria-valuetext", "42%");
 });
 
-it("follows a value that changes on its own without rendering what holds it", () => {
+it("follows a value and its marks that change on their own without rendering what holds them", () => {
     const level = source(-30);
+    const peak = source(-30);
     let renders = 0;
     function Panel() {
         renders += 1;
@@ -53,7 +56,10 @@ it("follows a value that changes on its own without rendering what holds it", ()
                     min={-60}
                     max={0}
                     format={(value) => `${value} dB`}
-                    marks={[{ value: -6, kind: "set", label: "Limit" }]}
+                    marks={[
+                        { value: peak.readable, kind: "held", label: "Peak" },
+                        { value: -6, kind: "set", label: "Limit" },
+                    ]}
                 />
             </Gauges>
         );
@@ -63,19 +69,63 @@ it("follows a value that changes on its own without rendering what holds it", ()
     expect(screen.getByRole("group", { name: "Output" })).toContainElement(
         left,
     );
-    expect(left).toHaveAttribute("aria-valuetext", "-30 dB");
+    expect(left).toHaveAttribute(
+        "aria-valuetext",
+        "-30 dB, Peak -30 dB, Limit -6 dB",
+    );
 
     act(() => {
         for (const value of [-24, -18, -12]) level.set(value);
+        peak.set(-3);
     });
     expect(left).toHaveAttribute("aria-valuenow", "-12");
-    expect(left).toHaveAttribute("aria-valuetext", "-12 dB");
+    expect(left).toHaveAttribute(
+        "aria-valuetext",
+        "-12 dB, Peak -3 dB, Limit -6 dB",
+    );
     expect(left).toHaveTextContent("-12 dB");
     expect(left.style.getPropertyValue("--level")).toBe("0.8");
     expect(renders).toBe(1);
 
     view.unmount();
     expect(level.listening()).toBe(0);
+    expect(peak.listening()).toBe(0);
+});
+
+it("reads its marks out with its value, in the app's words", () => {
+    const peak = source(-60);
+    render(
+        <LinenProvider
+            words={{
+                ...ENGLISH,
+                gaugeReading: (value, marks) =>
+                    [
+                        value,
+                        ...marks.map((mark) => `${mark.label} : ${mark.value}`),
+                    ].join(" ; "),
+            }}
+        >
+            <Gauge
+                label="Gauche"
+                value={-60}
+                min={-60}
+                max={0}
+                format={(value) => `${value} dB`}
+                marks={[
+                    { value: peak.readable, kind: "held", label: "Crête" },
+                    { value: -6, kind: "set", label: "Limite" },
+                ]}
+            />
+        </LinenProvider>,
+    );
+    const left = screen.getByRole("meter", { name: "Gauche" });
+    // A value held at the lowest reached nothing, so it is not said.
+    expect(left).toHaveAttribute("aria-valuetext", "-60 dB ; Limite : -6 dB");
+    act(() => peak.set(-20));
+    expect(left).toHaveAttribute(
+        "aria-valuetext",
+        "-60 dB ; Crête : -20 dB ; Limite : -6 dB",
+    );
 });
 
 /** The marks a gauge draws on its bar, which it keeps from readers. */
