@@ -41,3 +41,20 @@ it("marks the section of the page's own address where the app has no router", ()
         window.history.pushState({}, "", "/");
     }
 });
+
+it("marks itself a bar stuck to the page and says its height while it stands there", () => {
+    const { unmount } = render(
+        <LinenProvider
+            navigation={memoryNavigation("/settings/people").navigation}
+        >
+            <SectionNav label="Settings" sections={SECTIONS} />
+        </LinenProvider>,
+    );
+    const rail = screen.getByRole("navigation", { name: "Settings" });
+    const place = rail.parentElement;
+    // linen.css keeps what follows a marked bar clear of the bars.
+    expect(rail).toHaveAttribute("data-sticky");
+    expect(place?.style.getPropertyValue("--height-sectionnav")).not.toBe("");
+    unmount();
+    expect(place?.style.getPropertyValue("--height-sectionnav")).toBe("");
+});

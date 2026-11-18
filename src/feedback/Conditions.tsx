@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { classes } from "../foundation/classes";
 import { COLUMN_CLASS } from "../foundation/column";
 import { type Tone, TONE_TINT } from "../foundation/tone";
-import { usePublishedHeight } from "../foundation/viewport";
+import { useStickyBar } from "../foundation/viewport";
 import { ToneIcon } from "./toneIcon";
 
 /**
@@ -42,7 +42,11 @@ const ORDER: Record<Tone, number> = {
  * said politely: a condition that
  * arrives is read out once, and a count that ticks inside one is not.
  *
- * `Shell` holds one; a screen outside the shell puts one at its top.
+ * `Shell` holds one; a screen outside the shell puts one at its top. What
+ * follows it there comes to rest below it when it is scrolled to. Drawn in
+ * a box that scrolls, as a sample in a frame is, it is the box's and the
+ * page keeps nothing clear of it; drawn in the page anywhere but the top of
+ * a screen, it is out of place.
  */
 export function Conditions({
     conditions,
@@ -52,8 +56,8 @@ export function Conditions({
     conditions: readonly Condition[];
     className?: string;
 }) {
-    // Its height, for the bars stuck beneath it.
-    const place = usePublishedHeight<HTMLDivElement>("--height-conditions");
+    // Its height, for the bars stuck beneath it and what scrolls there.
+    const place = useStickyBar<HTMLDivElement>("--height-conditions");
     const standing = conditions.toSorted(
         (one, other) =>
             ORDER[one.tone ?? "accent"] - ORDER[other.tone ?? "accent"],

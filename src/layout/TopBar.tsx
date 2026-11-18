@@ -15,7 +15,7 @@ import {
     POSITIONER_CLASS,
     renderLeaving,
 } from "../foundation/popup";
-import { usePublishedHeight } from "../foundation/viewport";
+import { useStickyBar } from "../foundation/viewport";
 import { useWords } from "../foundation/words";
 import { useNavigation } from "../navigation/navigation";
 import { SCREEN_TITLE_CLASS } from "./column";
@@ -150,6 +150,10 @@ function Divider() {
  *
  * A screen beneath another, such as one record of a list, names the screens
  * above it in a trail, which takes the lead's place before the title.
+ *
+ * It stands at the top of a screen, and what follows it comes to rest below
+ * it when it is scrolled to. Drawn in a box that scrolls, as a sample in a
+ * frame is, it is the box's and the page keeps nothing clear of it.
  */
 export function TopBar({
     title,
@@ -169,8 +173,8 @@ export function TopBar({
     children?: ReactNode;
 }) {
     const lead = use(TopBarLead);
-    // Its height, for the section rail stuck beneath it.
-    const bar = usePublishedHeight<HTMLElement>("--height-topbar");
+    // Its height, for the sections stuck beneath it and what scrolls there.
+    const bar = useStickyBar<HTMLElement>("--height-topbar");
     return (
         <header
             ref={bar}
