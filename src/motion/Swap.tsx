@@ -28,9 +28,10 @@ export function Swap({
      * The views are steps of what a person does, so each view that arrives
      * takes the focus and shows its start, even where the act that brought
      * it stood outside the region and went with the step, as a dialog's
-     * submit does. Without it, a view takes the focus only from a view that
-     * leaves holding it, and a control that stays, such as the one choosing
-     * between a chart and its numbers, keeps it either way.
+     * submit does, or went through a dialog or a menu, once that has gone.
+     * Without it, a view takes the focus only from a view that leaves
+     * holding it, and a control that stays, such as the one choosing between
+     * a chart and its numbers, keeps it either way.
      */
     stepped?: boolean;
     /**
@@ -62,21 +63,34 @@ export function Swap({
         if (shown.current === view) return;
         shown.current = view;
         // The focus goes on with the person: from a view that leaves holding
-        // it, and in a stepped swap from what holds the region, where it
-        // falls when the act that swapped went with the step, as a dialog's
-        // submit does. Anywhere else, it is on something that stays.
-        const active = document.activeElement;
+        // it, and in a stepped swap from wherever it is lost: on nothing, on
+        // what only holds the region, or on something that has gone. Where
+        // it is in a layer over the page, as a dialog the act went through,
+        // it goes on once that goes with its layer, unless the person has
+        // gone back to the page first.
         const arriving = content.current?.querySelector<HTMLElement>(
             ":scope > :not([inert])",
         );
-        if (
-            arriving &&
-            (content.current?.contains(active) ||
-                (stepped &&
-                    (active === null || active.contains(region.current))))
-        ) {
+        const take = () => {
+            if (!arriving || gone(arriving)) return;
             arriving.focus({ preventScroll: true });
             showStart(arriving);
+        };
+        const lost = (focus: Element | null) =>
+            focus === null || focus.contains(region.current) || gone(focus);
+        const held = document.activeElement;
+        let letGo: (() => void) | undefined;
+        if (stepped ? lost(held) : content.current?.contains(held)) {
+            take();
+        } else if (stepped && held) {
+            const over = layer(held);
+            letGo = whenGone(held, over, () => {
+                // Inert where it stands, or gone with the layer; taken out
+                // of a layer that stays, as a dialog's button is as it
+                // shows its next view, it leaves the focus to it.
+                const withLayer = held.isConnected || gone(over);
+                if (withLayer && lost(document.activeElement)) take();
+            });
         }
         // A swap that interrupts another starts from where the region stands.
         const from =
@@ -84,7 +98,7 @@ export function Swap({
                 ? settled.current
                 : region.current.offsetHeight;
         const to = content.current?.offsetHeight;
-        if (from === undefined || to === undefined || from === to) return;
+        if (from === undefined || to === undefined || from === to) return letGo;
         const swap = ++swaps.current;
         // Held at once rather than from the animation's first frame, so
         // nothing around the region, such as a centred dialog, moves in
@@ -95,6 +109,7 @@ export function Swap({
             .then(() => {
                 if (swap === swaps.current) region.current.style.height = "";
             });
+        return letGo;
     }, [view, stepped, animate, region]);
 
     return (
@@ -112,6 +127,48 @@ export function Swap({
             </div>
         </div>
     );
+}
+
+/** Whether an element is off the page or inert, as everything leaving is. */
+function gone(element: Element) {
+    return !element.isConnected || element.closest("[inert]") !== null;
+}
+
+/** The part of the page under `body` that holds an element, such as a layer. */
+function layer(element: Element) {
+    let part = element;
+    while (part.parentElement && part.parentElement !== document.body) {
+        part = part.parentElement;
+    }
+    return part;
+}
+
+/**
+ * Calls `then` once `element` has gone, unless the focus first leaves
+ * `over`, the layer that holds it, and returns what stops the wait. Not
+ * every engine fires blur as a focused element goes, so it watches the
+ * element and what holds it for one of them to leave its parent or turn
+ * inert; it does not see one hidden, moved to another parent or inside a
+ * shadow root.
+ */
+function whenGone(element: Element, over: Element, then: () => void) {
+    const watch = new MutationObserver(() => {
+        if (!gone(element)) return;
+        stop();
+        then();
+    });
+    const away = (event: FocusEvent) => {
+        if (!over.contains(event.target as Node)) stop();
+    };
+    const stop = () => {
+        watch.disconnect();
+        document.removeEventListener("focusin", away);
+    };
+    for (let node: Node | null = element; node; node = node.parentNode) {
+        watch.observe(node, { childList: true, attributeFilter: ["inert"] });
+    }
+    document.addEventListener("focusin", away);
+    return stop;
 }
 
 /**

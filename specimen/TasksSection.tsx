@@ -6,6 +6,7 @@ import {
     Card,
     CardBody,
     CardHead,
+    ConfirmDialog,
     DialogLayout,
     DialogRoot,
     DialogShell,
@@ -47,6 +48,7 @@ export function TasksSection() {
     const [done, setDone] = useState(0.35);
     const [step, setStep] = useState<string | null>(null);
     const [onScreen, setOnScreen] = useState<string>(SETUP[1].id);
+    const [startingOver, setStartingOver] = useState(false);
     const [lines, setLines] = useState(() =>
         Array.from({ length: 12 }, (_, at) => line(at)),
     );
@@ -131,7 +133,11 @@ export function TasksSection() {
                                 </p>
                                 <Actions>
                                     <Button
-                                        onClick={() => setOnScreen(SETUP[0].id)}
+                                        onClick={() =>
+                                            before === undefined
+                                                ? setOnScreen(SETUP[0].id)
+                                                : setStartingOver(true)
+                                        }
                                     >
                                         Cancel
                                     </Button>
@@ -207,6 +213,18 @@ export function TasksSection() {
                         </DialogLayout>
                     </DialogShell>
                 </DialogRoot>
+                <ConfirmDialog
+                    open={startingOver}
+                    onOpenChange={setStartingOver}
+                    title="Start the setup over?"
+                    description="What is set so far is cleared."
+                    confirmLabel="Start over"
+                    destructive
+                    onConfirm={() => {
+                        setOnScreen(SETUP[0].id);
+                        setStartingOver(false);
+                    }}
+                />
             </Specimen>
 
             <Specimen
