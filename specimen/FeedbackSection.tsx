@@ -68,12 +68,6 @@ const mbps = (value: number) => `${Math.round(value)} MB/s`;
 /** A write that takes a moment. */
 const pause = (ms: number) =>
     new Promise<void>((resolve) => setTimeout(resolve, ms));
-/**
- * Takes the focus to the first control of a view that arrives, what the
- * person does next, before the one that held it leaves.
- */
-const focusFirstControl = (view: HTMLElement | null) =>
-    view?.querySelector("button")?.focus();
 
 export function FeedbackSection() {
     const toast = useToast();
@@ -575,6 +569,7 @@ export function FeedbackSection() {
                             >
                                 <Swap
                                     view={code === undefined ? "form" : "code"}
+                                    stepped
                                 >
                                     {code === undefined ? (
                                         <div className="flex flex-col gap-4">
@@ -624,17 +619,15 @@ export function FeedbackSection() {
                                             />
                                         </div>
                                     ) : (
-                                        <div ref={focusFirstControl}>
-                                            <ShownOnce
-                                                what="Invitation code"
-                                                label="Invitation code"
-                                                secret={code}
-                                                copies={`Join Atlas at https://example.com/join with the code ${code}.`}
-                                                copyLabel="Copy invitation"
-                                            >
-                                                Send it to {invitee.trim()}.
-                                            </ShownOnce>
-                                        </div>
+                                        <ShownOnce
+                                            what="Invitation code"
+                                            label="Invitation code"
+                                            secret={code}
+                                            copies={`Join Atlas at https://example.com/join with the code ${code}.`}
+                                            copyLabel="Copy invitation"
+                                        >
+                                            Send it to {invitee.trim()}.
+                                        </ShownOnce>
                                     )}
                                 </Swap>
                             </DialogLayout>
