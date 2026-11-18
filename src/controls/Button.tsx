@@ -21,10 +21,11 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
     // same frame as its neighbours so it is no less a button than they are.
     destructive:
         "border-border-strong bg-surface text-danger pressable:hover:border-danger/60",
-    // For a surface painted in the text colour, where the page's own border
-    // and surface tokens would vanish. Both themes invert, so this reads in
-    // either one.
-    inverted: "border-bg/25 bg-transparent text-bg",
+    // For a surface painted in the text colour, as a toast is, where the
+    // page's own border and surface tokens would vanish, and the accent's
+    // focus ring with them: its ring is its words' colour. Both themes
+    // invert, so this reads in either one.
+    inverted: "border-bg/25 bg-transparent text-bg focus-visible:outline-bg",
 };
 
 export interface ButtonProps extends ComponentProps<"button"> {

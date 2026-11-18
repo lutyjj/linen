@@ -664,6 +664,18 @@ export function FeedbackSection() {
                             Remove an entry
                         </Button>
                     </Sample>
+                    <Sample name="A long message, with undo">
+                        <Button
+                            onClick={() =>
+                                toast.show({
+                                    text: "Archived 14 tasks in Atlas, with their files, comments and the reports that cite them",
+                                    onUndo: () => undefined,
+                                })
+                            }
+                        >
+                            Archive tasks
+                        </Button>
+                    </Sample>
                     <Sample name="Sticky failure">
                         <Button
                             onClick={() =>

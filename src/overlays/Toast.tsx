@@ -9,6 +9,8 @@ import {
     useRef,
 } from "react";
 
+import { buttonClass } from "../controls/Button";
+import { classes } from "../foundation/classes";
 import { isContent } from "../foundation/slot";
 import { useWords } from "../foundation/words";
 
@@ -214,26 +216,38 @@ function ToastSurface({
     const words = useWords();
     const message = toast.data?.message;
     if (message === undefined) return null;
+    // Its answers are buttons at the compact height, inverted for its
+    // surface. They take no more of its height than a line of its words and
+    // stand with the first of them, as far inside its corner as from its
+    // edges, so their radius runs with the corner's.
+    const answer = classes(
+        buttonClass("inverted"),
+        "h-(--height-control-compact)",
+    );
     return (
         <BaseToast.Root
             toast={toast}
             data-toast=""
-            className="toast relative flex items-center gap-3 overflow-hidden rounded-card bg-text px-3.5 py-2.5 text-sm text-bg shadow-overlay"
+            className="toast relative flex items-start gap-2 overflow-hidden rounded-card bg-text px-4 py-2 text-sm text-bg shadow-overlay"
         >
             {isContent(message.lead) && (
-                <span className="-mr-1 flex">{message.lead}</span>
+                <span className="flex h-5 items-center">{message.lead}</span>
             )}
             <BaseToast.Title key={toast.updateKey} render={<span />}>
                 {message.text}
             </BaseToast.Title>
-            <BaseToast.Action className="cursor-pointer font-medium underline underline-offset-2" />
-            {message.sticky && (
-                <BaseToast.Close
-                    aria-label={words.dismiss}
-                    className="-mr-1 flex size-5 cursor-pointer items-center justify-center rounded-input opacity-60 hover:opacity-100"
-                >
-                    <X aria-hidden="true" className="size-3.5" />
-                </BaseToast.Close>
+            {(toast.actionProps !== undefined || message.sticky) && (
+                <span className="-my-1 -mr-3 ml-2 flex shrink-0 gap-2">
+                    <BaseToast.Action className={answer} />
+                    {message.sticky && (
+                        <BaseToast.Close
+                            aria-label={words.dismiss}
+                            className={classes(answer, "aspect-square px-0")}
+                        >
+                            <X aria-hidden="true" className="size-4" />
+                        </BaseToast.Close>
+                    )}
+                </span>
             )}
             {message.progress !== undefined && (
                 <span
