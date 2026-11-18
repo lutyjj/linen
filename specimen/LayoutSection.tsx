@@ -169,6 +169,26 @@ export function LayoutSection() {
             </Specimen>
 
             <Specimen
+                title="A screen as wide as its window"
+                rule="A top bar sets its title and actions in the content column, as every band does; a wide one spans the whole screen, for an editor whose content does. Here the column is narrowed to 24rem to show the two apart."
+                framed={false}
+            >
+                {[false, true].map((wide) => (
+                    <div
+                        key={String(wide)}
+                        className="overflow-hidden rounded-card border border-border [--width-content:24rem]"
+                    >
+                        <TopBar
+                            wide={wide}
+                            title={wide ? "Report layout" : "Reports"}
+                        >
+                            <Button>Preview</Button>
+                        </TopBar>
+                    </div>
+                ))}
+            </Specimen>
+
+            <Specimen
                 title="A card and its head"
                 rule="One concern per card. The head holds its title, a count beside it, what it is for, and its actions, which sit beside the title while the title keeps its own width beside them, and under what the card is for once it would not. Every title and value inside starts on the gutter."
                 framed={false}
