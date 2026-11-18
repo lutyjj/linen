@@ -10,11 +10,13 @@ import {
 // "resize", read as classes: it holds no classes.
 
 /**
- * The one breakpoint the interface has, matching Tailwind's `md`. Below it
- * the shell is a phone: the rail gives way to the phone's navigation, tables
- * read as cards, and the keyboard shortcuts stand down.
+ * The one breakpoint the interface has, Tailwind's default `md`, which the
+ * stylesheet reads from the theme. Tailwind writes it into each query rather
+ * than a property a script can read, so it is said here as well, and a test
+ * holds it to Tailwind's default theme. Below it the shell is a phone: the
+ * rail gives way to the phone's navigation.
  */
-const WIDE = "(min-width: 768px)";
+const WIDE = "(width >= 48rem)";
 
 function subscribe(listener: () => void): () => void {
     const media = window.matchMedia(WIDE);

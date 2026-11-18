@@ -1,7 +1,11 @@
 import { act, render, screen } from "@testing-library/react";
+import theme from "tailwindcss/theme.css?raw";
 import { afterEach, expect, it, vi } from "vitest";
 
 import { useNarrow, useWidth } from "./viewport";
+
+/** Tailwind's `md`, which every `md:` utility and linen.css read. */
+const MD = /--breakpoint-md:\s*([^;]+);/.exec(theme)?.[1];
 
 const unstubbed = Object.getOwnPropertyDescriptor(window, "matchMedia");
 
@@ -12,7 +16,7 @@ afterEach(() => {
     vi.restoreAllMocks();
 });
 
-it("says a window below md is narrow, and follows it across", () => {
+it("says a window below Tailwind's md is narrow, and follows it across", () => {
     let width = 390;
     const listeners = new Set<() => void>();
     Object.defineProperty(window, "matchMedia", {
@@ -20,7 +24,7 @@ it("says a window below md is narrow, and follows it across", () => {
         value: (query: string) =>
             ({
                 get matches() {
-                    return query === "(min-width: 768px)" && width >= 768;
+                    return query === `(width >= ${MD})` && width >= 768;
                 },
                 addEventListener: (_: string, listener: () => void) =>
                     listeners.add(listener),

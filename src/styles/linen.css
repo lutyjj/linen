@@ -182,8 +182,8 @@
     --width-content: 1180px;
 }
 
-@media (width >= 48rem) {
-    :root {
+:root {
+    @variant md {
         --spacing-gutter: 16px;
     }
 }

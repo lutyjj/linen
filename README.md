@@ -23,6 +23,8 @@ Import the stylesheet after Tailwind:
 @import "linen/linen.css";
 ```
 
+linen's one breakpoint is Tailwind's default `md`, which its script states as well, so an app keeps `--breakpoint-md` as it is.
+
 Wrap the app once in `LinenProvider`, which holds the words the components say and how the app moves between its pages. An app that says things in toasts (`useToast`) also stands a `ToastProvider` inside it, once, around everything that calls it.
 
 ```tsx

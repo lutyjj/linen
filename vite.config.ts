@@ -60,8 +60,9 @@ export default defineConfig(({ mode }) => ({
         globals: true,
         setupFiles: ["src/test/setup.ts"],
         include: ["src/**/*.test.{ts,tsx}"],
-        // The stylesheet is read as text where a test holds it to the code.
-        css: { include: [/src\/styles\/.+\.css/] },
+        // The stylesheet, and Tailwind's theme it reads, are read as text
+        // where a test holds them to the code.
+        css: { include: [/src\/styles\/.+\.css/, /tailwindcss\/theme\.css/] },
         // Every component is tested with Motion and again without it.
         projects: [
             { extends: true, test: { name: "motion" } },
