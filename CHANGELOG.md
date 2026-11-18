@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.8.0](https://github.com/lutyjj/linen/compare/v0.7.3...v0.8.0) (2026-11-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* Words gains gaugeReading; an app that passes its own Words to LinenProvider adds it.
+
+### Features
+
+* a swap takes a className for its region ([2153b47](https://github.com/lutyjj/linen/commit/2153b47139e456ed9f2632f46120b26df72d89ad))
+* the view a swap leaves hands the focus to the view that arrives ([2856fce](https://github.com/lutyjj/linen/commit/2856fce6aa46b6ab078a57d447ed64d4bc2bd006))
+
+
+### Bug Fixes
+
+* a card's actions go under its description once they crowd its title ([#29](https://github.com/lutyjj/linen/issues/29)) ([ac2adfb](https://github.com/lutyjj/linen/commit/ac2adfb7a1b886e2d065f72165f6c810d908bf39))
+* a dialog body whose content fits draws no hairline ([7386a35](https://github.com/lutyjj/linen/commit/7386a355331f65b512a224b7f50f093f198dac19))
+* a dialog that swaps its views stays inside the visible window ([#36](https://github.com/lutyjj/linen/issues/36)) ([f1fba34](https://github.com/lutyjj/linen/commit/f1fba340917106ca48c407dffc3a315611306a05))
+* a gauge reads its marks out with its value ([a85260f](https://github.com/lutyjj/linen/commit/a85260fd314b1775912c21a290e7dfbf150716cb))
+* a held mark at a gauge's lowest draws nothing ([aaae712](https://github.com/lutyjj/linen/commit/aaae71201d19ce397794eab01b92c35a396adffa))
+* a notice declares no container ([f47aa6a](https://github.com/lutyjj/linen/commit/f47aa6a84988a2af5afa9ad79fb3422acbd39ce6))
+* a set mark at either end of a gauge's scale draws whole ([cba943f](https://github.com/lutyjj/linen/commit/cba943f60a6da747b99b4aa4345e0e03aec79651))
+* a status with nothing to explain is a plain status ([81b1d57](https://github.com/lutyjj/linen/commit/81b1d57b51f53c425fdda540b7b03f830e6116a0))
+* what a screen scrolls to comes to rest below its sticky bars ([#39](https://github.com/lutyjj/linen/issues/39)) ([0fb700b](https://github.com/lutyjj/linen/commit/0fb700b51de252c34c4ae82356ce852c81108ecc))
+
 ## [0.7.3](https://github.com/lutyjj/linen/compare/v0.7.2...v0.7.3) (2026-11-17)
 
 
