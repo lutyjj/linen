@@ -56,7 +56,7 @@ A short window is as much a target as a narrow one. An open foldable gives the r
 
 Anything that floats at the foot of a phone's screen, as a toast does, stands `--inset-tabbar` above the edge: the tab bar's height while one is on the page, nothing otherwise. The frame starts below `--inset-top`, the band a translucent status bar covers in an app saved to a phone's home screen: the rail and the phone's top bar reach up under it in their own colour, and everything sticky sticks below it. A screen outside the shell keeps clear of it itself.
 
-Every card's contents start on `--spacing-gutter` (12px, 16px from `md`). Two settings never share a line. Actions sit beside a card's title while there is room and under its description once there is not.
+Every card's contents start on `--spacing-gutter` (12px, 16px from `md`). Two settings never share a line. Actions sit beside a card's title while the title and its count keep their own width beside them, and under its description once they would not.
 
 ## Controls
 
