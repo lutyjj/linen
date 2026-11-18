@@ -6,8 +6,16 @@ import { expect, it, vi } from "vitest";
 import { ENGLISH } from "../foundation/words";
 import { NumberField } from "./NumberField";
 
-function Volume({ onCommit }: { onCommit?: (value: number | null) => void }) {
-    const [value, setValue] = useState<number | null>(-20);
+function Volume({
+    start = -20,
+    disabled,
+    onCommit,
+}: {
+    start?: number;
+    disabled?: boolean;
+    onCommit?: (value: number | null) => void;
+}) {
+    const [value, setValue] = useState<number | null>(start);
     return (
         <NumberField
             label="Volume"
@@ -15,6 +23,7 @@ function Volume({ onCommit }: { onCommit?: (value: number | null) => void }) {
             unit="dB"
             min={-60}
             max={0}
+            disabled={disabled}
             value={value}
             onValueChange={setValue}
             onValueCommit={onCommit}
@@ -43,6 +52,35 @@ it("steps within its range from the keyboard and its buttons", async () => {
     expect(volume).toHaveValue("-60");
     await user.click(screen.getByRole("button", { name: ENGLISH.decrease }));
     expect(volume).toHaveValue("-60");
+});
+
+it("at either end of its range disables only the step that cannot go further", async () => {
+    const user = userEvent.setup();
+    render(<Volume start={-60} />);
+    const volume = screen.getByRole("textbox", { name: "Volume" });
+    const frame = screen.getByRole("group");
+    const down = screen.getByRole("button", { name: ENGLISH.decrease });
+    const up = screen.getByRole("button", { name: ENGLISH.increase });
+    expect(volume).toBeEnabled();
+    expect(down).toBeDisabled();
+    expect(up).toBeEnabled();
+    // The frame's look keys on this, which Base UI sets for the field alone.
+    expect(frame).not.toHaveAttribute("data-disabled");
+
+    await user.click(volume);
+    await user.keyboard("{End}");
+    expect(down).toBeEnabled();
+    expect(up).toBeDisabled();
+    expect(frame).not.toHaveAttribute("data-disabled");
+});
+
+it("is drawn disabled, steps and all, only while it is disabled", () => {
+    render(<Volume disabled />);
+    expect(screen.getByRole("textbox", { name: "Volume" })).toBeDisabled();
+    for (const step of screen.getAllByRole("button")) {
+        expect(step).toBeDisabled();
+    }
+    expect(screen.getByRole("group")).toHaveAttribute("data-disabled");
 });
 
 it("hands on the value once it is settled", async () => {

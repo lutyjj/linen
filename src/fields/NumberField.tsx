@@ -7,8 +7,12 @@ import { isContent } from "../foundation/slot";
 import { useWords } from "../foundation/words";
 import { CONTROL_CLASS, Field } from "./Field";
 
+/**
+ * A step at an end of the range dims on its own; in a disabled field the
+ * frame dims everything once.
+ */
 const STEP_CLASS =
-    "flex w-(--height-control) shrink-0 cursor-pointer items-center justify-center text-text-secondary hover:bg-sunken hover:text-text active:bg-border data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50";
+    "flex w-(--height-control) shrink-0 cursor-pointer items-center justify-center text-text-secondary hover:bg-sunken hover:text-text active:bg-border data-[disabled]:cursor-not-allowed not-in-data-[disabled]:data-[disabled]:opacity-50";
 
 /**
  * A number set within a range in steps, under its name: the value between a
@@ -90,7 +94,7 @@ export function NumberField({
                 <BaseNumberField.Group
                     className={classes(
                         CONTROL_CLASS,
-                        "flex w-full items-stretch overflow-hidden p-0 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-1 has-[:focus-visible]:outline-accent has-[[aria-invalid=true]]:border-danger has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50",
+                        "flex w-full items-stretch overflow-hidden p-0 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-1 has-[:focus-visible]:outline-accent has-[[aria-invalid=true]]:border-danger data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
                         className,
                     )}
                 >
