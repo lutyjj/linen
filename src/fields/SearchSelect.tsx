@@ -74,7 +74,7 @@ export function SearchSelect({
                     id={id}
                     className={classes(
                         PICKER_CLASS,
-                        "flex w-full data-[disabled]:cursor-default data-[disabled]:opacity-50",
+                        "flex w-full",
                         chosen === undefined ? "text-text-secondary" : "",
                         className,
                     )}

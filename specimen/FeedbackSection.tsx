@@ -492,7 +492,7 @@ export function FeedbackSection() {
                         min={1}
                         max={168}
                         unit="hours"
-                        width={160}
+                        width={40}
                     />
                     <div className="flex flex-col gap-2">
                         <p className="text-sm font-medium">What it holds</p>
@@ -609,7 +609,7 @@ export function FeedbackSection() {
                                                 min={1}
                                                 max={30}
                                                 unit="days"
-                                                width={160}
+                                                width={40}
                                             />
                                             <TextField
                                                 label="A note for them"

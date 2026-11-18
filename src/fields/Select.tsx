@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { type Choice, type ChoiceGroup } from "../foundation/choice";
 import { classes } from "../foundation/classes";
 import {
+    OPTION_CLASS,
     POPUP_CLASS,
     POSITIONER_CLASS,
     renderLeaving,
@@ -82,7 +83,8 @@ export function CellSelect({
             value={item.value}
             disabled={item.disabled}
             className={classes(
-                "cursor-pointer rounded-input px-2 py-1.5 data-[highlighted]:bg-accent-weak data-[highlighted]:text-accent data-[selected]:font-medium data-[disabled]:cursor-default data-[disabled]:opacity-50",
+                OPTION_CLASS,
+                "data-[selected]:font-medium",
                 item.value === "" ? "text-text-secondary" : "",
             )}
         >
@@ -154,7 +156,6 @@ export function CellSelect({
                 aria-label={ariaLabel}
                 className={classes(
                     PICKER_CLASS,
-                    "data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50",
                     value === "" ? "text-text-secondary" : "",
                     className,
                 )}

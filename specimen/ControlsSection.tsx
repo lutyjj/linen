@@ -1,12 +1,12 @@
 import { Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { type ComponentProps, useState } from "react";
 
 import {
     Button,
     Card,
     CardBody,
     CardHead,
-    CellInput,
+    CellNumber,
     CellText,
     Checkbox,
     Chip,
@@ -16,12 +16,14 @@ import {
     Form,
     IconButton,
     Kbd,
+    NumberField,
     OptionCards,
     SearchField,
     SearchSelect,
     SegmentedControl,
     Select,
     SelectToggle,
+    SettingRow,
     ShownOnce,
     Switch,
     TextField,
@@ -68,6 +70,213 @@ const ASSIGNEES = [
     },
 ];
 
+/** A number field that holds its own value, as a sample needs. */
+function HeldNumber({
+    start,
+    ...props
+}: Omit<ComponentProps<typeof NumberField>, "value" | "onValueChange"> & {
+    start: number | null;
+}) {
+    const [value, setValue] = useState(start);
+    return <NumberField {...props} value={value} onValueChange={setValue} />;
+}
+
+const RUNS = ["Hourly", "Daily", "Weekly"].map((run) => ({
+    value: run,
+    label: run,
+}));
+
+function NumberSpecimen() {
+    const [runs, setRuns] = useState("Daily");
+    const [copies, setCopies] = useState<number | null>(12);
+    const [kept, setKept] = useState<number | null>(30);
+    return (
+        <Specimen
+            title="A number in a range"
+            rule="A number set within a range moves in steps: the arrows and its buttons take one, Shift takes ten of them unless the field says otherwise, and Home and End go to either end. Its value starts where every field's value starts, its unit a space after it, and its steps stand together at the frame's end, where a picker's chevron stands. At either end of the range only the step that cannot go further dims."
+            framed={false}
+        >
+            <Card>
+                <CardBody>
+                    <Form
+                        errors={{ limit: "A limit is at least 1 GB." }}
+                        onSubmit={() => undefined}
+                        className="grid max-w-2xl gap-4 sm:grid-cols-2"
+                    >
+                        <HeldNumber
+                            label="Copies kept"
+                            hint="From 1 to 30."
+                            start={7}
+                            min={1}
+                            max={30}
+                        />
+                        <HeldNumber
+                            label="Kept for"
+                            unit="days"
+                            start={30}
+                            min={1}
+                            max={365}
+                        />
+                        <HeldNumber
+                            label="Retries"
+                            hint="Set for the whole workspace."
+                            start={3}
+                            min={0}
+                            max={10}
+                            disabled
+                        />
+                        <HeldNumber
+                            label="Workers"
+                            hint="At its most."
+                            start={16}
+                            min={1}
+                            max={16}
+                        />
+                        <HeldNumber
+                            label="Delay"
+                            unit="sec"
+                            hint="At its least."
+                            start={0}
+                            min={0}
+                            max={600}
+                        />
+                        <HeldNumber
+                            label="Scale"
+                            unit="×"
+                            start={1.25}
+                            min={0.25}
+                            max={4}
+                            step={0.05}
+                            format={{ minimumFractionDigits: 2 }}
+                        />
+                        <HeldNumber
+                            label="Time offset"
+                            unit="h"
+                            start={-5}
+                            min={-12}
+                            max={14}
+                        />
+                        <HeldNumber
+                            label="Batch size"
+                            unit="rows"
+                            start={10000}
+                            min={500}
+                            max={50000}
+                            step={500}
+                        />
+                        <HeldNumber
+                            label="Storage limit"
+                            name="limit"
+                            unit="GB"
+                            start={0}
+                            min={0}
+                            max={1000}
+                        />
+                    </Form>
+                    <div className="flex flex-col gap-4">
+                        <Select
+                            label="Runs"
+                            width={64}
+                            choices={RUNS}
+                            value={runs}
+                            onValueChange={setRuns}
+                        />
+                        <TextField
+                            label="Name"
+                            width={64}
+                            defaultValue="Nightly export"
+                        />
+                        <HeldNumber
+                            label="Retries"
+                            width={32}
+                            start={3}
+                            min={0}
+                            max={10}
+                            disabled
+                        />
+                        <HeldNumber
+                            label="Delay"
+                            hint="Shift steps a minute."
+                            width={32}
+                            unit="sec"
+                            start={30}
+                            min={0}
+                            max={600}
+                            largeStep={60}
+                        />
+                        <HeldNumber
+                            label="Copies kept"
+                            width={28}
+                            start={12}
+                            min={1}
+                            max={30}
+                        />
+                        <HeldNumber
+                            label="Batch size"
+                            hint="Narrower than its value: the unit gives way first."
+                            width={28}
+                            unit="rows"
+                            start={10000}
+                            min={500}
+                            max={50000}
+                            step={500}
+                        />
+                    </div>
+                    <FieldRow>
+                        <HeldNumber
+                            label="Width"
+                            width={36}
+                            unit="px"
+                            start={1920}
+                            min={16}
+                            max={7680}
+                        />
+                        <HeldNumber
+                            label="Height"
+                            width={36}
+                            unit="px"
+                            start={1080}
+                            min={16}
+                            max={4320}
+                        />
+                        <Button>Resize</Button>
+                    </FieldRow>
+                </CardBody>
+            </Card>
+            <Card>
+                <CardHead title="Exports" />
+                <SettingRow
+                    title="Copies kept"
+                    description="The oldest is removed when another is made."
+                >
+                    <CellNumber
+                        aria-label="Copies kept"
+                        className="w-28"
+                        value={copies}
+                        onValueChange={setCopies}
+                        min={1}
+                        max={30}
+                    />
+                </SettingRow>
+                <SettingRow
+                    title="Kept for"
+                    description="How long a copy stays before it is removed."
+                >
+                    <CellNumber
+                        aria-label="Kept for"
+                        className="w-36"
+                        unit="days"
+                        value={kept}
+                        onValueChange={setKept}
+                        min={1}
+                        max={365}
+                    />
+                </SettingRow>
+            </Card>
+        </Specimen>
+    );
+}
+
 export function ControlsSection() {
     const [name, setName] = useState("Atlas");
     const [zone, setZone] = useState("");
@@ -83,6 +292,7 @@ export function ControlsSection() {
     const [saving, setSaving] = useState(false);
     const [port, setPort] = useState("80800");
     const [listens, setListens] = useState("8080");
+    const [retention, setRetention] = useState("900");
     const [query, setQuery] = useState("");
     const [picked, setPicked] = useState(["Orion"]);
     const [lastPicked, setLastPicked] = useState(0);
@@ -148,7 +358,7 @@ export function ControlsSection() {
 
             <Specimen
                 title="Fields"
-                rule="A field wears the same frame wherever it stands, its name above it and its hint below. A refused value says why under the control, before the hint. A picker ends in one chevron, which turns as its list opens; a list of more than one kind of thing holds each under its heading."
+                rule="A field wears the same frame wherever it stands, its name above it and its hint below, its value at the frame's inset and a unit a space after it. A refused value says why under the control, before the hint. A picker ends in one chevron, which turns as its list opens; a list of more than one kind of thing holds each under its heading."
             >
                 <Form
                     errors={REFUSED}
@@ -208,16 +418,12 @@ export function ControlsSection() {
                         value={assignee}
                         onValueChange={setAssignee}
                     />
-                    <div>
-                        <span className="mb-1 block text-sm font-medium">
-                            With a unit
-                        </span>
-                        <CellInput
-                            className="w-full"
-                            defaultValue="900"
-                            unit="sec"
-                        />
-                    </div>
+                    <TextField
+                        label="With a unit"
+                        value={retention}
+                        onChange={(event) => setRetention(event.target.value)}
+                        unit="sec"
+                    />
                 </Form>
                 <Samples>
                     <Sample name="Checkbox, for a form">
@@ -346,6 +552,8 @@ export function ControlsSection() {
                     />
                 </div>
             </Specimen>
+
+            <NumberSpecimen />
 
             <Specimen
                 title="Options with a meaning each"

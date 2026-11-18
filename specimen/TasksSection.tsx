@@ -13,7 +13,6 @@ import {
     Fact,
     Facts,
     LogView,
-    NumberField,
     Progress,
     SettingRow,
     Steps,
@@ -44,7 +43,6 @@ function line(count: number): string {
 }
 
 export function TasksSection() {
-    const [level, setLevel] = useState<number | null>(-18);
     const [done, setDone] = useState(0.35);
     const [step, setStep] = useState<string | null>(null);
     const [onScreen, setOnScreen] = useState<string>(SETUP[1].id);
@@ -70,23 +68,6 @@ export function TasksSection() {
 
     return (
         <Stack>
-            <Specimen
-                title="A number in a range"
-                rule="A number set within a range moves in steps: the arrows and its buttons take one, Shift or Page Up and Page Down take ten, Home and End go to either end. Its unit stands inside the frame, after it."
-            >
-                <div className="max-w-xs">
-                    <NumberField
-                        label="Volume"
-                        hint="From −60 to 0."
-                        unit="dB"
-                        min={-60}
-                        max={0}
-                        value={level}
-                        onValueChange={setLevel}
-                    />
-                </div>
-            </Specimen>
-
             <Specimen
                 title="Progress in place"
                 rule="Something under way says its phase in words over a bar that fills. One that cannot tell how far sends a stretch along the bar."

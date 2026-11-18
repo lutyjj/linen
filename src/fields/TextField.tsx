@@ -1,14 +1,15 @@
 import { Input } from "@base-ui/react/input";
 import {
-    type InputHTMLAttributes,
+    type ComponentProps,
     type ReactNode,
     useEffect,
+    useId,
     useState,
 } from "react";
 
 import { classes } from "../foundation/classes";
 import { isContent } from "../foundation/slot";
-import { CONTROL_CLASS, Field } from "./Field";
+import { CONTROL_CLASS, Field, INPUT_FRAME_CLASS, ValueAndUnit } from "./Field";
 
 /** A text box under its name, with its hint and, once refused, its error. */
 export function TextField({
@@ -36,35 +37,56 @@ export function TextField({
  * and the control inside a `Field`, which names and describes it.
  *
  * A unit, when the value has one, is part of the field rather than words
- * floating beside it: it sits inside the frame, after the value, so "120" and
- * "seconds" read as one answer and move as one when the row wraps.
+ * floating beside it: it follows the value inside the frame, so "120" and
+ * "seconds" read as one answer and move as one when the row wraps. A unit
+ * needs a value the app holds, which it follows wherever it ends: a value
+ * only the input holds can change unheard, as a form's reset changes it. Its
+ * `className` is the frame's, as every field's is; the value starts at the
+ * frame's inset whatever the frame is given.
  */
 export function CellInput({
     className = "",
     unit,
     ...rest
-}: InputHTMLAttributes<HTMLInputElement> & { unit?: ReactNode }) {
+}: ComponentProps<"input"> &
+    (
+        | { unit?: false | null | "" }
+        | { unit: ReactNode; value: string | number }
+    )) {
+    const unitId = useId();
     if (!isContent(unit)) {
         return (
             <Input className={classes(CONTROL_CLASS, className)} {...rest} />
         );
     }
     return (
-        <span
-            className={classes(
-                CONTROL_CLASS,
-                "inline-flex cursor-text items-center gap-1.5 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-1 has-[:focus-visible]:outline-accent has-[[aria-invalid=true]]:border-danger has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50",
-                className,
+        <Input
+            aria-describedby={unitId}
+            {...rest}
+            className="bg-transparent outline-none placeholder:text-text-muted"
+            render={(props, state) => (
+                // The frame says what Base UI says of the input, as a number
+                // field's frame does.
+                <span
+                    data-disabled={state.disabled || undefined}
+                    className={classes(
+                        INPUT_FRAME_CLASS,
+                        "inline-flex",
+                        className,
+                    )}
+                >
+                    <ValueAndUnit
+                        input={props}
+                        text={
+                            String(rest.value ?? "") ||
+                            String(rest.placeholder ?? "")
+                        }
+                        unit={unit}
+                        unitId={unitId}
+                    />
+                </span>
             )}
-        >
-            <Input
-                className="h-full min-w-0 flex-1 bg-transparent text-inherit outline-none placeholder:text-text-muted"
-                {...rest}
-            />
-            <span aria-hidden="true" className="shrink-0 text-text-muted">
-                {unit}
-            </span>
-        </span>
+        />
     );
 }
 

@@ -56,6 +56,24 @@ describe("text corrected in place", () => {
     });
 });
 
+it("describes a value by its unit, and takes a unit only with a held value", () => {
+    render(
+        <CellInput
+            aria-label="Retention"
+            unit="days"
+            value="30"
+            onChange={() => undefined}
+        />,
+    );
+    expect(
+        screen.getByRole("textbox", { name: "Retention" }),
+    ).toHaveAccessibleDescription("days");
+    // A value only the input holds can change unheard, as a form's reset
+    // changes it, and leave its unit where the old value ended.
+    // @ts-expect-error A unit needs a value the app holds.
+    void (<CellInput aria-label="Timeout" unit="sec" defaultValue="120" />);
+});
+
 it("draws a cell whose unit is nothing as a cell without one", () => {
     const { container, rerender } = render(<CellInput aria-label="Limit" />);
     const cell = markup(container);

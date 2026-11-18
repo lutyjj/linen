@@ -1,9 +1,16 @@
 import { Field as BaseField } from "@base-ui/react/field";
 import { CircleAlert } from "lucide-react";
-import type { CSSProperties, ReactNode } from "react";
+import type { ComponentProps, CSSProperties, ReactNode } from "react";
 
 import { classes } from "../foundation/classes";
 import { isContent } from "../foundation/slot";
+
+/**
+ * How every field looks while it takes no input, keyed on a native control's
+ * `disabled` and on the `data-disabled` Base UI marks a field's parts with.
+ */
+const DISABLED_CLASS =
+    "disabled:cursor-not-allowed disabled:opacity-50 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50";
 
 /**
  * The frame every field wears, wherever it stands: a form, a table cell, a
@@ -11,9 +18,68 @@ import { isContent } from "../foundation/slot";
  * the frame is always drawn; it is a hairline that firms under the pointer
  * rather than a box that shouts. A popup takes focus off the trigger that
  * opened it, so the open state firms the frame too.
+ *
+ * Its height is a floor rather than a size. Chromium centres the line of an
+ * input given a height a pixel below a picker's words; an input that meets
+ * the floor lays its line where every field's words stand.
  */
-export const CONTROL_CLASS =
-    "h-(--height-control) rounded-button border border-border-strong bg-surface px-2.5 text-sm text-text placeholder:text-text-muted hover:border-text-muted data-[popup-open]:border-text-muted aria-[invalid=true]:border-danger disabled:cursor-not-allowed disabled:opacity-50";
+export const CONTROL_CLASS = `min-h-(--height-control) rounded-button border border-border-strong bg-surface px-2.5 text-sm text-text placeholder:text-text-muted hover:border-text-muted data-[popup-open]:border-text-muted aria-[invalid=true]:border-danger ${DISABLED_CLASS}`;
+
+/**
+ * The same frame around an input and what stands beside it inside, such as
+ * its unit or its steps. It answers the input's focus and refusal as a lone
+ * control's frame does, and dims only with the field, whose disabling Base UI
+ * marks on the frame: a step that cannot go further dims on its own.
+ */
+export const INPUT_FRAME_CLASS = `${CONTROL_CLASS} cursor-text p-0 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-1 has-[:focus-visible]:outline-accent has-[[aria-invalid=true]]:border-danger`;
+
+/**
+ * A value and its unit, as "120 seconds" reads in a sentence: the value at
+ * the frame's inset, where every field's value starts, and the unit a space
+ * after it, on its baseline. The input shares a cell with a hidden copy of
+ * its words, which gives the cell their width; when the room runs short the
+ * unit gives way first, cut to an ellipsis, and only then the value. The
+ * label around them takes a press anywhere beside the words to the input.
+ * Without a unit the value stands the same way.
+ */
+export function ValueAndUnit({
+    input,
+    text,
+    unit,
+    unitId,
+}: {
+    /** The input's own props, as a Base UI part hands them to `render`. */
+    input: ComponentProps<"input">;
+    /** What the input shows now: its value, or its placeholder. */
+    text: string;
+    unit: ReactNode;
+    unitId: string;
+}) {
+    return (
+        <label className="grid min-w-0 flex-1 grid-cols-[minmax(0,max-content)_minmax(0,1fr)] content-center items-baseline px-2.5">
+            <input
+                {...input}
+                className={classes(
+                    input.className,
+                    "col-start-1 row-start-1 w-0 min-w-full disabled:cursor-not-allowed",
+                )}
+            />
+            {/* The copy ends in a space: the caret's room, and the space
+                between the value and its unit. */}
+            <span
+                aria-hidden="true"
+                className="invisible col-start-1 row-start-1 overflow-hidden whitespace-pre"
+            >
+                {text}{" "}
+            </span>
+            {isContent(unit) && (
+                <span id={unitId} className="truncate text-text-muted">
+                    {unit}
+                </span>
+            )}
+        </label>
+    );
+}
 
 /**
  * A control under its name, with the hint that explains it and, once its

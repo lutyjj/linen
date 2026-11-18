@@ -37,7 +37,7 @@ export { ExplainedStatus, Status, type StatusTone } from "./feedback/Status";
 export { type Step, Steps } from "./feedback/Steps";
 export { CONTROL_CLASS, Field, FieldRow } from "./fields/Field";
 export { Form, type FormErrors } from "./fields/Form";
-export { NumberField } from "./fields/NumberField";
+export { CellNumber, NumberField } from "./fields/NumberField";
 export { SearchField } from "./fields/SearchField";
 export { SearchSelect } from "./fields/SearchSelect";
 export { CellSelect, PICKER_CLASS, PickerMark, Select } from "./fields/Select";
