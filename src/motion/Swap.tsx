@@ -1,6 +1,7 @@
 import { AnimatePresence, m, useAnimate, useIsPresent } from "motion/react";
 import { type ReactNode, type Ref, useLayoutEffect, useRef } from "react";
 
+import { classes } from "../foundation/classes";
 import { spring } from "./tokens";
 
 /**
@@ -15,10 +16,16 @@ import { spring } from "./tokens";
  */
 export function Swap({
     view,
+    className,
     children,
 }: {
     /** Which view is shown. A change of it is a swap. */
     view: string;
+    /**
+     * The region's place in the flow, such as a margin or a width. Its height
+     * is the swap's, so it takes no padding or border of its own.
+     */
+    className?: string;
     children: ReactNode;
 }) {
     const [region, animate] = useAnimate<HTMLDivElement>();
@@ -62,7 +69,13 @@ export function Swap({
     }, [view, animate, region]);
 
     return (
-        <div ref={region} className="overflow-clip [overflow-clip-margin:3px]">
+        <div
+            ref={region}
+            className={classes(
+                "overflow-clip [overflow-clip-margin:3px]",
+                className,
+            )}
+        >
             <div ref={content} className="relative">
                 <AnimatePresence initial={false} mode="popLayout">
                     <SwapView key={view}>{children}</SwapView>
