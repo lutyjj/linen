@@ -76,6 +76,14 @@ if (!("getAnimations" in Element.prototype)) {
     });
 }
 
+// Nor does jsdom keep the focus off what is inert, as a browser does: focus()
+// there moves nothing. This goes once jsdom has its own.
+const focus = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "focus")
+    ?.value as (this: HTMLElement, options?: FocusOptions) => void;
+HTMLElement.prototype.focus = function (options?: FocusOptions) {
+    if (this.closest("[inert]") === null) focus.call(this, options);
+};
+
 /*
  * What React only warns about is a defect here: two children with one key,
  * which it may duplicate or drop, and a prop that reaches an element it does
