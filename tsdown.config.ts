@@ -17,6 +17,10 @@ export default defineConfig({
     // One file for each module, as in src/, so linen.css can leave out the
     // ones whose words are no classes.
     unbundle: true,
+    // The scripts ship without their doc comments, whose words an app's
+    // Tailwind would take for classes, such as "table"; the declarations
+    // keep them for the app's editor.
+    outputOptions: { comments: { jsdoc: false } },
     platform: "neutral",
     dts: true,
     copy: { from: "src/styles/*.css", to: "dist/styles" },
