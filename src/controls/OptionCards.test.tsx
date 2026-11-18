@@ -79,3 +79,36 @@ it("draws a card whose line is nothing as its words alone, describing nothing", 
     expect(card.children).toHaveLength(1);
     expect(card.firstElementChild).toHaveTextContent("Keep it");
 });
+
+describe("a suggested answer", () => {
+    function suggesting(value: "keep" | "archive" | undefined) {
+        return (
+            <OptionCards
+                label="Its fate"
+                value={value}
+                options={OPTIONS}
+                suggested="archive"
+                suggestedMark={<span>Suggested</span>}
+                onValueChange={() => undefined}
+            />
+        );
+    }
+
+    it("wears its mark before its words while the question is open", () => {
+        render(suggesting(undefined));
+        const card = screen.getByRole("radio", { name: /Archive it$/ });
+        expect(card).toHaveTextContent(/^SuggestedArchive it/);
+        expect(
+            screen.getByRole("radio", { name: "Keep it" }),
+        ).not.toHaveTextContent("Suggested");
+    });
+
+    it("is one answer among the others once the question is answered", () => {
+        const { rerender } = render(suggesting("keep"));
+        expect(
+            screen.getByRole("radio", { name: "Archive it" }),
+        ).not.toHaveTextContent("Suggested");
+        rerender(suggesting("archive"));
+        expect(screen.getByRole("radio", { name: "Archive it" })).toBeChecked();
+    });
+});

@@ -49,6 +49,7 @@ export function OptionCards<Value extends string>({
     className?: string;
 }) {
     const id = useId();
+    const suggestion = value === undefined ? suggested : undefined;
     return (
         <RadioGroup
             aria-label={label}
@@ -78,7 +79,7 @@ export function OptionCards<Value extends string>({
                         "data-[checked]:border-accent data-[checked]:bg-accent-weak",
                         // A suggestion wears the ink's tint until the question
                         // is answered.
-                        option.value === suggested
+                        option.value === suggestion
                             ? "data-[unchecked]:border-accent/40 data-[unchecked]:bg-accent-weak/60 pressable:data-[unchecked]:hover:border-accent"
                             : "data-[unchecked]:border-border-strong data-[unchecked]:bg-surface pressable:data-[unchecked]:hover:border-accent pressable:data-[unchecked]:hover:bg-accent-weak",
                     )}
@@ -86,11 +87,11 @@ export function OptionCards<Value extends string>({
                     <span
                         id={`${id}-${index}`}
                         className={classes(
-                            "flex items-center gap-1.5 text-sm font-medium",
+                            "flex items-center gap-2 text-sm font-medium",
                             option.value === value ? "text-accent" : "",
                         )}
                     >
-                        {option.value === suggested && suggestedMark}
+                        {option.value === suggestion && suggestedMark}
                         {option.label}
                     </span>
                     {isContent(option.description) && (

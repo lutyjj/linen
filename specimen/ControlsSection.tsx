@@ -1,4 +1,4 @@
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Sparkles, Trash2 } from "lucide-react";
 import { type ComponentProps, useState } from "react";
 
 import {
@@ -290,6 +290,7 @@ export function ControlsSection() {
         "comfortable",
     );
     const [removal, setRemoval] = useState<"archive" | "delete">("archive");
+    const [destination, setDestination] = useState<"email" | "folder">();
     const [saving, setSaving] = useState(false);
     const [port, setPort] = useState("80800");
     const [listens, setListens] = useState("8080");
@@ -624,9 +625,9 @@ export function ControlsSection() {
 
             <Specimen
                 title="Options with a meaning each"
-                rule="A choice whose answers each need a line is a set of cards. The chosen card stays marked."
+                rule="A choice whose answers each need a line is a set of cards. The chosen card stays marked; a suggested one wears the ink's tint and a mark until the question is answered."
             >
-                <div className="max-w-2xl">
+                <div className="flex max-w-2xl flex-col gap-4">
                     <OptionCards
                         label="How to remove it"
                         value={removal}
@@ -644,6 +645,28 @@ export function ControlsSection() {
                             },
                         ]}
                         onValueChange={setRemoval}
+                    />
+                    <OptionCards
+                        label="Where the report goes"
+                        value={destination}
+                        suggested="email"
+                        suggestedMark={
+                            <Sparkles aria-hidden="true" className="size-3.5" />
+                        }
+                        options={[
+                            {
+                                value: "email",
+                                label: "Email it",
+                                description:
+                                    "Each Monday, to everyone in the project.",
+                            },
+                            {
+                                value: "folder",
+                                label: "Keep it in the project",
+                                description: "In Reports, for anyone to open.",
+                            },
+                        ]}
+                        onValueChange={setDestination}
                     />
                 </div>
             </Specimen>
