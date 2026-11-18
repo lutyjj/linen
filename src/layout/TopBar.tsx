@@ -185,6 +185,7 @@ export function TopBar({
     trail,
     meta,
     wide = false,
+    className,
     children,
 }: {
     /** The screen's name; a `TitleField` may stand in for it. */
@@ -195,6 +196,7 @@ export function TopBar({
     meta?: ReactNode;
     /** Spans the whole width, for a screen whose content does. */
     wide?: boolean;
+    className?: string;
     children?: ReactNode;
 }) {
     const lead = use(TopBarLead);
@@ -205,7 +207,10 @@ export function TopBar({
     return (
         <header
             ref={bar}
-            className="@container sticky top-[calc(var(--inset-top)+var(--height-conditions,0px))] z-5 border-b border-border bg-bg"
+            className={classes(
+                "@container sticky top-[calc(var(--inset-top)+var(--height-conditions,0px))] z-5 border-b border-border bg-bg",
+                className,
+            )}
         >
             {/* Everything stands on the title's first line, a control's
                 height: the lead and the actions centred on it, the trail on
@@ -269,7 +274,11 @@ export function TitleField({
     placeholder,
     className,
     ...props
-}: Omit<ComponentProps<"input">, "size" | "value"> & { value: string }) {
+}: Omit<ComponentProps<"input">, "className" | "size" | "value"> & {
+    value: string;
+    /** Lands on the frame the name stands in; the input keeps the rest. */
+    className?: string;
+}) {
     const frame =
         "rounded-button border border-transparent px-1.5 whitespace-pre";
     return (
@@ -278,7 +287,12 @@ export function TitleField({
         // The copy ends in a space, the caret's room after the last letter.
         // The frame reaches past the words on every side, so an editable title
         // stands where a written one would and is as tall.
-        <span className="-mx-1.5 -my-px inline-grid max-w-[min(32rem,calc(100%+--spacing(3)))] min-w-0 align-top">
+        <span
+            className={classes(
+                "-mx-1.5 -my-px inline-grid max-w-[min(32rem,calc(100%+--spacing(3)))] min-w-0 align-top",
+                className,
+            )}
+        >
             <span
                 aria-hidden="true"
                 className={classes(
@@ -296,7 +310,6 @@ export function TitleField({
                 className={classes(
                     frame,
                     "col-start-1 row-start-1 w-full min-w-0 bg-transparent text-ellipsis placeholder:text-text-muted hover:border-border focus-visible:border-border-strong focus-visible:bg-surface",
-                    className,
                 )}
             />
         </span>
