@@ -81,11 +81,12 @@ function stripes(
  * a compact bar both stay inside it.
  *
  * Each mark moves on a transform, so a value it follows many times a second
- * costs no layout: a box as wide as the scale the block can travel slides by
- * the share of it the value has reached, and its parent clips what slides
- * past the bar. A held block leaves and returns at the lowest by its
- * visibility, which costs no layout either. Each value it follows is handed
- * on to `heard`, so the gauge reads it out.
+ * costs no layout: a box narrower than the scale by the mark's width slides
+ * by the share of it the value has reached, so the mark stands whole inside
+ * the bar at either end of the scale, and the bar clips the box where it
+ * slides past the bar's end. A held block leaves and returns at the lowest
+ * by its visibility, which costs no layout either. Each value it follows is
+ * handed on to `heard`, so the gauge reads it out.
  */
 function Mark({
     mark,
@@ -112,8 +113,8 @@ function Mark({
             ref={place}
             aria-hidden="true"
             className={classes(
-                "absolute inset-y-0 left-0 translate-x-[calc(var(--at,0)*100%)]",
-                held ? (small ? "right-0.5" : "right-1") : "right-0",
+                "pointer-events-none absolute inset-y-0 left-0 translate-x-[calc(var(--at,0)*100%)]",
+                held && !small ? "right-1" : "right-0.5",
             )}
         >
             <span
@@ -122,7 +123,7 @@ function Mark({
                     held
                         ? classes("bg-text", small ? "w-0.5" : "w-1")
                         : classes(
-                              "w-0.5 -translate-x-1/2 rounded-full bg-text-muted",
+                              "w-0.5 rounded-full bg-text-muted",
                               !small && "-my-1",
                           ),
                 )}
@@ -242,10 +243,19 @@ export function Gauge({
             {/* The track is the scale, empty; only the fill, in the ink of
                 each zone it reaches, is the value, so a gauge at its lowest
                 reads as empty. Held marks lie inside the track's clip; set
-                marks stand over it in a layer that clips only its sides, so
-                they pass the track's top and bottom and nothing reaches past
-                its ends. No mark takes a pointer. */}
-            <span className={classes("relative block", small ? "h-1" : "h-3")}>
+                marks stand over it, after them. The bar clips its sides, so
+                the boxes the marks travel in reach past neither end, and a
+                full bar's set marks pass its top and bottom; a compact bar
+                clips them to its rounded ends, as the track does its held
+                marks. No mark takes a pointer. */}
+            <span
+                className={classes(
+                    "relative block",
+                    small
+                        ? "h-1 overflow-hidden rounded-full"
+                        : "h-3 overflow-x-clip",
+                )}
+            >
                 <span className="pointer-events-none absolute inset-0 overflow-hidden rounded-full bg-border">
                     <span className="absolute inset-0 bg-(image:--fill) [clip-path:inset(0_calc((1_-_var(--level,0))_*_100%)_0_0)]" />
                     {marks.map(
@@ -261,21 +271,17 @@ export function Gauge({
                             ),
                     )}
                 </span>
-                {marks.some((mark) => mark.kind === "set") && (
-                    <span className="pointer-events-none absolute inset-0 overflow-x-clip">
-                        {marks.map(
-                            (mark, index) =>
-                                mark.kind === "set" && (
-                                    <Mark
-                                        key={index}
-                                        mark={mark}
-                                        at={at}
-                                        small={small}
-                                        heard={heard(index)}
-                                    />
-                                ),
-                        )}
-                    </span>
+                {marks.map(
+                    (mark, index) =>
+                        mark.kind === "set" && (
+                            <Mark
+                                key={index}
+                                mark={mark}
+                                at={at}
+                                small={small}
+                                heard={heard(index)}
+                            />
+                        ),
                 )}
             </span>
             {!small && (
