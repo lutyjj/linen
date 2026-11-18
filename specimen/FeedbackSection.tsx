@@ -23,17 +23,28 @@ import { wandering } from "./live";
 import { Sample, Samples, Specimen, Stack } from "./Specimen";
 
 const [READ, WRITE] = wandering([60, 30], 0, 200);
-/** Projects in a list, each with its own disk activity. */
-const BUSY = ["Atlas", "Orion", "Vega"].map((name, at) => {
-    const [read, write] = wandering([50 + at * 50, 20 + at * 30], 0, 200);
-    return {
-        name,
+/** A disk at rest: no activity, and none in the last two seconds. */
+const IDLE = { level: 0, high: 0 };
+/** Projects in a list, each with its own disk activity; the last is idle. */
+const BUSY = [
+    ...["Atlas", "Orion", "Vega"].map((name, at) => {
+        const [read, write] = wandering([50 + at * 50, 20 + at * 30], 0, 200);
+        return {
+            name,
+            channels: [
+                { label: "Read", channel: read },
+                { label: "Write", channel: write },
+            ],
+        };
+    }),
+    {
+        name: "Lyra",
         channels: [
-            { label: "Read", channel: read },
-            { label: "Write", channel: write },
+            { label: "Read", channel: IDLE },
+            { label: "Write", channel: IDLE },
         ],
-    };
-});
+    },
+];
 const PARTS = [
     "Tasks",
     "Comments",
@@ -152,7 +163,7 @@ export function FeedbackSection() {
 
             <Specimen
                 title="Gauges"
-                rule="A gauge shows a value on a bounded scale: an empty track and a fill in the ink of each zone it reaches. A value held is a block on the bar; a threshold set is a line that stands past its edges, so the two read apart where they stand close. At its lowest it is empty. Gauges read together stand close, lined up. A live gauge follows its value without rendering anything around it. In a row of a list, a compact gauge is its bar alone."
+                rule="A gauge shows a value on a bounded scale: an empty track and a fill in the ink of each zone it reaches. A value held is a block on the bar, and nothing at the lowest; a threshold set is a line that stands past its edges, so the two read apart where they stand close. At its lowest it is empty. Gauges read together stand close, lined up. A live gauge follows its value without rendering anything around it. In a row of a list, a compact gauge is its bar alone."
             >
                 <div className="flex max-w-md flex-col gap-5">
                     <Gauge
@@ -235,6 +246,24 @@ export function FeedbackSection() {
                                 },
                             ]}
                         />
+                    </Gauges>
+                    <Gauges label="Backup disk activity">
+                        {["Read", "Write"].map((channel) => (
+                            <Gauge
+                                key={channel}
+                                label={channel}
+                                value={IDLE.level}
+                                max={200}
+                                format={mbps}
+                                marks={[
+                                    {
+                                        value: IDLE.high,
+                                        kind: "held",
+                                        label: "Highest",
+                                    },
+                                ]}
+                            />
+                        ))}
                     </Gauges>
                     <ul className="divide-y divide-border rounded-card border border-border">
                         {BUSY.map(({ name, channels }) => (

@@ -78,6 +78,50 @@ it("follows a value that changes on its own without rendering what holds it", ()
     expect(level.listening()).toBe(0);
 });
 
+/** The marks a gauge draws on its bar, which it keeps from readers. */
+function drawnMarks(meter: HTMLElement) {
+    return [...meter.querySelectorAll("[aria-hidden='true'] > span")];
+}
+
+it("draws no held mark at the scale's lowest, where the value reached nothing", () => {
+    const peak = source(-60);
+    render(
+        <>
+            <Gauge
+                label="Left"
+                value={-60}
+                min={-60}
+                max={0}
+                marks={[{ value: peak.readable, kind: "held", label: "Peak" }]}
+            />
+            <Gauge
+                label="Right"
+                value={-60}
+                min={-60}
+                max={0}
+                compact
+                marks={[
+                    { value: -60, kind: "held", label: "Peak" },
+                    { value: -60, kind: "set", label: "Floor" },
+                ]}
+            />
+        </>,
+    );
+    const [left] = drawnMarks(screen.getByRole("meter", { name: "Left" }));
+    expect(left).not.toBeVisible();
+    act(() => peak.set(-59));
+    expect(left).toBeVisible();
+    act(() => peak.set(-60));
+    expect(left).not.toBeVisible();
+
+    // A threshold set at the lowest is still set, so it is drawn.
+    const [held, set] = drawnMarks(
+        screen.getByRole("meter", { name: "Right" }),
+    );
+    expect(held).not.toBeVisible();
+    expect(set).toBeVisible();
+});
+
 it("holds a value beyond its scale at the scale's end", () => {
     render(<Gauge label="Load" value={7} min={0} max={4} />);
     const load = screen.getByRole("meter", { name: "Load" });
