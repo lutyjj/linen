@@ -320,3 +320,60 @@ it("opens an account menu whose caption, choices or way out are nothing as one w
     };
     expect(await menu(false)).toBe(await menu());
 });
+
+it("wears a place's count beside its words, and keeps the words its name", () => {
+    render(
+        <LinenProvider navigation={memoryNavigation("/").navigation}>
+            <Shell
+                label="Places"
+                places={[
+                    { href: "/", label: "Projects", icon: Folder },
+                    {
+                        href: "/people",
+                        label: "People",
+                        icon: Users,
+                        badge: "3",
+                    },
+                ]}
+                home={HOME}
+                wordmark="linen"
+                storageKey="test:rail"
+            >
+                <p>The screen</p>
+            </Shell>
+        </LinenProvider>,
+    );
+    const rail = screen.getAllByRole("navigation", { name: "Places" })[0];
+    const people = within(rail!).getByRole("link", { name: "People" });
+    expect(people).toHaveTextContent("People3");
+});
+
+it("brings a new group of places in afresh rather than renaming the rows", () => {
+    const { navigation } = memoryNavigation("/");
+    const shell = (placesKey: string, label: string) => (
+        <LinenProvider navigation={navigation}>
+            <Shell
+                label="Places"
+                places={[{ href: "/", label, icon: Folder }]}
+                placesKey={placesKey}
+                home={HOME}
+                wordmark="linen"
+                storageKey="test:rail"
+            >
+                <p>The screen</p>
+            </Shell>
+        </LinenProvider>
+    );
+    const rail = () =>
+        screen.getAllByRole("navigation", { name: "Places" })[0]!;
+    const { rerender } = render(shell("north", "Reports"));
+    const first = within(rail()).getByRole("link", { name: "Reports" });
+
+    rerender(shell("north", "Exports"));
+    expect(within(rail()).getByRole("link", { name: "Exports" })).toBe(first);
+
+    rerender(shell("south", "Schedules"));
+    expect(within(rail()).getByRole("link", { name: "Schedules" })).not.toBe(
+        first,
+    );
+});

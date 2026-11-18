@@ -23,6 +23,7 @@ import {
     Shell,
     ToastProvider,
     TopBar,
+    UnsavedChangesGuard,
 } from "../src";
 import { ControlsSection } from "./ControlsSection";
 import { FeedbackSection } from "./FeedbackSection";
@@ -70,6 +71,7 @@ const SCREENS = [
         to: "/tasks",
         label: "Tasks",
         icon: ListChecks,
+        badge: "2",
         element: <TasksSection />,
     },
     {
@@ -80,11 +82,14 @@ const SCREENS = [
     },
 ] as const;
 
-const PLACES: readonly Place[] = SCREENS.map(({ to, label, icon }) => ({
-    href: to,
-    label,
-    icon,
-}));
+const PLACES: readonly Place[] = SCREENS.map(
+    ({ to, label, icon, ...screen }) => ({
+        href: to,
+        label,
+        icon,
+        badge: "badge" in screen ? screen.badge : undefined,
+    }),
+);
 
 function Specimen() {
     const pathname = historyNavigation.usePathname();
@@ -166,7 +171,9 @@ createRoot(root).render(
         <LinenProvider navigation={historyNavigation}>
             <ToastProvider>
                 <FrameProvider>
-                    <Specimen />
+                    <UnsavedChangesGuard>
+                        <Specimen />
+                    </UnsavedChangesGuard>
                 </FrameProvider>
             </ToastProvider>
         </LinenProvider>

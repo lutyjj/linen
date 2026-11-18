@@ -17,6 +17,8 @@ import {
     SettingRow,
     Steps,
     Swap,
+    TextField,
+    useUnsavedChanges,
 } from "../src";
 import { Sample, Samples, Specimen, Stack } from "./Specimen";
 
@@ -40,6 +42,39 @@ const SIGNING_KEY =
 function line(count: number): string {
     const at = new Date(Date.UTC(2026, 0, 1, 12, 0, count)).toISOString();
     return `${at} worker ${count % 3} handled request ${1000 + count} in ${(count * 7) % 90} ms`;
+}
+
+/** Work kept with a save button, which asks before the page is left. */
+function Draft() {
+    const [saved, setSaved] = useState("Nightly export");
+    const [name, setName] = useState(saved);
+    useUnsavedChanges(name !== saved, { name: "the export's name" });
+    return (
+        <Card>
+            <CardHead
+                title="Export"
+                description="Change its name, then go to another page before saving it."
+            />
+            <CardBody>
+                <div className="max-w-sm">
+                    <TextField
+                        label="Name"
+                        value={name}
+                        onChange={(event) => setName(event.target.value)}
+                    />
+                </div>
+                <Actions className="justify-end">
+                    <Button
+                        variant="primary"
+                        disabled={name === saved}
+                        onClick={() => setSaved(name)}
+                    >
+                        Save
+                    </Button>
+                </Actions>
+            </CardBody>
+        </Card>
+    );
 }
 
 export function TasksSection() {
@@ -205,6 +240,14 @@ export function TasksSection() {
                         setStartingOver(false);
                     }}
                 />
+            </Specimen>
+
+            <Specimen
+                title="Unsaved work"
+                rule="Work a person keeps with a save button is a draft. Leaving its page while it is unsaved asks first and names what would be lost; closing the tab asks through the browser."
+                framed={false}
+            >
+                <Draft />
             </Specimen>
 
             <Specimen

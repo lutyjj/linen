@@ -27,6 +27,7 @@ import {
     Nothing,
     PickerMark,
     SearchField,
+    SectionNav,
     SegmentedControl,
     SettingNote,
     SettingRow,
@@ -245,6 +246,25 @@ export function LayoutSection() {
                             <Nothing>None were sent this week.</Nothing>
                         </Card>
                     </Content>
+                </div>
+            </Specimen>
+
+            <Specimen
+                title="A screen's sections"
+                rule="A screen that holds more than one concern names them under its top bar, each a route of its own, so a section is linked to, survives a reload and steps back with the browser. The chosen mark slides to the section chosen; on a phone the row scrolls."
+                framed={false}
+            >
+                <div className="overflow-hidden rounded-card border border-border">
+                    <TopBar title="Quarterly report" />
+                    <SectionNav
+                        label="Quarterly report"
+                        sections={[
+                            { href: "/layout", label: "Overview", exact: true },
+                            { href: "/layout/schedules", label: "Schedules" },
+                            { href: "/layout/recipients", label: "Recipients" },
+                            { href: "/layout/history", label: "History" },
+                        ]}
+                    />
                 </div>
             </Specimen>
 
