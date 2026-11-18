@@ -479,47 +479,45 @@ export function FeedbackSection() {
                         toast.show({ text: "Export scheduled" });
                     }}
                 >
-                    <div className="flex flex-col gap-4">
-                        <TextField label="Name" defaultValue="Nightly export" />
-                        <TextField
-                            label="Send it to"
-                            hint="An address that takes files, such as exports@example.com."
-                            defaultValue="exports@example.com"
-                        />
-                        <NumberField
-                            label="Every"
-                            value={every}
-                            onValueChange={setEvery}
-                            min={1}
-                            max={168}
-                            unit="hours"
-                            width={160}
-                        />
-                        <div className="flex flex-col gap-2">
-                            <p className="text-sm font-medium">What it holds</p>
-                            {PARTS.map((part) => (
-                                <Checkbox
-                                    key={part}
-                                    checked={parts.includes(part)}
-                                    onCheckedChange={(checked) =>
-                                        setParts(
-                                            checked
-                                                ? [...parts, part]
-                                                : parts.filter(
-                                                      (one) => one !== part,
-                                                  ),
-                                        )
-                                    }
-                                >
-                                    {part}
-                                </Checkbox>
-                            ))}
-                        </div>
-                        <TextField
-                            label="A note for whoever reads it"
-                            hint="Sent with each export."
-                        />
+                    <TextField label="Name" defaultValue="Nightly export" />
+                    <TextField
+                        label="Send it to"
+                        hint="An address that takes files, such as exports@example.com."
+                        defaultValue="exports@example.com"
+                    />
+                    <NumberField
+                        label="Every"
+                        value={every}
+                        onValueChange={setEvery}
+                        min={1}
+                        max={168}
+                        unit="hours"
+                        width={160}
+                    />
+                    <div className="flex flex-col gap-2">
+                        <p className="text-sm font-medium">What it holds</p>
+                        {PARTS.map((part) => (
+                            <Checkbox
+                                key={part}
+                                checked={parts.includes(part)}
+                                onCheckedChange={(checked) =>
+                                    setParts(
+                                        checked
+                                            ? [...parts, part]
+                                            : parts.filter(
+                                                  (one) => one !== part,
+                                              ),
+                                    )
+                                }
+                            >
+                                {part}
+                            </Checkbox>
+                        ))}
                     </div>
+                    <TextField
+                        label="A note for whoever reads it"
+                        hint="Sent with each export."
+                    />
                 </FormDialog>
                 <DialogRoot
                     open={inviting}

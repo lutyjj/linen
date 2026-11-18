@@ -153,7 +153,7 @@ export function ControlsSection() {
                 <Form
                     errors={REFUSED}
                     onSubmit={() => undefined}
-                    className="grid max-w-2xl gap-x-4 sm:grid-cols-2"
+                    className="grid max-w-2xl gap-4 sm:grid-cols-2"
                 >
                     <TextField
                         label="Name"
@@ -208,7 +208,7 @@ export function ControlsSection() {
                         value={assignee}
                         onValueChange={setAssignee}
                     />
-                    <div className="mb-4">
+                    <div>
                         <span className="mb-1 block text-sm font-medium">
                             With a unit
                         </span>
@@ -303,9 +303,9 @@ export function ControlsSection() {
 
             <Specimen
                 title="Fields on a phone"
-                rule="A field's stated width is its control's, up to the width it is given; its name and its messages take the room the field stands in. A row of fields gives way to its column. A picker's list is never wider than the screen; a long choice wraps. Narrow the window to a phone's width: every chevron stays inside the card."
+                rule="A field's stated width is its control's, up to the width it is given; its name and its messages take the room the field stands in. On a phone a row of fields stands them one under another, each filling the column. A picker's list is never wider than the screen; a long choice wraps. Narrow the window to a phone's width: every chevron stays inside the card."
             >
-                <div className="grid max-w-2xl gap-2">
+                <div className="grid max-w-2xl gap-4">
                     <Form errors={REFUSED} onSubmit={() => undefined}>
                         <FieldRow>
                             <TextField

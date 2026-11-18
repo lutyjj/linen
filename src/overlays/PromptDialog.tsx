@@ -63,7 +63,7 @@ export function PromptDialog({
             errors={errors}
             onConfirm={() => onConfirm(value.trim())}
         >
-            <Field compact label={label}>
+            <Field label={label}>
                 <CellInput
                     name="answer"
                     autoFocus

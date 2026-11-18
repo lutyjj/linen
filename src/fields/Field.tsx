@@ -1,6 +1,6 @@
 import { Field as BaseField } from "@base-ui/react/field";
 import { CircleAlert } from "lucide-react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 import { classes } from "../foundation/classes";
 import { isContent } from "../foundation/slot";
@@ -23,13 +23,15 @@ export const CONTROL_CLASS =
  * `CellInput` or a picker; a native element goes through Base UI's `Input`,
  * as `<Input render={<textarea />} />` does. The name is no `label` element,
  * so a press on it focuses a picker rather than opening it.
+ *
+ * A field keeps no room around itself: what stacks fields sets the room
+ * between them, so a field reads the same in a grid, a column and a row.
  */
 export function Field({
     label,
     hint,
     name,
     validate,
-    compact = false,
     width,
     className = "",
     children,
@@ -43,8 +45,6 @@ export function Field({
      * the value is fine. It runs on submit, and as the value changes after.
      */
     validate?: BaseField.Root.Props["validate"];
-    /** For a tight place, such as inside another popup. */
-    compact?: boolean;
     /**
      * How much room the control needs, in the spacing scale's own steps. A
      * field that states its own width does not need a box drawn around it to
@@ -60,21 +60,12 @@ export function Field({
             name={name}
             validate={validate}
             data-field
-            className={classes(
-                "min-w-0 max-w-full",
-                compact ? "" : "mb-4",
-                className,
-            )}
+            className={classes("min-w-0 max-w-full", className)}
         >
             <BaseField.Label
                 nativeLabel={false}
                 render={<div />}
-                className={classes(
-                    "mb-1 block",
-                    compact
-                        ? "text-xs text-text-secondary"
-                        : "text-sm font-medium",
-                )}
+                className="mb-1 block text-sm font-medium"
             >
                 {label}
             </BaseField.Label>
@@ -85,8 +76,13 @@ export function Field({
                 // is given. Its name and its messages take the room the field
                 // stands in, so a narrow control's error reads in a line.
                 <div
-                    className="max-w-full"
-                    style={{ width: `calc(var(--spacing) * ${width})` }}
+                    data-width
+                    className="w-(--width) max-w-full"
+                    style={
+                        {
+                            "--width": `calc(var(--spacing) * ${width})`,
+                        } as CSSProperties
+                    }
                 >
                     {children}
                 </div>
@@ -126,14 +122,20 @@ export function Field({
 /**
  * Fields and their action side by side, their controls on one line.
  *
- * The row owns the vertical rhythm its fields normally carry. While its
- * fields hold a name and a control alone, everything in it stands on the
- * foot of the line. While any field says something under its control, the
- * row stands on the top instead, and what is not a field stands a name's
- * room down, so the controls keep one line and the message hangs below it.
- * A field widens to hold its message, which moves what follows it along the
- * row. A field may stand in an element of its own; its name is a full one,
- * not `compact`, whose room the row does not keep.
+ * While its fields hold a name and a control alone, everything in it stands
+ * on the foot of the line. While any field says something under its control,
+ * the row stands on the top instead, and what is not a field stands a name's
+ * room down, its 20px line and 4px gap, so the controls keep one line and the
+ * message hangs below it. A field widens to hold its message, which moves
+ * what follows it along the row. A field may stand in an element of its own.
+ *
+ * In a column narrower than 28rem, a phone's, the row stands its fields one
+ * under another, each filling the column whatever width it states, and its
+ * actions under them, so a stacked form's edges agree. Fields stand 16px
+ * apart across the row and down it, as stacked fields do. The row reads the
+ * column through a container query, so it takes its width from where it
+ * stands, never from its fields: as a flex item or in a box that fits its
+ * contents it needs a width of its own.
  */
 export function FieldRow({
     className,
@@ -147,7 +149,7 @@ export function FieldRow({
         // the column open, so a row of fields fits a phone.
         <div
             className={classes(
-                "flex min-w-0 flex-wrap items-end gap-3 has-data-message:items-start [&_[data-field]]:mb-0 has-data-message:*:not-data-field:not-has-data-field:mt-6",
+                "@container/row flex min-w-0 flex-wrap items-end gap-4 has-data-message:items-start @max-md/row:*:data-field:basis-full @max-md/row:*:has-data-field:basis-full @max-md/row:**:data-width:w-full @md/row:has-data-message:*:not-data-field:not-has-data-field:mt-6",
                 className,
             )}
         >

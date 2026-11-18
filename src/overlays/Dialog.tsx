@@ -10,13 +10,14 @@ import { DialogRoot, DialogShell } from "./DialogRoot";
 
 /**
  * What every dialog lays out the same way: its title, what it is about, what
- * it asks, and its actions at the end, the one it exists for last. A dialog
- * holds one, since its title names the dialog: one that moves on to another
- * view keeps it, its title and actions changing with the view and its body
- * swapping with a `stepped` `Swap`. It keeps to the room its `DialogShell`
- * gives, whatever stands between them, such as a `Form` or an app's own
- * wrapper: in a window too short for all of it, the title and the actions
- * keep their places and what lies between them scrolls.
+ * it asks, one part under another 16px apart as stacked fields stand, and
+ * its actions at the end, the one it exists for last. A dialog holds one,
+ * since its title names the dialog: one that moves on to another view keeps
+ * it, its title and actions changing with the view and its body swapping
+ * with a `stepped` `Swap`. It keeps to the room its `DialogShell` gives,
+ * whatever stands between them, such as a `Form` or an app's own wrapper:
+ * in a window too short for all of it, the title and the actions keep their
+ * places and what lies between them scrolls.
  */
 export function DialogLayout({
     title,
@@ -46,7 +47,11 @@ export function DialogLayout({
                             {description}
                         </Dialog.Description>
                     )}
-                    {asks && <div className="mt-4">{children}</div>}
+                    {asks && (
+                        <div className="mt-4 flex flex-col gap-4">
+                            {children}
+                        </div>
+                    )}
                 </div>
             )}
             <Actions className="mt-5 shrink-0 justify-end">{actions}</Actions>

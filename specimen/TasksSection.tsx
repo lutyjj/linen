@@ -205,7 +205,6 @@ export function TasksSection() {
                                 label="Setup"
                                 steps={SETUP}
                                 current={step ?? "address"}
-                                className="mb-4"
                             />
                             <p className="text-sm text-text-secondary">
                                 {BODY[step ?? "address"]}
