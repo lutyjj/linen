@@ -253,13 +253,23 @@
 
     /* A dialog's body that scrolls draws a hairline at each edge something
      * lies past, under the title or over the actions. Its own scroll is the
-     * timeline, so a body that fits draws neither; a browser without scroll
-     * timelines draws none, rather than holding the last frame. */
-    @supports (animation-timeline: scroll()) {
-        .dialog-body {
-            animation: linen-edges linear both;
-            animation-timeline: scroll(self block);
-        }
+     * timeline, and each hairline is drawn only inside its own range: the
+     * top's once a pixel or more is scrolled, the bottom's while a pixel or
+     * more lies below. An animation that has reached its end keeps its last
+     * frame when its timeline goes inactive, as a body's does once its
+     * content fits, so the top's range runs past the end and is never
+     * reached, and the bottom's ends inside the last pixel, past which it
+     * draws nothing. It ends three quarters of a pixel early: Chromium counts
+     * an end within half a pixel of the scroll's end as that end, where an
+     * animation still draws. A body that fits draws neither, whatever it was
+     * scrolled to. A browser without scroll timelines runs each over no time
+     * and holds nothing, so draws none. */
+    .dialog-body {
+        animation-name: linen-edge-top, linen-edge-bottom;
+        animation-timeline: scroll(self block);
+        animation-range:
+            1px calc(100% + 1px),
+            0 calc(100% - 0.75px);
     }
 
     /* A panel unfolds from the control above it to its own height and folds
@@ -361,20 +371,17 @@
     }
 }
 
-@keyframes linen-edges {
-    0% {
-        border-top-color: transparent;
-        border-bottom-color: var(--color-border);
-    }
-    1% {
+@keyframes linen-edge-top {
+    from,
+    to {
         border-top-color: var(--color-border);
     }
-    99% {
+}
+
+@keyframes linen-edge-bottom {
+    from,
+    to {
         border-bottom-color: var(--color-border);
-    }
-    100% {
-        border-top-color: var(--color-border);
-        border-bottom-color: transparent;
     }
 }
 
