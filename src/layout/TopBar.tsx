@@ -110,7 +110,7 @@ function Folded({ crumbs }: { crumbs: readonly Crumb[] }) {
         <Popover.Root open={open} onOpenChange={setOpen}>
             <Popover.Trigger
                 aria-label={words.foldedSteps}
-                className="-my-1 flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-input hover:bg-border hover:text-text data-[popup-open]:bg-border data-[popup-open]:text-text"
+                className="-my-1 flex size-(--height-control-inline) shrink-0 cursor-pointer items-center justify-center rounded-input hover:bg-border hover:text-text data-[popup-open]:bg-border data-[popup-open]:text-text"
             >
                 <Ellipsis aria-hidden="true" className="size-3.5" />
             </Popover.Trigger>
