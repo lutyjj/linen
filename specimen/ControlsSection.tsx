@@ -4,6 +4,7 @@ import { type ComponentProps, useState } from "react";
 import {
     Actions,
     Button,
+    buttonClass,
     Card,
     CardBody,
     CardHead,
@@ -17,6 +18,7 @@ import {
     Form,
     IconButton,
     Kbd,
+    LINK_CLASS,
     NumberField,
     OptionCards,
     SearchField,
@@ -29,7 +31,10 @@ import {
     Switch,
     TextField,
 } from "../src";
+import { historyNavigation } from "./navigation";
 import { Sample, Samples, Specimen, Stack } from "./Specimen";
+
+const { Link } = historyNavigation;
 
 /** What an answer refused, held as the app holds it. */
 const REFUSED = {
@@ -291,6 +296,7 @@ export function ControlsSection() {
     );
     const [removal, setRemoval] = useState<"archive" | "delete">("archive");
     const [destination, setDestination] = useState<"email" | "folder">();
+    const [filtered, setFiltered] = useState(true);
     const [saving, setSaving] = useState(false);
     const [port, setPort] = useState("80800");
     const [listens, setListens] = useState("8080");
@@ -349,6 +355,9 @@ export function ControlsSection() {
                             <Button variant="primary" disabled>
                                 Save
                             </Button>
+                            <Button variant="destructive" disabled>
+                                Revoke
+                            </Button>
                         </Actions>
                     </Sample>
                     <Sample name="Busy, pressed to see">
@@ -360,6 +369,20 @@ export function ControlsSection() {
                         <IconButton aria-label="Remove">
                             <Trash2 aria-hidden="true" className="size-4" />
                         </IconButton>
+                    </Sample>
+                    <Sample name="A link to where it happens">
+                        <Link href="/tasks" className={buttonClass()}>
+                            Open tasks
+                        </Link>
+                    </Sample>
+                    <Sample name="A link in running text">
+                        <p className="text-sm text-text-secondary">
+                            Reports run nightly;{" "}
+                            <Link href="/feedback" className={LINK_CLASS}>
+                                see the last run
+                            </Link>
+                            .
+                        </p>
                     </Sample>
                 </Samples>
             </Specimen>
@@ -488,7 +511,29 @@ export function ControlsSection() {
                                 disabled
                                 onValueChange={() => undefined}
                             />
+                            <SelectToggle
+                                label="Select Atlas"
+                                checked={false}
+                                disabled
+                                onCheckedChange={() => undefined}
+                            />
                         </div>
+                    </Sample>
+                    <Sample name="One option disabled">
+                        <SegmentedControl
+                            label="Export as"
+                            value="pdf"
+                            options={[
+                                { value: "pdf", label: "PDF" },
+                                { value: "html", label: "HTML" },
+                                {
+                                    value: "sheet",
+                                    label: "Sheet",
+                                    disabled: true,
+                                },
+                            ]}
+                            onValueChange={() => undefined}
+                        />
                     </Sample>
                     <Sample name="Search, as typing pauses">
                         <SearchField
@@ -668,6 +713,42 @@ export function ControlsSection() {
                         ]}
                         onValueChange={setDestination}
                     />
+                    <OptionCards
+                        label="How to share it, one answer closed"
+                        value="link"
+                        options={[
+                            {
+                                value: "link",
+                                label: "A link",
+                                description: "Anyone with it can read.",
+                            },
+                            {
+                                value: "invite",
+                                label: "An invitation",
+                                description: "Only for people in the project.",
+                                disabled: true,
+                            },
+                        ]}
+                        onValueChange={() => undefined}
+                    />
+                    <OptionCards
+                        label="How to share it, all closed"
+                        value="link"
+                        disabled
+                        options={[
+                            {
+                                value: "link",
+                                label: "A link",
+                                description: "Anyone with it can read.",
+                            },
+                            {
+                                value: "invite",
+                                label: "An invitation",
+                                description: "Only for people in the project.",
+                            },
+                        ]}
+                        onValueChange={() => undefined}
+                    />
                 </div>
             </Specimen>
 
@@ -701,6 +782,33 @@ export function ControlsSection() {
                     </Sample>
                     <Sample name="Trigger">
                         <ChipTrigger>Any project</ChipTrigger>
+                    </Sample>
+                    <Sample name="Removable, a filter">
+                        {filtered ? (
+                            <Chip
+                                onRemove={() => setFiltered(false)}
+                                removeLabel="Remove the Atlas filter"
+                            >
+                                Project: Atlas
+                            </Chip>
+                        ) : (
+                            <ChipTrigger onClick={() => setFiltered(true)}>
+                                Any project
+                            </ChipTrigger>
+                        )}
+                    </Sample>
+                    <Sample name="Framed under the hand">
+                        <ChipTrigger size="row" frame="hover">
+                            Atlas
+                        </ChipTrigger>
+                    </Sample>
+                    <Sample name="Muted, framed at rest">
+                        <Chip size="row" tone="muted" frame="rest">
+                            Archived
+                        </Chip>
+                    </Sample>
+                    <Sample name="Trigger, disabled">
+                        <ChipTrigger disabled>Any owner</ChipTrigger>
                     </Sample>
                     <Sample name="Key">
                         <Kbd>Esc</Kbd>
