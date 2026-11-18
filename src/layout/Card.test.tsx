@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { expect, it } from "vitest";
 
 import { Button } from "../controls/Button";
-import { CardHead, Nothing } from "./Card";
+import { CardHead, Count, Nothing } from "./Card";
 
 it("draws a head whose actions or description are nothing as the head without them", () => {
     const plain = render(<CardHead title="Reports" />);
@@ -30,6 +30,17 @@ it("draws a head whose actions or description are nothing as the head without th
 it("draws a description of 0, which is content", () => {
     render(<CardHead title="Reports" description={0} />);
     expect(screen.getByText("0")).toBeVisible();
+});
+
+it("draws a count of zero, or one handed nothing, as nothing", () => {
+    const shown = false as boolean;
+    for (const nothing of [0, shown && 3, null, "", []]) {
+        const { container, unmount } = render(<Count>{nothing}</Count>);
+        expect(container).toBeEmptyDOMElement();
+        unmount();
+    }
+    render(<Count>3</Count>);
+    expect(screen.getByText("3")).toBeVisible();
 });
 
 it("says there is nothing here in one paragraph, with a link in its line", () => {

@@ -193,7 +193,8 @@ export function CardBody({
  * Counts, timestamps, and other figures that sit beside a title.
  *
  * A count of zero says nothing the body's empty state does not, so it
- * renders as nothing rather than as a stray digit beside a button.
+ * renders as nothing rather than as a stray digit beside a button, as does
+ * a count handed nothing (`isContent`).
  */
 export function Count({
     className,
@@ -202,7 +203,7 @@ export function Count({
     className?: string;
     children: ReactNode;
 }) {
-    if (children === 0) return null;
+    if (children === 0 || !isContent(children)) return null;
     return (
         <span
             className={classes(
