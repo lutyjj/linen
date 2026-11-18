@@ -19,8 +19,9 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
         "border-accent bg-accent text-bg inactive:border-border-strong inactive:bg-surface inactive:text-text",
     // An act that destroys something says so before it is pressed, in the
     // same frame as its neighbours so it is no less a button than they are.
+    // Disabled, it gives up its ink as the primary does, so its words read.
     destructive:
-        "border-border-strong bg-surface text-danger pressable:hover:border-danger/60",
+        "border-border-strong bg-surface text-danger pressable:hover:border-danger/60 inactive:text-text",
     // For a surface painted in the text colour, as a toast is, where the
     // page's own border and surface tokens would vanish, and the accent's
     // focus ring with them: its ring is its words' colour. Both themes
