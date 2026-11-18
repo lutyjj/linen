@@ -154,29 +154,54 @@
         rotate: 180deg;
     }
 
-    /* A button gives way under the hand, and comes back on the same spring. */
+    /* A button answers the hand with a layer of its words' ink over its
+     * fill: a draught under a hover, twice that under a press, where it also
+     * gives way and comes back on the same spring. A layer is the same step
+     * on any fill, on any ground and in either theme. */
     .press {
         transition: scale var(--motion-state);
-    }
 
-    .press:active:not(:disabled) {
-        scale: 0.98;
+        &:not(:disabled) {
+            @variant hover {
+                --hand: 6%;
+            }
+
+            &:active {
+                --hand: 12%;
+                scale: 0.98;
+            }
+        }
     }
 
     /* A control waiting on an answer: one pass of light across its face
      * after another. Still, the light rests across its middle. */
     .thinking {
         cursor: progress;
-        background-image: linear-gradient(
-            100deg,
-            transparent 35%,
-            color-mix(in oklch, currentColor 16%, transparent) 50%,
-            transparent 65%
-        );
         background-size: 300% 100%;
         background-position: 50% 0;
         background-repeat: no-repeat;
         animation: linen-thinking var(--motion-thinking) linear infinite;
+    }
+
+    /* A layer of a control's own ink, as the hand's and the light's are, is
+     * a mix; a browser without one draws none, where the stylesheet's
+     * fallback would paint the whole ink over the control's words. */
+    @supports (color: color-mix(in oklch, red, red)) {
+        .press {
+            background-image: linear-gradient(
+                color-mix(in oklch, currentColor var(--hand, 0%), transparent) 0
+                    0
+            );
+        }
+
+        .thinking {
+            background-image: linear-gradient(
+                100deg,
+                transparent 35%,
+                color-mix(in oklch, currentColor 16%, transparent) 50%,
+                transparent 65%
+            );
+        }
     }
 
     /* A bar that fills as something goes moves to each new length over

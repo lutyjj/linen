@@ -9,7 +9,7 @@ Every neutral takes the app's `--hue` at a chroma of 0.02 or less, so the page i
 | Token                                       | Marks                                                                                                   |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
 | `ink`, `accent`                             | What a hand can act on or has set: the primary action, links, focus, the current place, a chosen option |
-| `accent-weak`                               | The ink mixed into the surface: hover, the current place's fill, a notice                               |
+| `accent-weak`                               | The ink mixed into the surface: a choice under the pointer or keys, the current place's fill, a notice  |
 | `warn`                                      | A state that wants attention, and nothing else                                                          |
 | `danger`                                    | Removal and failure                                                                                     |
 | `positive`                                  | Something gained or arrived                                                                             |
@@ -164,4 +164,4 @@ A component does each of these jobs the one way linen does it, so a new componen
 
 ## Every action shows its end state
 
-A control answers rest, hover, focus, active and disabled in its own body, and busy wherever it starts something asynchronous. A write lands somewhere visible, a failure names what failed and offers the retry where the fault is, and a state a person can enter but cannot see or leave is a defect.
+A control answers rest, hover, focus, active and disabled in its own body, and busy wherever it starts something asynchronous. Under the pointer it steps toward its words' ink: a button's fill takes a layer of that ink, deeper under a press, a frame's hairline turns `text-muted`, quiet words turn `text` and a row of navigation fills with `border`; a choice in a list or a set of cards that the pointer or the keys are on wears `accent-weak`. A write lands somewhere visible, a failure names what failed and offers the retry where the fault is, and a state a person can enter but cannot see or leave is a defect.

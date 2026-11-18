@@ -9,21 +9,19 @@ import { classes } from "../foundation/classes";
 export type ButtonVariant = "default" | "primary" | "destructive" | "inverted";
 
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
-    default:
-        "border-border-strong bg-surface hover:border-text-muted hover:bg-sunken active:bg-border",
+    default: "border-border-strong bg-surface hover:border-text-muted",
     // Text in the page colour rather than white: the accent is dark in the
     // light theme and light in the dark one, and only the page's own ink
     // reads on both.
-    primary:
-        "border-accent bg-accent text-bg hover:brightness-106 active:brightness-96 disabled:hover:brightness-100",
+    primary: "border-accent bg-accent text-bg",
     // An act that destroys something says so before it is pressed, in the
     // same frame as its neighbours so it is no less a button than they are.
     destructive:
-        "border-border-strong bg-surface text-danger hover:border-danger/60 hover:bg-danger/6 active:bg-danger/12",
+        "border-border-strong bg-surface text-danger hover:border-danger/60",
     // For a surface painted in the text colour, where the page's own border
     // and surface tokens would vanish. Both themes invert, so this reads in
     // either one.
-    inverted: "border-bg/25 bg-transparent text-bg hover:bg-bg/12",
+    inverted: "border-bg/25 bg-transparent text-bg",
 };
 
 export interface ButtonProps extends ComponentProps<"button"> {
@@ -54,7 +52,7 @@ export function Actions({
     );
 }
 
-/** `press` gives way under the hand (motion.css). */
+/** `press` answers the hand (motion.css). */
 const BUTTON_CLASS =
     "press inline-flex h-(--height-control) shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-button border px-3 text-sm font-medium whitespace-nowrap select-none disabled:cursor-not-allowed disabled:opacity-45";
 
