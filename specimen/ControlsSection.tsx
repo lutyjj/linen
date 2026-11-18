@@ -293,6 +293,9 @@ export function ControlsSection() {
     const [port, setPort] = useState("80800");
     const [listens, setListens] = useState("8080");
     const [retention, setRetention] = useState("900");
+    const [note, setNote] = useState("Ships on Friday");
+    const [title, setTitle] = useState("Atlas");
+    const [suggested, setSuggested] = useState<string>();
     const [query, setQuery] = useState("");
     const [picked, setPicked] = useState(["Orion"]);
     const [lastPicked, setLastPicked] = useState(0);
@@ -470,6 +473,36 @@ export function ControlsSection() {
                                 return Promise.resolve(true);
                             }}
                         />
+                    </Sample>
+                    <Sample name="Emptied, an answer">
+                        <CellText
+                            label="Note"
+                            value={note}
+                            placeholder="No note"
+                            clearable
+                            onCommit={(next) => {
+                                setNote(next);
+                                return Promise.resolve(true);
+                            }}
+                        />
+                    </Sample>
+                    <Sample name="A suggestion, opened to change">
+                        <span className="flex items-center gap-2">
+                            <CellText
+                                label="Project name"
+                                value={title}
+                                draft={suggested}
+                                onDiscard={() => setSuggested(undefined)}
+                                onCommit={(next) => {
+                                    setTitle(next);
+                                    setSuggested(undefined);
+                                    return Promise.resolve(true);
+                                }}
+                            />
+                            <Button onClick={() => setSuggested("Atlas north")}>
+                                Suggest
+                            </Button>
+                        </span>
                     </Sample>
                     <Sample name="Selecting rows, a range with Shift">
                         <div className="flex flex-col gap-2 text-sm">

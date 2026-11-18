@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { useState } from "react";
+import { type ComponentProps, useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import { markup } from "../test/markup";
@@ -9,12 +9,14 @@ import { CellInput, CellText } from "./TextField";
 describe("text corrected in place", () => {
     function Harness({
         onCommit,
+        ...props
     }: {
         onCommit: (value: string) => Promise<boolean>;
-    }) {
+    } & Omit<ComponentProps<typeof CellText>, "label" | "value" | "onCommit">) {
         const [value, setValue] = useState("Atlas");
         return (
             <CellText
+                {...props}
                 label="Name"
                 value={value}
                 onCommit={async (next) => {
@@ -53,6 +55,61 @@ describe("text corrected in place", () => {
         expect(box).toHaveValue("Atlas");
         await userEvent.tab();
         expect(onCommit).not.toHaveBeenCalled();
+    });
+
+    it("puts the held value back when the write fails", async () => {
+        render(
+            <Harness onCommit={() => Promise.reject(new Error("offline"))} />,
+        );
+        const box = screen.getByRole("textbox", { name: "Name" });
+        await userEvent.clear(box);
+        await userEvent.type(box, "Harbor{Enter}");
+        expect(await screen.findByDisplayValue("Atlas")).toBe(box);
+    });
+
+    it("writes an emptied box only where emptying is an answer", async () => {
+        const onCommit = vi.fn(() => Promise.resolve(true));
+        const { unmount } = render(<Harness onCommit={onCommit} />);
+        await userEvent.clear(screen.getByRole("textbox", { name: "Name" }));
+        await userEvent.tab();
+        expect(onCommit).not.toHaveBeenCalled();
+        expect(screen.getByRole("textbox", { name: "Name" })).toHaveValue(
+            "Atlas",
+        );
+        unmount();
+
+        render(<Harness onCommit={onCommit} clearable />);
+        await userEvent.clear(screen.getByRole("textbox", { name: "Name" }));
+        await userEvent.tab();
+        expect(onCommit).toHaveBeenCalledWith("");
+    });
+
+    it("opens a draft with the cursor in it, and writes it when left", async () => {
+        const onCommit = vi.fn(() => Promise.resolve(true));
+        render(<Harness onCommit={onCommit} draft="Atlas north" />);
+        const box = screen.getByRole("textbox", { name: "Name" });
+        expect(box).toHaveFocus();
+        expect(box).toHaveValue("Atlas north");
+        await userEvent.tab();
+        expect(onCommit).toHaveBeenCalledWith("Atlas north");
+    });
+
+    it("says a draft left unwritten is spent", async () => {
+        const onCommit = vi.fn(() => Promise.resolve(true));
+        const onDiscard = vi.fn();
+        render(
+            <Harness
+                onCommit={onCommit}
+                onDiscard={onDiscard}
+                draft="Atlas north"
+            />,
+        );
+        const box = screen.getByRole("textbox", { name: "Name" });
+        await userEvent.type(box, "{Escape}");
+        expect(box).toHaveValue("Atlas");
+        await userEvent.tab();
+        expect(onCommit).not.toHaveBeenCalled();
+        expect(onDiscard).toHaveBeenCalledOnce();
     });
 });
 

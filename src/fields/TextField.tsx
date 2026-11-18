@@ -4,6 +4,7 @@ import {
     type ReactNode,
     useEffect,
     useId,
+    useRef,
     useState,
 } from "react";
 
@@ -114,7 +115,10 @@ export function CellText({
      * opened to change. The field takes the cursor, and leaving it writes.
      */
     draft?: string;
-    /** Rejected by resolving to false, which puts the held value back. */
+    /**
+     * Refused by resolving to false, or by failing, which puts the held value
+     * back; a failure is the app's to report.
+     */
     onCommit: (value: string) => Promise<boolean>;
     /** The field was left without writing, so a draft it started from is spent. */
     onDiscard?: () => void;
@@ -125,7 +129,19 @@ export function CellText({
     className?: string;
 }) {
     const [text, setText] = useState(draft ?? value);
-    useEffect(() => setText(draft ?? value), [value, draft]);
+    // A held value or a draft the app hands anew replaces what is typed.
+    const [given, setGiven] = useState({ value, draft });
+    if (given.value !== value || given.draft !== draft) {
+        setGiven({ value, draft });
+        setText(draft ?? value);
+    }
+    // A box handed a draft takes the cursor. `autoFocus` would only under
+    // React: Preact writes the attribute, which a browser reads as a page
+    // loads.
+    const box = useRef<HTMLInputElement>(null);
+    useEffect(() => {
+        if (draft !== undefined) box.current?.focus();
+    }, [draft]);
 
     function commit() {
         const wanted = text.trim();
@@ -134,9 +150,12 @@ export function CellText({
             onDiscard?.();
             return;
         }
-        void onCommit(wanted).then((kept) => {
-            if (!kept) setText(value);
-        });
+        void onCommit(wanted).then(
+            (kept) => {
+                if (!kept) setText(value);
+            },
+            () => setText(value),
+        );
     }
 
     return (
@@ -145,8 +164,8 @@ export function CellText({
             className={className}
             placeholder={placeholder}
             unit={unit}
+            ref={box}
             value={text}
-            autoFocus={draft !== undefined}
             onChange={(event) => setText(event.target.value)}
             onBlur={commit}
             onKeyDown={(event) => {
