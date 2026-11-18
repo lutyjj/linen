@@ -39,19 +39,17 @@ export function budget({
                 );
             }
         },
-        generateBundle(_, bundle) {
+        // After the bundle is written, so each file is read as it ships:
+        // the bundle in generateBundle is not final, and plugins that run
+        // after this one still edit it.
+        writeBundle({ dir }, bundle) {
+            if (dir === undefined) this.error("the build writes no directory");
             // A page's files gzipped as one, as an app that ships the page
             // in one file has them.
             const gzipped = (names: Iterable<string>) =>
                 gzipSync(
                     [...names]
-                        .map((name) => {
-                            const file = bundle[name];
-                            if (file === undefined) return "";
-                            return file.type === "chunk"
-                                ? file.code
-                                : String(file.source);
-                        })
+                        .map((name) => readFileSync(join(dir, name), "utf8"))
                         .join("\n"),
                     { level: 9 },
                 ).length;
