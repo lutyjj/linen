@@ -295,7 +295,7 @@ export function TitleField({
                 size={1}
                 className={classes(
                     frame,
-                    "col-start-1 row-start-1 w-full min-w-0 bg-transparent text-ellipsis placeholder:text-text-muted hover:border-border focus-visible:border-accent focus-visible:bg-surface focus-visible:outline-none",
+                    "col-start-1 row-start-1 w-full min-w-0 bg-transparent text-ellipsis placeholder:text-text-muted hover:border-border focus-visible:border-border-strong focus-visible:bg-surface",
                     className,
                 )}
             />
