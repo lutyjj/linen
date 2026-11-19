@@ -66,7 +66,6 @@ export function PromptDialog({
             <Field label={label}>
                 <CellInput
                     name="answer"
-                    autoFocus
                     value={value}
                     placeholder={placeholder}
                     onChange={(event) => setValue(event.target.value)}

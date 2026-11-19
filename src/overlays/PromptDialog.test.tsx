@@ -31,6 +31,15 @@ function Renaming({
     );
 }
 
+it("puts the focus in its box as it opens", async () => {
+    const { rerender } = render(
+        <Renaming open={false} onConfirm={() => undefined} />,
+    );
+    rerender(<Renaming onConfirm={() => undefined} />);
+    const box = await screen.findByRole("textbox", { name: "Name" });
+    await waitFor(() => expect(box).toHaveFocus());
+});
+
 it("hands over the answer trimmed, and stays open until the app closes it", async () => {
     const closing = vi.fn();
     const confirmed = vi.fn(() => undefined);
