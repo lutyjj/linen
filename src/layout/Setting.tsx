@@ -16,7 +16,9 @@ import { BAND_CLASS, WORDS_SHARE_CLASS } from "./Card";
  * them once it does not, where it starts the line and a control that grows
  * fills it; the row decides from its own width and the control's, not the
  * screen's, so the same setting lays out the same way in any card, and a wide
- * control never squeezes the words.
+ * control never squeezes the words. A control that states its `width` keeps
+ * it beside the words and grows to fill the line under them, so controls of
+ * one width start on one edge down a card.
  *
  * The description describes the control, any of Base UI's, through its field.
  */
@@ -50,7 +52,7 @@ export function SettingRow({
             className={className}
             frame="flex flex-wrap"
             words={`${WORDS_SHARE_CLASS} basis-64`}
-            place="grow"
+            place="grow *:data-width:grow"
         >
             {children}
         </SettingLayout>

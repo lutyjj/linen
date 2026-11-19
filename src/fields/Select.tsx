@@ -10,7 +10,7 @@ import {
     POSITIONER_CLASS,
     renderLeaving,
 } from "../foundation/popup";
-import { CONTROL_CLASS, Field } from "./Field";
+import { CONTROL_CLASS, Field, WIDTH_CLASS, widthStyle } from "./Field";
 
 /**
  * What says a control opens something: a list, or a record's details. One
@@ -39,6 +39,7 @@ export function CellSelect({
     value,
     onValueChange,
     disabled,
+    width,
     className = "",
     id,
     name,
@@ -54,6 +55,12 @@ export function CellSelect({
     value: string;
     onValueChange: (value: string) => void;
     disabled?: boolean;
+    /**
+     * How wide it is, in the spacing scale's own steps, up to the width it
+     * is given. At the end of a setting's row it fills the line once the
+     * row puts it under the words.
+     */
+    width?: number;
     className?: string;
     id?: string;
     /** The key of its error in its form's `errors`. */
@@ -103,9 +110,12 @@ export function CellSelect({
             <BaseSelect.Trigger
                 id={id}
                 aria-label={ariaLabel}
+                data-width={width === undefined ? undefined : ""}
+                style={widthStyle(width)}
                 className={classes(
                     PICKER_CLASS,
                     value === "" ? "text-text-secondary" : "",
+                    width !== undefined && WIDTH_CLASS,
                     className,
                 )}
             >

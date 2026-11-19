@@ -257,7 +257,7 @@ function NumberSpecimen() {
                 >
                     <CellNumber
                         aria-label="Copies kept"
-                        className="w-28"
+                        width={28}
                         value={copies}
                         onValueChange={setCopies}
                         min={1}
@@ -270,7 +270,7 @@ function NumberSpecimen() {
                 >
                     <CellNumber
                         aria-label="Kept for"
-                        className="w-36"
+                        width={36}
                         unit="days"
                         value={kept}
                         onValueChange={setKept}

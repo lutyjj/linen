@@ -10,7 +10,14 @@ import {
 
 import { classes } from "../foundation/classes";
 import { isContent } from "../foundation/slot";
-import { CONTROL_CLASS, Field, INPUT_FRAME_CLASS, ValueAndUnit } from "./Field";
+import {
+    CONTROL_CLASS,
+    Field,
+    INPUT_FRAME_CLASS,
+    ValueAndUnit,
+    WIDTH_CLASS,
+    widthStyle,
+} from "./Field";
 
 /** A text box under its name, with its hint and, once refused, its error. */
 export function TextField({
@@ -48,16 +55,30 @@ export function TextField({
 export function CellInput({
     className = "",
     unit,
+    width,
     ...rest
-}: ComponentProps<"input"> &
-    (
+}: Omit<ComponentProps<"input">, "width"> & {
+    /**
+     * How wide its frame is, in the spacing scale's own steps, up to the
+     * width it is given. At the end of a setting's row it fills the line
+     * once the row puts it under the words.
+     */
+    width?: number;
+} & (
         | { unit?: false | null | "" }
         | { unit: ReactNode; value: string | number }
     )) {
     const unitId = useId();
+    const stated = width === undefined ? undefined : "";
+    const frame = classes(stated !== undefined && WIDTH_CLASS, className);
     if (!isContent(unit)) {
         return (
-            <Input className={classes(CONTROL_CLASS, className)} {...rest} />
+            <Input
+                {...rest}
+                data-width={stated}
+                style={{ ...widthStyle(width), ...rest.style }}
+                className={classes(CONTROL_CLASS, frame)}
+            />
         );
     }
     return (
@@ -70,11 +91,9 @@ export function CellInput({
                 // field's frame does.
                 <span
                     data-disabled={state.disabled || undefined}
-                    className={classes(
-                        INPUT_FRAME_CLASS,
-                        "inline-flex",
-                        className,
-                    )}
+                    data-width={stated}
+                    style={widthStyle(width)}
+                    className={classes(INPUT_FRAME_CLASS, "inline-flex", frame)}
                 >
                     <ValueAndUnit
                         input={props}

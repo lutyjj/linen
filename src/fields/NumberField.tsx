@@ -5,7 +5,13 @@ import { type ReactNode, useId } from "react";
 import { classes } from "../foundation/classes";
 import { isContent } from "../foundation/slot";
 import { useWords } from "../foundation/words";
-import { Field, INPUT_FRAME_CLASS, ValueAndUnit } from "./Field";
+import {
+    Field,
+    INPUT_FRAME_CLASS,
+    ValueAndUnit,
+    WIDTH_CLASS,
+    widthStyle,
+} from "./Field";
 
 /**
  * A step takes a press across the frame's whole height, and the step up to
@@ -47,6 +53,7 @@ export function CellNumber({
     format,
     disabled,
     name,
+    width,
     className,
     id,
     "aria-label": ariaLabel,
@@ -69,6 +76,12 @@ export function CellNumber({
     disabled?: boolean;
     /** The key of its error in its form's `errors`. */
     name?: string;
+    /**
+     * How wide it is, in the spacing scale's own steps, up to the width it
+     * is given. At the end of a setting's row it fills the line once the
+     * row puts it under the words.
+     */
+    width?: number;
     /** The frame's classes. */
     className?: string;
     id?: string;
@@ -90,6 +103,9 @@ export function CellNumber({
             largeStep={largeStep}
             format={format}
             disabled={disabled}
+            data-width={width === undefined ? undefined : ""}
+            style={widthStyle(width)}
+            className={width === undefined ? undefined : WIDTH_CLASS}
         >
             <BaseNumberField.Group
                 className={classes(

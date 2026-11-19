@@ -9,9 +9,10 @@ import { OptionCards } from "../controls/OptionCards";
 import { SegmentedControl } from "../controls/SegmentedControl";
 import { Field } from "./Field";
 import { Form, type FormErrors } from "./Form";
+import { CellNumber } from "./NumberField";
 import { SearchSelect } from "./SearchSelect";
-import { Select } from "./Select";
-import { TextField } from "./TextField";
+import { CellSelect, Select } from "./Select";
+import { CellInput, TextField } from "./TextField";
 
 const ZONES = [
     { value: "utc", label: "UTC" },
@@ -173,6 +174,56 @@ it("holds only its control to a stated width, never its name or its messages", (
         screen.getByText("Where the service listens."),
     );
     expect(held).not.toContainElement(screen.getByText("Port"));
+});
+
+it("states a bare control's width on its outermost element, which a setting's row grows", () => {
+    for (const [control, role, name] of [
+        [
+            <CellSelect
+                aria-label="Runs"
+                width={48}
+                choices={ZONES}
+                value="utc"
+                onValueChange={() => undefined}
+            />,
+            "combobox",
+            "Runs",
+        ],
+        [
+            <CellNumber
+                aria-label="Kept for"
+                width={48}
+                value={30}
+                onValueChange={() => undefined}
+            />,
+            "textbox",
+            "Kept for",
+        ],
+        [
+            <CellInput aria-label="File name" width={48} />,
+            "textbox",
+            "File name",
+        ],
+        [
+            <CellInput
+                aria-label="Gap"
+                width={48}
+                unit="px"
+                value="4"
+                onChange={() => undefined}
+            />,
+            "textbox",
+            "Gap",
+        ],
+    ] as const) {
+        const { container, unmount } = render(control);
+        const outermost = container.firstElementChild;
+        expect(outermost).toHaveStyle({
+            "--width": "calc(var(--spacing) * 48)",
+        });
+        expect(outermost).toContainElement(screen.getByRole(role, { name }));
+        unmount();
+    }
 });
 
 it("leaves each option of a group its own name, and describes it by its line and the field's hint", () => {

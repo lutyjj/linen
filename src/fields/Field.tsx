@@ -33,6 +33,20 @@ export const CONTROL_CLASS = `min-h-(--height-control) rounded-button border bor
 export const INPUT_FRAME_CLASS = `${CONTROL_CLASS} cursor-text p-0 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-1 has-[:focus-visible]:outline-accent has-[[aria-invalid=true]]:border-danger`;
 
 /**
+ * A width a control or a field states, in the spacing scale's own steps, as
+ * `--width`. The control is held to it by `WIDTH_CLASS`, up to the width it
+ * is given, and marked `data-width`, which a row of fields and a setting's
+ * row read.
+ */
+export function widthStyle(width: number | undefined) {
+    return width === undefined
+        ? undefined
+        : ({ "--width": `calc(var(--spacing) * ${width})` } as CSSProperties);
+}
+
+export const WIDTH_CLASS = "w-(--width) max-w-full";
+
+/**
  * A value and its unit, as "120 seconds" reads in a sentence: the value at
  * the frame's inset, where every field's value starts, and the unit a space
  * after it, on its baseline. The input shares a cell with a hidden copy of
@@ -132,13 +146,7 @@ export function Field({
                 "min-w-0 max-w-full @md/row:max-w-[max(20rem,var(--width,100%))]",
                 className,
             )}
-            style={
-                width === undefined
-                    ? undefined
-                    : ({
-                          "--width": `calc(var(--spacing) * ${width})`,
-                      } as CSSProperties)
-            }
+            style={widthStyle(width)}
         >
             <BaseField.Label
                 nativeLabel={false}
@@ -153,7 +161,7 @@ export function Field({
                 // A stated width is the control's, up to the width the field
                 // is given. Its name and its messages take the room the field
                 // stands in, so a narrow control's error reads in a line.
-                <div data-width className="w-(--width) max-w-full">
+                <div data-width className={WIDTH_CLASS}>
                     {children}
                 </div>
             )}

@@ -14,6 +14,9 @@ import {
     Card,
     CardBody,
     CardHead,
+    CellInput,
+    CellNumber,
+    CellSelect,
     Chip,
     Content,
     CopyValue,
@@ -71,6 +74,9 @@ export function LayoutSection() {
     const [query, setQuery] = useState("");
     const [status, setStatus] = useState("all");
     const [period, setPeriod] = useState("week");
+    const [runs, setRuns] = useState("daily");
+    const [zone, setZone] = useState("Europe/Lisbon");
+    const [kept, setKept] = useState<number | null>(30);
 
     return (
         <Stack>
@@ -445,7 +451,7 @@ export function LayoutSection() {
 
             <Specimen
                 title="A setting is a row"
-                rule="A setting's name, what it does, and its control at the end of the row while the control fits beside the words, below them once it does not, so a wide control never squeezes them. A switch keeps the end of the row at every width."
+                rule="A setting's name, what it does, and its control at the end of the row while the control fits beside the words, below them once it does not, so a wide control never squeezes them. A switch keeps the end of the row at every width. Controls that state one width start on one edge down a card, and each fills its line once it stands under the words."
                 framed={false}
             >
                 <Card>
@@ -501,6 +507,65 @@ export function LayoutSection() {
                     <SettingNote>
                         The deployment sets these; change them there.
                     </SettingNote>
+                </Card>
+                <Card>
+                    <CardHead title="Schedule" />
+                    <SettingRow
+                        title="Runs"
+                        description="How often the export is written."
+                    >
+                        <CellSelect
+                            aria-label="Runs"
+                            width={48}
+                            choices={[
+                                { value: "hourly", label: "Hourly" },
+                                { value: "daily", label: "Daily" },
+                                { value: "weekly", label: "Weekly, on Monday" },
+                            ]}
+                            value={runs}
+                            onValueChange={setRuns}
+                        />
+                    </SettingRow>
+                    <SettingRow
+                        title="Time zone"
+                        description="Where its days begin and end."
+                    >
+                        <CellSelect
+                            aria-label="Time zone"
+                            width={48}
+                            choices={[
+                                "Europe/Lisbon",
+                                "America/New_York",
+                                "Asia/Tokyo",
+                            ].map((value) => ({ value, label: value }))}
+                            value={zone}
+                            onValueChange={setZone}
+                        />
+                    </SettingRow>
+                    <SettingRow
+                        title="Kept for"
+                        description="How long a copy stays before it is removed."
+                    >
+                        <CellNumber
+                            aria-label="Kept for"
+                            width={48}
+                            unit="days"
+                            value={kept}
+                            onValueChange={setKept}
+                            min={1}
+                            max={365}
+                        />
+                    </SettingRow>
+                    <SettingRow
+                        title="File name"
+                        description="What each file's name starts with."
+                    >
+                        <CellInput
+                            aria-label="File name"
+                            width={48}
+                            defaultValue="nightly-export"
+                        />
+                    </SettingRow>
                 </Card>
                 <Card>
                     <SettingRow
