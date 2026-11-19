@@ -133,44 +133,6 @@ export default defineConfig({
 });
 ```
 
-```ts
-// src/test/use-sync-external-store.ts
-import { useCallback, useRef, useSyncExternalStore } from "preact/compat";
-
-export { useSyncExternalStore };
-
-export function useSyncExternalStoreWithSelector<Snapshot, Selection>(
-    subscribe: (onChange: () => void) => () => void,
-    getSnapshot: () => Snapshot,
-    _getServerSnapshot: unknown,
-    selector: (snapshot: Snapshot) => Selection,
-    isEqual?: (a: Selection, b: Selection) => boolean,
-): Selection {
-    const last = useRef<{
-        snapshot: Snapshot;
-        selector: (snapshot: Snapshot) => Selection;
-        selection: Selection;
-    } | null>(null);
-    const select = useCallback(() => {
-        const snapshot = getSnapshot();
-        const held = last.current;
-        if (
-            held !== null &&
-            held.selector === selector &&
-            Object.is(held.snapshot, snapshot)
-        ) {
-            return held.selection;
-        }
-        const selection = selector(snapshot);
-        const kept =
-            held !== null && isEqual?.(held.selection, selection) === true
-                ? held.selection
-                : selection;
-        last.current = { snapshot, selector, selection: kept };
-        return kept;
-    }, [getSnapshot, selector, isEqual]);
-    return useSyncExternalStore(subscribe, select);
-}
-```
+The app takes [`src/test/use-sync-external-store.ts`](https://github.com/lutyjj/linen/blob/main/src/test/use-sync-external-store.ts) from this repository, to the path the alias names: it re-exports Preact's `useSyncExternalStore` and adds `useSyncExternalStoreWithSelector` over it.
 
 jsdom has no `Element.prototype.getAnimations`, and Base UI then calls a close complete before Preact has drawn the closing state; giving it one that returns `[]` in the test setup makes jsdom behave as a browser does once its transitions end, until jsdom has its own. `vite.config.ts` and `src/test/setup.ts` in this repository hold the configuration linen's own tests use.
