@@ -72,8 +72,11 @@ export default defineConfig(({ mode }) => ({
                 test: {
                     name: "still",
                     setupFiles: ["src/test/still.ts"],
-                    // Motion's own springs are what this test compares to.
-                    exclude: ["src/motion/springs.test.ts"],
+                    // Motion's own springs and layout are what these tests read.
+                    exclude: [
+                        "src/motion/springs.test.ts",
+                        "src/motion/SettlingRows.layout.test.tsx",
+                    ],
                 },
             },
             {
@@ -90,6 +93,7 @@ export default defineConfig(({ mode }) => ({
                     setupFiles: ["src/test/still.ts", "src/test/preact.ts"],
                     exclude: [
                         "src/motion/springs.test.ts",
+                        "src/motion/SettlingRows.layout.test.tsx",
                         // React Router needs hooks Preact does not have.
                         "src/navigation/react-router.test.tsx",
                     ],

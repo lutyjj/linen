@@ -1,9 +1,9 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { StrictMode } from "react";
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 
 import { MotionProvider } from "./MotionProvider";
-import { SettlingItem, SettlingRows } from "./SettlingRows";
+import { SettlingItem, SettlingRows, SettlingTr } from "./SettlingRows";
 
 // StrictMode runs every effect twice, as a remount does.
 function List({
@@ -83,4 +83,73 @@ it("marks the first row of a list that loaded empty", () => {
     const list = render(<List rows={[]} />);
     list.rerender(<List rows={["Atlas"]} />);
     expect(marked("Atlas")).toBe(true);
+});
+
+/** A table whose rows settle, each handing the caller its animation ends. */
+function Table({
+    rows,
+    scope,
+    onAnimationEnd,
+}: {
+    rows: readonly string[];
+    scope?: string;
+    onAnimationEnd?: () => void;
+}) {
+    return (
+        <MotionProvider>
+            <table>
+                <tbody>
+                    <SettlingRows scope={scope} marksArrivals>
+                        {rows.map((row) => (
+                            <SettlingTr
+                                key={row}
+                                className="task"
+                                onAnimationEnd={onAnimationEnd}
+                            >
+                                <td>{row}</td>
+                            </SettlingTr>
+                        ))}
+                    </SettlingRows>
+                </tbody>
+            </table>
+        </MotionProvider>
+    );
+}
+
+const row = (name: string) => screen.getByRole("row", { name });
+
+it("marks a table row that arrives as a list's item, and keeps what its caller gave it", () => {
+    const onAnimationEnd = vi.fn();
+    const table = render(
+        <Table
+            scope="tasks"
+            rows={["Atlas"]}
+            onAnimationEnd={onAnimationEnd}
+        />,
+    );
+    table.rerender(
+        <Table
+            scope="tasks"
+            rows={["Atlas", "Harbor"]}
+            onAnimationEnd={onAnimationEnd}
+        />,
+    );
+    expect(row("Atlas")).not.toHaveAttribute("data-arrival");
+    expect(row("Harbor")).toHaveAttribute("data-arrival");
+    expect(row("Harbor")).toHaveClass("task");
+
+    act(() => {
+        fireEvent.animationEnd(row("Harbor"), {
+            animationName: "linen-arrival",
+        });
+    });
+    expect(row("Harbor")).not.toHaveAttribute("data-arrival");
+    expect(onAnimationEnd).toHaveBeenCalledOnce();
+});
+
+it("draws a table row outside a list as a plain row", () => {
+    const table = render(<Table rows={["Atlas"]} />);
+    table.rerender(<Table rows={["Atlas", "Harbor"]} />);
+    expect(row("Harbor")).not.toHaveAttribute("data-arrival");
+    expect(row("Harbor")).toHaveAttribute("class", "task");
 });
