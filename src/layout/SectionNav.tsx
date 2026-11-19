@@ -44,7 +44,7 @@ export function SectionNav({
     const marks = useId();
     const group = useRef<HTMLDivElement>(null);
     // Its height, for what scrolls beneath it.
-    const rail = useStickyBar<HTMLElement>("--height-sectionnav");
+    const bar = useStickyBar<HTMLElement>("--height-sectionnav");
     const pathname = useNavigation().usePathname();
     useEffect(() => {
         group.current
@@ -53,7 +53,7 @@ export function SectionNav({
     }, [group, pathname]);
     return (
         <nav
-            ref={rail}
+            ref={bar}
             aria-label={label}
             className={classes(
                 "sticky top-[calc(var(--inset-top)+var(--height-conditions,0px)+var(--height-topbar,0px))] z-4 border-b border-border bg-bg",

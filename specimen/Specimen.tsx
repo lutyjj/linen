@@ -7,8 +7,8 @@ import { Card, CardBody, classes } from "../src";
  * components drawn in the states that part has.
  *
  * Samples are framed on a card. Components that are cards themselves, such
- * as a table or a review band, stand on the page as they do on a screen, so
- * no card is ever drawn inside another.
+ * as a `Card` of rows, stand on the page as they do on a screen, so no card
+ * is ever drawn inside another.
  */
 export function Specimen({
     title,

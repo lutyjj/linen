@@ -6,13 +6,12 @@ import { DialogCancel, DialogLayout } from "./Dialog";
 import { DialogRoot, DialogShell } from "./DialogRoot";
 
 /**
- * Required for any action affecting more than one row, and for destroying a
- * record however few it is. It states what and how much.
- *
- * These confirm rather than offer undo, because a confirmation the user read
- * beats an undo they must notice. It is an alert dialog, which a press beside
- * it does not dismiss. An act that can be put back exactly, such
- * as a corrected value, takes a toast's undo instead and does not come here.
+ * Asks before an act is done, and states what it does and how much; an act
+ * that destroys something always comes here. It confirms rather than offers
+ * undo, because a confirmation the person read beats an undo they must notice.
+ * It is an alert dialog, which a press beside it does not dismiss. An act that
+ * can be put back exactly, such as a corrected value, takes a toast's undo
+ * instead and does not come here.
  */
 export function ConfirmDialog({
     open,

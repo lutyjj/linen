@@ -2,10 +2,10 @@
  * The one content column, centred, and the class every band of chrome aligns
  * itself to.
  *
- * A screen is a stack of full-bleed bands (the top bar, the section rail, the
+ * A screen is a stack of full-bleed bands (the top bar, the sections, the
  * content), and each one puts its contents in this column, so a title, a
- * toolbar button, and the table beneath them share a left and a right edge at
- * every window width.
+ * button in the top bar and the card beneath them share a left and a right
+ * edge at every window width.
  */
 export const COLUMN_CLASS =
     "mx-auto w-full max-w-[var(--width-content)] px-3 md:px-5";

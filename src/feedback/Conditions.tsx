@@ -40,8 +40,8 @@ const ORDER: Record<Tone, number> = {
  * or more hold, they stand one under another, a failure first, then a
  * warning, then what is under way or simply so, and last what came good,
  * each with its own action, and the app's order within a tone. The place is
- * said politely: a condition that
- * arrives is read out once, and a count that ticks inside one is not.
+ * said politely: a condition that arrives is read out once, and a count
+ * that ticks inside one is not.
  *
  * `Shell` holds one; a screen outside the shell puts one at its top. What
  * follows it there comes to rest below it when it is scrolled to. Drawn in

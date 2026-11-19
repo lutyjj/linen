@@ -33,14 +33,14 @@ export function useNarrow(): boolean {
 }
 
 /**
- * How wide an element is, for a layout the viewport cannot answer for: a
- * table shares out the width of its own box, which the rail beside it and the
+ * How wide an element is, for a layout the viewport cannot answer for: one
+ * that shares out the width of its own box, which the rail beside it and the
  * card around it have already spent some of. Undefined until it is measured.
  *
  * A callback ref rather than a `RefObject`, because the element being measured
- * is sometimes replaced by the very decision the measurement makes: a table
- * too narrow for its columns unmounts and comes back as a list of cards, and
- * an observer attached once would go on reporting the width of an element that
+ * is sometimes replaced by the very decision the measurement makes: a layout
+ * too narrow for its columns unmounts and comes back as a list, and an
+ * observer attached once would go on reporting the width of an element that
  * is no longer on the page.
  */
 export function useWidth(): [

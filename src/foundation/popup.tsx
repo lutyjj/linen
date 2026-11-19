@@ -15,7 +15,7 @@ export const POPUP_CLASS =
 /**
  * Every popup rides on a positioner, and the stacking order belongs there: the
  * popup itself is statically positioned, so a z-index on it does nothing while
- * the sticky table headers it must clear carry one of their own.
+ * the bars, the rail and the tab bar it must clear carry one of their own.
  */
 export const POSITIONER_CLASS = "z-50";
 

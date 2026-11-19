@@ -6,10 +6,9 @@ import { renderLeaving } from "../foundation/popup";
 
 /**
  * What a control shows and hides in place: a record's details, the filters a
- * phone folds away, a review band. Base UI's Collapsible owns whether it is
- * open and says so to assistive technology; `panel` (motion.css)
- * unfolds it from the control and folds it back, and the content mounts only
- * while it is open.
+ * phone folds away. Base UI's Collapsible owns whether it is open and says so
+ * to assistive technology; `panel` (motion.css) unfolds it from the control
+ * and folds it back, and the content mounts only while it is open.
  */
 export function DisclosurePanel({
     className,
