@@ -54,7 +54,7 @@ function Trail({ crumbs }: { crumbs: readonly Crumb[] }) {
         // before it, its own margin rather than the bar's gap.
         <nav
             aria-label={words.breadcrumb}
-            className="-mr-3 hidden max-w-max grow basis-0 self-baseline @[50rem]:block"
+            className="-mr-4 hidden max-w-max grow basis-0 self-baseline @[50rem]:block"
         >
             <ol className="flex items-baseline text-sm text-text-muted">
                 {folds && (
@@ -222,7 +222,7 @@ export function TopBar({
             <div
                 className={classes(
                     wide ? WIDE_COLUMN_CLASS : COLUMN_CLASS,
-                    "flex min-h-[var(--height-toolbar)] flex-wrap items-start gap-x-3 gap-y-2 py-2",
+                    "flex min-h-[var(--height-toolbar)] flex-wrap items-start gap-x-4 gap-y-2 py-2",
                 )}
             >
                 {trail?.length ? <Trail crumbs={trail} /> : null}
@@ -238,14 +238,14 @@ export function TopBar({
                     {isContent(before) && (
                         <div
                             className={classes(
-                                "flex h-(--height-control) shrink-0 items-center *:mr-3",
+                                "flex h-(--height-control) shrink-0 items-center *:mr-2",
                                 nearest && "@[50rem]:hidden",
                             )}
                         >
                             {before}
                         </div>
                     )}
-                    <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+                    <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
                         <h1
                             className={classes(
                                 SCREEN_TITLE_CLASS,
