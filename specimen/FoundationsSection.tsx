@@ -20,7 +20,22 @@ const PAPER: readonly Swatch[] = [
     { token: "--color-sunken", name: "Sunken" },
     { token: "--color-border", name: "Hairline" },
     { token: "--color-border-strong", name: "Strong hairline" },
-    { token: "--color-accent-weak", name: "Ink tint" },
+    { token: "--color-scrim", name: "Scrim", says: "Behind a dialog" },
+];
+
+const TINTS: readonly Swatch[] = [
+    {
+        token: "--color-accent-weak",
+        name: "Ink tint",
+        says: "A note, a choice",
+    },
+    {
+        token: "--color-positive-weak",
+        name: "Positive tint",
+        says: "A success",
+    },
+    { token: "--color-warn-weak", name: "Caution tint", says: "A warning" },
+    { token: "--color-danger-weak", name: "Danger tint", says: "A failure" },
 ];
 
 const TEXT: readonly Swatch[] = [
@@ -47,7 +62,7 @@ function Swatches({ swatches }: { swatches: readonly Swatch[] }) {
                                 {swatch.says}
                             </span>
                         )}
-                        <code className="block truncate font-mono text-[11px] text-text-muted">
+                        <code className="block truncate font-mono text-2xs text-text-muted">
                             {swatch.token}
                         </code>
                     </span>
@@ -68,9 +83,12 @@ const TYPE_STEPS: readonly { name: string; className: string }[] = [
     { name: "Base · 14", className: "text-base" },
     { name: "SM · 13", className: "text-sm text-text-secondary" },
     { name: "XS · 12", className: "text-xs text-text-muted" },
+    { name: "2XS · 11", className: "text-2xs text-text-muted" },
+    { name: "3XS · 10", className: "text-3xs text-text-muted" },
 ];
 
 const RADII: readonly { name: string; token: string }[] = [
+    { name: "Check · 3", token: "--radius-check" },
     { name: "Input · 6", token: "--radius-input" },
     { name: "Button · 8", token: "--radius-button" },
     { name: "Card · 12", token: "--radius-card" },
@@ -89,10 +107,13 @@ export function FoundationsSection() {
 
             <Specimen
                 title="Paper and tints"
-                rule="Every neutral is the primary ink's hue at a whisper of chroma, so the page is one temperature. Tints are mixes of an ink into the surface, never a colour picked by eye."
+                rule="Every neutral is the primary ink's hue at a whisper of chroma, so the page is one temperature. Tints are mixes of an ink into the surface, never a colour picked by eye: the ink's, and one for each state."
             >
                 <Group name="Surfaces and rules">
                     <Swatches swatches={PAPER} />
+                </Group>
+                <Group name="Tints">
+                    <Swatches swatches={TINTS} />
                 </Group>
                 <Group name="Text">
                     <Swatches swatches={TEXT} />
@@ -165,7 +186,7 @@ export function FoundationsSection() {
 
             <Specimen
                 title="Sizes and corners"
-                rule="Controls used together take the same height. Corners grow with the thing they round: a field, a button, a card, a dialog."
+                rule="Controls used together take the same height. Corners grow with the thing they round: a check, a field, a button, a card, a dialog."
             >
                 <Group name="Control heights">
                     <Samples>
