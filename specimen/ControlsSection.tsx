@@ -9,6 +9,7 @@ import {
     CardBody,
     CardHead,
     CellNumber,
+    CellSelect,
     CellText,
     Checkbox,
     Chip,
@@ -305,6 +306,8 @@ export function ControlsSection() {
     const [title, setTitle] = useState("Atlas");
     const [suggested, setSuggested] = useState<string>();
     const [query, setQuery] = useState("");
+    const [filterQuery, setFilterQuery] = useState("");
+    const [filterOwner, setFilterOwner] = useState("");
     const [picked, setPicked] = useState(["Orion"]);
     const [lastPicked, setLastPicked] = useState(0);
     // Shift takes every row between the last one pressed and this one.
@@ -849,6 +852,34 @@ export function ControlsSection() {
                     </Sample>
                     <Sample name="Trigger, disabled">
                         <ChipTrigger disabled>Any owner</ChipTrigger>
+                    </Sample>
+                    <Sample name="A bar of filters, compact">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <SearchField
+                                label="Search tasks"
+                                placeholder="Search tasks"
+                                value={filterQuery}
+                                onValueChange={setFilterQuery}
+                                className="min-h-(--height-control-compact) w-40"
+                            />
+                            <CellSelect
+                                aria-label="Owner"
+                                placeholder="Any owner"
+                                choices={[
+                                    { value: "ada", label: "Ada" },
+                                    { value: "grace", label: "Grace" },
+                                ]}
+                                value={filterOwner}
+                                onValueChange={setFilterOwner}
+                                className="min-h-(--height-control-compact)"
+                            />
+                            <Chip
+                                onRemove={() => undefined}
+                                removeLabel="Remove the Atlas filter"
+                            >
+                                Project: Atlas
+                            </Chip>
+                        </div>
                     </Sample>
                     <Sample name="Key">
                         <Kbd>Esc</Kbd>

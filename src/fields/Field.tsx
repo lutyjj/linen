@@ -20,7 +20,10 @@ const DISABLED_CLASS = "inactive:dimmed";
  *
  * Its height is a floor rather than a size. Chromium centres the line of an
  * input given a height a pixel below a picker's words; an input that meets
- * the floor lays its line where every field's words stand.
+ * the floor lays its line where every field's words stand. A caller sets
+ * another floor with `min-h-*`, as a filter beside bar chips takes
+ * `min-h-(--height-control-compact)`; an `h-*` stands beside the floor, which
+ * outvotes any height below it.
  */
 export const CONTROL_CLASS = `min-h-(--height-control) rounded-button border border-border-strong bg-surface px-2.5 text-sm text-text placeholder:text-text-muted pressable:hover:border-text-muted data-[popup-open]:border-text-muted aria-[invalid=true]:border-danger ${DISABLED_CLASS}`;
 
