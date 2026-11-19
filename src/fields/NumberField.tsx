@@ -118,10 +118,9 @@ export function CellNumber({
                     aria-label={ariaLabel}
                     aria-describedby={isContent(unit) ? unitId : undefined}
                     className="bg-transparent outline-none"
-                    render={(props, state) => (
+                    render={(props) => (
                         <ValueAndUnit
                             input={props}
-                            text={state.inputValue}
                             unit={unit}
                             unitId={unitId}
                         />

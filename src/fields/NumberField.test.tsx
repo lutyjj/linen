@@ -182,3 +182,24 @@ it("describes its value by no unit that is nothing", () => {
         "aria-describedby",
     );
 });
+
+it("shows its unit where a placeholder stands while empty, then after what is typed", async () => {
+    function Copies() {
+        const [value, setValue] = useState<number | null>(null);
+        return (
+            <NumberField
+                label="Copies"
+                unit="kept"
+                value={value}
+                onValueChange={setValue}
+            />
+        );
+    }
+    render(<Copies />);
+    const box = screen.getByRole("textbox", { name: "Copies" });
+    expect(screen.getByText("kept")).toBeVisible();
+    await userEvent.type(box, "12");
+    expect(box).toHaveFocus();
+    expect(box).toHaveValue("12");
+    expect(screen.getByText("kept")).toBeVisible();
+});

@@ -56,21 +56,24 @@ export const WIDTH_CLASS = "w-(--width) max-w-full";
  * its words, which gives the cell their width; when the room runs short the
  * unit gives way first, cut to an ellipsis, and only then the value. The
  * label around them takes a press anywhere beside the words to the input.
- * Without a unit the value stands the same way.
+ * A unit follows a value only: an empty field shows its placeholder alone,
+ * and one with no placeholder its unit where a placeholder stands. The unit
+ * describes the input whether it shows or not. Without a unit the value
+ * stands the same way.
  */
 export function ValueAndUnit({
     input,
-    text,
     unit,
     unitId,
 }: {
     /** The input's own props, as a Base UI part hands them to `render`. */
     input: ComponentProps<"input">;
-    /** What the input shows now: its value, or its placeholder. */
-    text: string;
     unit: ReactNode;
     unitId: string;
 }) {
+    const value = String(input.value ?? "");
+    const placeholder = input.placeholder ?? "";
+    const alone = value === "" && placeholder === "";
     return (
         <label className="grid min-w-0 flex-1 grid-cols-[minmax(0,max-content)_minmax(0,1fr)] content-center items-baseline px-2.5">
             <input
@@ -86,10 +89,17 @@ export function ValueAndUnit({
                 aria-hidden="true"
                 className="invisible col-start-1 row-start-1 overflow-hidden whitespace-pre"
             >
-                {text}{" "}
+                {value || placeholder}{" "}
             </span>
             {isContent(unit) && (
-                <span id={unitId} className="truncate text-text-muted">
+                <span
+                    id={unitId}
+                    hidden={value === "" && !alone}
+                    className={classes(
+                        "truncate text-text-muted",
+                        alone && "pointer-events-none col-start-1 row-start-1",
+                    )}
+                >
                     {unit}
                 </span>
             )}

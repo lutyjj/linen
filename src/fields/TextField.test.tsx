@@ -137,3 +137,41 @@ it("draws a cell whose unit is nothing as a cell without one", () => {
     rerender(<CellInput aria-label="Limit" unit="" />);
     expect(markup(container)).toBe(cell);
 });
+
+it("shows its unit after a value only, and keeps its input as the value arrives", async () => {
+    function SizeLimit() {
+        const [text, setText] = useState("");
+        return (
+            <CellInput
+                aria-label="Size limit"
+                unit="MB"
+                placeholder="No limit"
+                value={text}
+                onChange={(event) => setText(event.target.value)}
+            />
+        );
+    }
+    render(<SizeLimit />);
+    const box = screen.getByRole("textbox", { name: "Size limit" });
+    expect(box).toHaveAttribute("placeholder", "No limit");
+    expect(screen.getByText("MB")).not.toBeVisible();
+    // The unit describes the field before it shows.
+    expect(box).toHaveAccessibleDescription("MB");
+    await userEvent.type(box, "500");
+    expect(screen.getByRole("textbox", { name: "Size limit" })).toBe(box);
+    expect(box).toHaveFocus();
+    expect(box).toHaveValue("500");
+    expect(screen.getByText("MB")).toBeVisible();
+});
+
+it("shows its unit where a placeholder stands while empty with none", () => {
+    render(
+        <CellInput
+            aria-label="Retention"
+            unit="days"
+            value=""
+            onChange={() => undefined}
+        />,
+    );
+    expect(screen.getByText("days")).toBeVisible();
+});

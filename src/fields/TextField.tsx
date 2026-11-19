@@ -48,9 +48,14 @@ export function TextField({
  * floating beside it: it follows the value inside the frame, so "120" and
  * "seconds" read as one answer and move as one when the row wraps. A unit
  * needs a value the app holds, which it follows wherever it ends: a value
- * only the input holds can change unheard, as a form's reset changes it. Its
- * `className` is the frame's, as every field's is; the value starts at the
- * frame's inset whatever the frame is given.
+ * only the input holds can change unheard, as a form's reset changes it.
+ * A field with a unit draws its input inside the frame, and one without
+ * draws the input as the frame, so a unit must not come or go while the
+ * field has the focus: another input would take its place, and the focus,
+ * with what is typed after, would fall to the page. An empty field shows
+ * no unit beside a placeholder, so a field that has a unit is handed it
+ * always. Its `className` is the frame's, as every field's is; the value
+ * starts at the frame's inset whatever the frame is given.
  */
 export function CellInput({
     className = "",
@@ -95,15 +100,7 @@ export function CellInput({
                     style={widthStyle(width)}
                     className={classes(INPUT_FRAME_CLASS, "inline-flex", frame)}
                 >
-                    <ValueAndUnit
-                        input={props}
-                        text={
-                            String(rest.value ?? "") ||
-                            String(rest.placeholder ?? "")
-                        }
-                        unit={unit}
-                        unitId={unitId}
-                    />
+                    <ValueAndUnit input={props} unit={unit} unitId={unitId} />
                 </span>
             )}
         />

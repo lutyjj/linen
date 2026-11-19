@@ -172,6 +172,14 @@ function NumberSpecimen() {
                             step={500}
                         />
                         <HeldNumber
+                            label="Warn after"
+                            unit="days"
+                            hint="Empty, it never warns."
+                            start={null}
+                            min={1}
+                            max={365}
+                        />
+                        <HeldNumber
                             label="Storage limit"
                             name="limit"
                             unit="GB"
@@ -302,6 +310,7 @@ export function ControlsSection() {
     const [port, setPort] = useState("80800");
     const [listens, setListens] = useState("8080");
     const [retention, setRetention] = useState("900");
+    const [limit, setLimit] = useState("");
     const [note, setNote] = useState("Ships on Friday");
     const [title, setTitle] = useState("Atlas");
     const [suggested, setSuggested] = useState<string>();
@@ -457,6 +466,13 @@ export function ControlsSection() {
                         value={retention}
                         onChange={(event) => setRetention(event.target.value)}
                         unit="sec"
+                    />
+                    <TextField
+                        label="With a unit, empty"
+                        placeholder="No limit"
+                        value={limit}
+                        onChange={(event) => setLimit(event.target.value)}
+                        unit="MB"
                     />
                 </Form>
                 <Samples>
