@@ -114,7 +114,7 @@ function Tasks() {
             </CardHead>
             <table className="w-full border-separate border-spacing-0 text-sm">
                 <thead className="text-left text-xs text-text-muted">
-                    <tr className="[&>th]:h-9 [&>th]:border-b [&>th]:border-border [&>th]:px-gutter [&>th]:font-medium">
+                    <tr className="[&>th]:h-9 [&>th]:border-t [&>th]:border-border [&>th]:px-gutter [&>th]:font-medium">
                         <th>Task</th>
                         <th className="w-full">Owner</th>
                         <th>
@@ -127,7 +127,7 @@ function Tasks() {
                         {tasks.entries.map((task) => (
                             <SettlingTr
                                 key={task}
-                                className="[&>td]:border-b [&>td]:border-border [&>td]:p-gutter last:[&>td]:border-b-0"
+                                className="[&>td]:border-t [&>td]:border-border [&>td]:p-gutter"
                             >
                                 <td className="whitespace-nowrap">{task}</td>
                                 <td className="text-text-secondary">
@@ -204,11 +204,7 @@ function Exports() {
                                     style={{
                                         top: `calc(var(--row) * ${shown.from + at})`,
                                     }}
-                                    className={classes(
-                                        "absolute inset-x-0 flex h-(--row) items-center justify-between gap-2 px-gutter text-sm",
-                                        shown.from + at > 0 &&
-                                            "border-t border-border",
-                                    )}
+                                    className="absolute inset-x-0 flex h-(--row) items-center justify-between gap-2 border-t border-border px-gutter text-sm"
                                 >
                                     <span className="font-mono text-xs text-text-secondary">
                                         {file}

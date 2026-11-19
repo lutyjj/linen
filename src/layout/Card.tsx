@@ -7,10 +7,9 @@ import { isContent } from "../foundation/slot";
 /**
  * A part of a card after its head: a row, a body, a form band, a note, or a
  * row an app builds for a list in a card. It draws the hairline above itself
- * and holds its contents a gutter from each of its edges. `band` names it to
- * the card it stands in.
+ * and holds its contents a gutter from each of its edges.
  */
-export const BAND_CLASS = "band border-t border-border p-gutter";
+export const BAND_CLASS = "border-t border-border p-gutter";
 
 /**
  * The words' share of a line they hold with controls that wrap by fit, as a
@@ -23,10 +22,13 @@ export const WORDS_SHARE_CLASS = "grow-[1e9]";
 
 /**
  * One concern on the page: its head, then its bands, a hairline between one
- * and the next. Its own edge stands above its first part and below its last,
- * and the head draws the hairline under itself, so nothing at the edge or
- * straight under the head draws one: neither a part there nor a band first
- * in what stands there, such as a list of rows.
+ * and the next. Each part draws the hairline above itself, the head too, and
+ * the card's first child stands a pixel up under the card's own top edge,
+ * which covers the first hairline whatever holds it: a list, a panel or a
+ * swap. Nothing draws a hairline below itself, so a head with nothing
+ * showing under it ends on the card's edge. A first child that draws no
+ * hairline, such as an image, has its top pixel under the edge, and one
+ * that is hidden leaves the next part's hairline standing on the edge.
  */
 export function Card({
     className = "",
@@ -37,7 +39,7 @@ export function Card({
         <section
             {...props}
             className={classes(
-                "overflow-hidden rounded-card border border-border bg-surface [&>:is(:first-child,header+*)]:border-t-0 [&>:is(:first-child,header+*)>.band:first-child]:border-t-0 [&>:last-child]:border-b-0",
+                "overflow-hidden rounded-card border border-border bg-surface [&>:first-child]:-mt-px",
                 className,
             )}
         >
@@ -86,7 +88,7 @@ export function CardHead({
     return (
         <header
             className={classes(
-                "@container border-b border-border bg-surface p-gutter",
+                "@container border-t border-border bg-surface p-gutter",
                 className,
             )}
         >

@@ -10,7 +10,9 @@ import { useState } from "react";
 
 import {
     Actions,
+    BAND_CLASS,
     Button,
+    buttonClass,
     Card,
     CardBody,
     CardHead,
@@ -18,6 +20,7 @@ import {
     CellNumber,
     CellSelect,
     Chip,
+    classes,
     Content,
     CopyValue,
     Count,
@@ -35,6 +38,7 @@ import {
     SettingNote,
     SettingRow,
     SettingToggle,
+    Swap,
     TextField,
     TitleField,
     TopBar,
@@ -77,6 +81,8 @@ export function LayoutSection() {
     const [runs, setRuns] = useState("daily");
     const [zone, setZone] = useState("Europe/Lisbon");
     const [kept, setKept] = useState<number | null>(30);
+    const [shown, setShown] = useState("summary");
+    const [keeps, setKeeps] = useState(false);
 
     return (
         <Stack>
@@ -398,7 +404,7 @@ export function LayoutSection() {
                     />
                     <div
                         data-scroll-box
-                        className="max-h-80 overflow-y-auto scroll-pt-9"
+                        className="max-h-80 overflow-y-auto scroll-pt-9 border-t border-border"
                     >
                         <table className="w-full border-separate border-spacing-0 text-sm">
                             <thead className="text-left text-xs text-text-muted">
@@ -583,6 +589,102 @@ export function LayoutSection() {
                         />
                     </SettingRow>
                 </Card>
+            </Specimen>
+
+            <Specimen
+                title="Parts that come and go"
+                rule="A card draws one hairline between one part and the next whatever holds them: a panel that unfolds under the head or after the rows, and a view that swaps. A head with nothing showing under it ends on the card's edge."
+                framed={false}
+            >
+                <Collapsible.Root>
+                    <Card>
+                        <CardHead
+                            title="Delivery"
+                            description="Where each export is sent once it is written."
+                        >
+                            <Collapsible.Trigger className={buttonClass()}>
+                                Details
+                                <PickerMark />
+                            </Collapsible.Trigger>
+                        </CardHead>
+                        <DisclosurePanel>
+                            <CardBody>
+                                <Facts>
+                                    <Fact name="Sent to">
+                                        reports@example.com
+                                    </Fact>
+                                    <Fact name="Last sent">9 March</Fact>
+                                </Facts>
+                            </CardBody>
+                        </DisclosurePanel>
+                    </Card>
+                </Collapsible.Root>
+                <Card>
+                    <CardHead title="Last export">
+                        <SegmentedControl
+                            label="Shown"
+                            value={shown}
+                            options={[
+                                { value: "summary", label: "Summary" },
+                                { value: "files", label: "Files" },
+                            ]}
+                            onValueChange={setShown}
+                        />
+                    </CardHead>
+                    <Swap view={shown}>
+                        {shown === "summary" ? (
+                            <CardBody className="text-sm text-text-secondary">
+                                Written on 9 March in 4 seconds, 3 files.
+                            </CardBody>
+                        ) : (
+                            <ul>
+                                {WRITTEN.slice(0, 3).map(({ file, size }) => (
+                                    <li
+                                        key={file}
+                                        className={classes(
+                                            BAND_CLASS,
+                                            "flex justify-between text-sm",
+                                        )}
+                                    >
+                                        <span className="font-mono text-xs text-text-secondary">
+                                            {file}
+                                        </span>
+                                        <span className="text-text-muted tabular-nums">
+                                            {size}
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </Swap>
+                </Card>
+                <Collapsible.Root open={keeps}>
+                    <Card>
+                        <SettingToggle
+                            title="Keep copies"
+                            description="Each export stays after it is sent."
+                            label="Keep copies"
+                            checked={keeps}
+                            onCheckedChange={setKeeps}
+                        />
+                        <DisclosurePanel>
+                            <SettingRow
+                                title="Kept for"
+                                description="How long a copy stays before it is removed."
+                            >
+                                <CellNumber
+                                    aria-label="Kept for"
+                                    width={48}
+                                    unit="days"
+                                    value={kept}
+                                    onValueChange={setKept}
+                                    min={1}
+                                    max={365}
+                                />
+                            </SettingRow>
+                        </DisclosurePanel>
+                    </Card>
+                </Collapsible.Root>
             </Specimen>
 
             <Specimen
