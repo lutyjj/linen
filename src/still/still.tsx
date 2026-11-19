@@ -27,38 +27,20 @@ import {
  * every component on it.
  */
 
-/** The props Motion reads, which no element should be handed. */
+/**
+ * The props linen hands a Motion element, dropped from the plain one. A
+ * prop linen starts to pass reaches the page until it is listed here, and
+ * src/test/still.ts fails the run for it.
+ */
 const MOTION_PROPS = new Set([
     "initial",
     "animate",
     "exit",
     "transition",
-    "variants",
-    "custom",
-    "inherit",
-    "whileHover",
-    "whileTap",
-    "whileFocus",
-    "whileInView",
-    "whileDrag",
-    "viewport",
     "layout",
     "layoutId",
     "layoutScroll",
-    "layoutRoot",
     "layoutDependency",
-    "onAnimationComplete",
-    "onUpdate",
-    "onLayoutAnimationStart",
-    "onLayoutAnimationComplete",
-    "onHoverStart",
-    "onHoverEnd",
-    "onTap",
-    "onTapStart",
-    "onTapCancel",
-    "onViewportEnter",
-    "onViewportLeave",
-    "transformTemplate",
 ]);
 
 function withoutMotion(
@@ -100,8 +82,6 @@ export const m = new Proxy(
 ) as Record<string, ComponentType<Record<string, unknown>>> & {
     create: (renders: Renders) => ComponentType<Record<string, unknown>>;
 };
-
-export const motion = m;
 
 /**
  * Whether a child of `AnimatePresence` is still wanted, and how a part of it
@@ -233,8 +213,6 @@ export function useAnimate<Element = HTMLElement>(): [
     return [useRef<Element>(null), ended];
 }
 
-export const animate = ended;
-
 export function LazyMotion({ children }: { children?: ReactNode }) {
     return children;
 }
@@ -244,7 +222,6 @@ export function MotionConfig({ children }: { children?: ReactNode }) {
 }
 
 export const domMax = {};
-export const domAnimation = {};
 
 /** What a test sets on Motion's own config has nothing here to reach. */
 export const MotionGlobalConfig: Record<string, unknown> = {};

@@ -19,6 +19,7 @@ const MOTION_ATTRIBUTES = new Set(
         "layout",
         "layoutId",
         "layoutScroll",
+        "layoutScroll",
         "layoutRoot",
         "layoutDependency",
         "whileHover",

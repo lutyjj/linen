@@ -72,6 +72,8 @@ export default defineConfig({
 
 Every state stays, and so does every motion the stylesheet runs: popups, dialogs, panels, toasts, a press, the rail's tips and fold, arrival marks, a refresh's turn and the theme's cross-fade. What Motion would carry lands where it would have ended, as it does for a reader who asks for less motion. linen's types do not name Motion, so the app type-checks without it. linen's code imports `motion/react`, so an app does one or the other: installs `motion`, or resolves it to `linen/still`.
 
+`linen/still` provides what linen imports from `motion/react` and nothing more: `m` (with `m.create`), `useAnimate`, `AnimatePresence`, `usePresence`, `useIsPresent`, `LazyMotion`, `MotionConfig` and `domMax`. Its elements are plain ones that drop Motion's props, so an app that animates with Motion itself installs it and leaves the alias out.
+
 ### On Preact
 
 linen runs on Preact 11 through `preact/compat`, without Motion. Its own tests run every component that way on Preact 11.2, whose `preact/compat` tells libraries it is React 19, and `pnpm specimen:preact` draws them. With Vite, `@preact/preset-vite` resolves React to `preact/compat`, and the app resolves Motion to `linen/still`:
