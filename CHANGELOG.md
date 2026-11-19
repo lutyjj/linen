@@ -1,5 +1,84 @@
 # Changelog
 
+## [0.9.0](https://github.com/lutyjj/linen/compare/v0.8.1...v0.9.0) (2026-11-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* CardHead draws no hairline under itself. A part of a card that is not a band, such as a table or a box that scrolls, draws `border-t border-border` as BAND_CLASS does, and needs no rule taking the line off its first or last row. BAND_CLASS no longer carries the `band` class. A card's first child stands a pixel up under its top edge: one that draws no hairline, such as an image, has its top pixel under the edge, and a hidden first child leaves the next part's line on the edge. A card the app pads holds no head or bands. EmptyState's `className` is its card's; its padding stands in a band inside.
+* LinenProvider no longer takes `nonce`. An app that passed one deletes it; nothing linen draws carried it.
+* `linen/still` no longer exports `motion`, `animate` or `domAnimation`. An app that resolves `motion` to it and imports them installs Motion and drops the alias; the ones linen uses are unchanged.
+* RailRow, railItemClass and useRailCompact are no longer exported. An app that built a row of the rail's foot with them offers it as a RailChoice or in its account menu, or draws its own row. Lines: source +54/-60, specimen +11/-5. consumer/ gzipped: minimal 18956 B JS and 10141 B CSS, unchanged; app 89589 B JS (+18) and 10141 B CSS, inside budget.json.
+* a view of a Swap keeps its own first and last margins inside the swap, so a view that starts or ends with a margin stands that much further in; an app that relied on them collapsing out moves the space onto the Swap's className. A DisclosurePanel's className styles a frame around the panel: an app that styled the panel's own box, such as its padding or overflow, styles what the panel holds instead. Lines: source +64/-40, docs +1, budget +2/-2. consumer/ gzipped: minimal 18951 B JS (+2) and 9997 B CSS (+93); app 89857 B JS (+11) and 9997 B CSS (+93). The room's variables, the utilities that read it and the panel's rules take both pages past their 9984 B CSS budget, so budget.json raises it one step to 10048 B.
+* a press on a Button marked aria-disabled no longer runs its onClick: the button wears the disabled look, keeps its focus and starts nothing. An app that answered such a press itself, to say why the act is not available, leaves the button live and says so there, or shows the reason beside it.
+* CellSelect's inline prop is gone. Drop it: a picker inside a dialog or a popover chooses without closing it.
+* NumberField's onValueCommit is onValueCommitted, Base UI's name. A value with a unit, in NumberField, TextField, CellInput or CellText, starts at the frame's inset with its unit after it; a field's className dresses its frame, so text-right there moves nothing. CellInput and TextField take a unit only beside a value the app holds: an uncontrolled field with a unit holds its value in state. CONTROL_CLASS sets a minimum height rather than a height.
+* Field, and every field on it (TextField, Select, SearchSelect, NumberField), has no bottom margin, so fields stacked in a plain element touch. Give what stacks them flex flex-col gap-4 or grid gap-4 (CardBody, FormBand and a dialog's body already stack what they hold), and drop the mb-0 and negative margins that undid the old margin. Field's compact prop is gone: a field in a popup takes the name every field does. FieldRow's fields stand 16 px apart instead of 12, and in a column narrower than 28rem one under another, each filling the column. FieldRow takes its width from where it stands: as a flex item, or in a box that fits its contents, give it a width of its own.
+* ShownOnce's what is title, and the words it held as children are its description prop.
+* CardBody, FormBand and Content lay out each child as one block of a flex column 16 px apart, so an app changes what it stacks there. It drops the gap, grid or margins it gave those children. It puts a run of text and inline elements in one paragraph, which would otherwise break into lines 16 px apart; a lone button or link in Actions, which would otherwise stretch to the band's width; and w-full on a child centred with mx-auto and a max-w-*, which would otherwise shrink to its content. Nothing is a paragraph, so it takes words and links, not blocks. CopyValue grows to fill any flex row it stands in. Every band's padding, an empty state's sides, the gap under a name, the gaps beside words and the measure of a description change as above. A row an app builds in a card can wear BAND_CLASS in place of its own hairline, padding and rule for the head above it.
+* a className given to TitleField styles the frame the name stands in, not the input. Its type still reaches the input, which inherits font and colour; a class for the input's own box, such as its border or padding, no longer does.
+
+### Features
+
+* a box that scrolls inside a screen rests its rows at its own edge, clear of the bars ([d895f86](https://github.com/lutyjj/linen/commit/d895f864fc33f07f9c7e943f72966f7b9fce4c7c))
+* a fact takes a className ([298e252](https://github.com/lutyjj/linen/commit/298e252c8d216d42f9c2b08c44300cd0ad0ecd68))
+* a field's value starts at its inset, its unit a space after it ([4266cd3](https://github.com/lutyjj/linen/commit/4266cd3de5bcb9f53945831e740a2871841b2d4f))
+* a picker's list always leaves through a portal ([a5670df](https://github.com/lutyjj/linen/commit/a5670dfe4fac017c8409d6fe9426d9f3af1fa112))
+* a secret shown once takes a title and a description ([e2f3f2d](https://github.com/lutyjj/linen/commit/e2f3f2dccad39566b54485bf4348e2302bd35d04))
+* a section can be current at its own address alone ([88c418b](https://github.com/lutyjj/linen/commit/88c418b93011156110ed43436f43fff2d93bdae8))
+* every band of a card keeps one rhythm ([ca0b596](https://github.com/lutyjj/linen/commit/ca0b59660950b1ff94f06bfb29ca40763363a47f))
+* the Foundations page draws the type steps, tints, scrim and check corner it lacked ([2a55add](https://github.com/lutyjj/linen/commit/2a55add83a6b2609b6614606c20f85e3c5a20dec))
+* the specimen draws sections, a place's count and unsaved work ([29a8567](https://github.com/lutyjj/linen/commit/29a85674962706eb7c63dd0915888b103c438d89))
+
+
+### Bug Fixes
+
+* a box that clips keeps the focus ring's room in every browser ([ea149c4](https://github.com/lutyjj/linen/commit/ea149c427086de6460a73fc93d555b71c95b18e5))
+* a busy control answers no hover or press ([be6cd95](https://github.com/lutyjj/linen/commit/be6cd9548b0ca9295feca9f58dcd249902c176f0))
+* a button's hover and press step toward its words' ink in both themes ([841865a](https://github.com/lutyjj/linen/commit/841865aeefeb845639a1c18dbdd7b6660ce5776b))
+* a card draws one hairline between its parts whatever holds them ([e1cfbfd](https://github.com/lutyjj/linen/commit/e1cfbfd245de42713fe717dda27ba44adfebd9dd))
+* a checkbox's hairline answers the pointer ([0a5ff17](https://github.com/lutyjj/linen/commit/0a5ff17d9fc47f43e8d294cfe6d9faefbf69b21a))
+* a count handed nothing draws nothing ([1c1892e](https://github.com/lutyjj/linen/commit/1c1892ea61a00d68db9f289775ace940959814d4))
+* a dialog stands its parts on a band's steps ([53e5f73](https://github.com/lutyjj/linen/commit/53e5f735ac17f193b0d8aec5b4a1c55e9fec8243))
+* a disabled control has one look and answers no hover ([ebbe253](https://github.com/lutyjj/linen/commit/ebbe25383766a61cec9a634254ffe9a43f2ae790))
+* a field's hint and error keep the reading measure ([3f6c916](https://github.com/lutyjj/linen/commit/3f6c916cd26d1486ea4bf386a6b6304991b74ed5))
+* a field's unit follows a value only ([67c49bd](https://github.com/lutyjj/linen/commit/67c49bd45289352213194e35e8ca90a964b1ef09))
+* a long wordmark wraps beside the rail's fold ([6097cce](https://github.com/lutyjj/linen/commit/6097cce1e6a6ac4d76b33a2490fba2faf841515d))
+* a message widens a field in a row only up to 20rem ([b565a99](https://github.com/lutyjj/linen/commit/b565a99b280bfe921ff8939e841e6f1e99a472e0))
+* a number field at either end of its range is not drawn disabled ([63698c1](https://github.com/lutyjj/linen/commit/63698c1eefdf953cef86da65275dd2ab65714cb6))
+* a number field keeps its own step with Alt held ([06ca2d3](https://github.com/lutyjj/linen/commit/06ca2d38f7b57c85f57eccd57d5db2b588fce21a))
+* a prompt's box takes the focus from the dialog alone ([02700ab](https://github.com/lutyjj/linen/commit/02700ab744587d5e8d1d4c6ff92334448416c2f6))
+* a step whose act goes through a dialog keeps the focus ([fc673ad](https://github.com/lutyjj/linen/commit/fc673ade3db38d11e2426f12f5b2f6c2ddf51bc1))
+* a suggested option card stands out only until the question is answered ([f5e6eaf](https://github.com/lutyjj/linen/commit/f5e6eafa53923321ef40f4118a51030b2ec379a0))
+* a Tab stop in a box that scrolls comes into view the nearest way ([e655d89](https://github.com/lutyjj/linen/commit/e655d89a72f7616a73a97fc73d584e61a580ab62))
+* a toast wraps a long message at a glance's measure ([6eede27](https://github.com/lutyjj/linen/commit/6eede279406a7c3d34a21c743a2c0d02463ebba1))
+* a toast's answers are buttons ([69b3b5e](https://github.com/lutyjj/linen/commit/69b3b5ead0f00b4a0ec608ffd186e8429f1dbd2a))
+* a top bar and an editable title take className where they stand ([487f294](https://github.com/lutyjj/linen/commit/487f29464da1b25c8d5e9e83530aca9683a06609))
+* a top bar is as tall with a trail as with a lead ([ca6c4be](https://github.com/lutyjj/linen/commit/ca6c4beb2b80333df47d70d8e18cdda94b30e341))
+* an app's stylesheet holds no utility from linen's doc comments ([da91715](https://github.com/lutyjj/linen/commit/da917157dd8a961204a7144232dc26d784bcfe9a))
+* an editable title is as narrow as a short name ([70ffeda](https://github.com/lutyjj/linen/commit/70ffedaeb209095c287f4ad6d09834a49937aa88))
+* an editable title wears linen's focus ring ([963c2e7](https://github.com/lutyjj/linen/commit/963c2e789620955ed1487b6a2779ee8f16baaa99))
+* every card head stands the same, with actions or without ([1da5e33](https://github.com/lutyjj/linen/commit/1da5e337a6d28ec2e56f17652f8f8cc6447e909f))
+* every place in navigation wears one look ([2db4ba3](https://github.com/lutyjj/linen/commit/2db4ba38fab6c49c000c87078da963c890ddf301))
+* small faults in controls and feedback ([c34b9eb](https://github.com/lutyjj/linen/commit/c34b9eb8bed55a5d7e35519577235c7c6d9ebaca))
+* text corrected in place keeps its value through a failed write ([d6081cb](https://github.com/lutyjj/linen/commit/d6081cbc6a1430c66b98bc312aef58297431afb9))
+* the conditions band spaces its parts as a notice does ([02fabff](https://github.com/lutyjj/linen/commit/02fabffc6de4092d246ad80c963da7f2d48a0acb))
+* the disabled look yields to a caller's class and keeps its words ([110941b](https://github.com/lutyjj/linen/commit/110941b2dc0e90f98605de3f0e0e947d13e8d532))
+* the search box in a picker's list shows its focus ([2f002e1](https://github.com/lutyjj/linen/commit/2f002e130aa679abca4b55c076fda24e8b916d52))
+* the sections take a className and each shell job is done once ([6338f0d](https://github.com/lutyjj/linen/commit/6338f0db9e82398e1691838adbb9b44933f01294))
+* the shell spaces its parts on the 4px scale ([811cefd](https://github.com/lutyjj/linen/commit/811cefde89e5c1a81e611d3ff795fbe4370477b9))
+* the specimen pins the saved theme before the first paint ([e07a646](https://github.com/lutyjj/linen/commit/e07a646df2d356f840d8bf72152a475742ce75e6))
+* the specimen's screens leave a sticky toast's room at their foot ([dbaccda](https://github.com/lutyjj/linen/commit/dbaccda42f5f82bdff39dbf360be6cc82a8a30f2))
+* the top bar spaces its parts on the Layout rule ([9290397](https://github.com/lutyjj/linen/commit/9290397101e45dcf7a93069c71627c7b5bbe2293))
+* what reads beside a head's title never makes its row taller ([e261789](https://github.com/lutyjj/linen/commit/e261789e45fb5ab9cf7aaf8c10bfb8c39f1358d0))
+* what stacks fields sets the room between them ([8a45fec](https://github.com/lutyjj/linen/commit/8a45fec18e49f53e905b69828a00619a3ce626ea))
+
+
+### Code Refactoring
+
+* linen/still provides what linen imports from Motion and no more ([3cc2646](https://github.com/lutyjj/linen/commit/3cc26464ec2add555adb3d689346f39e23a3c830))
+* LinenProvider takes no nonce, which reached nothing ([3e92661](https://github.com/lutyjj/linen/commit/3e926611e5e120d2ad3c699970528cc59bb28879))
+
 ## [0.8.1](https://github.com/lutyjj/linen/compare/v0.8.0...v0.8.1) (2026-11-18)
 
 
