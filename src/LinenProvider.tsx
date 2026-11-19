@@ -14,26 +14,23 @@ import {
  * between its pages, and one clock for every animation.
  *
  * Base UI draws no `<style>` of its own beneath it; linen.css holds the one
- * rule it would have drawn, so a page served under a Content Security
- * Policy that forbids inline styles needs no nonce for linen. An app whose
- * policy names a nonce hands it here, and Base UI's scripts carry it.
+ * rule it would have drawn, and linen uses none of the parts that draw a
+ * `<script>`, so a page served under a Content Security Policy that forbids
+ * inline styles and scripts needs no nonce for linen.
  */
 export function LinenProvider({
     words = ENGLISH,
     navigation,
-    nonce,
     children,
 }: {
     words?: Words;
     /** The app's router, which linen's links follow; plain anchors without. */
     navigation?: Navigation;
-    /** The page's Content Security Policy nonce, where it has one. */
-    nonce?: string;
     children: ReactNode;
 }) {
     const moves = useMemo(() => navigationOf(navigation), [navigation]);
     return (
-        <CSPProvider nonce={nonce} disableStyleElements>
+        <CSPProvider disableStyleElements>
             <WordsContext value={words}>
                 <NavigationContext value={moves}>
                     <MotionProvider>{children}</MotionProvider>

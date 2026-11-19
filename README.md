@@ -41,7 +41,7 @@ export function App() {
 }
 ```
 
-linen asks Base UI to draw no `<style>` of its own, and `linen.css` holds the rule it would have drawn, so a page served under a Content Security Policy that forbids inline styles needs no nonce for linen. An app whose policy names a nonce hands it to `LinenProvider` (`nonce`), which passes it to Base UI.
+linen asks Base UI to draw no `<style>` of its own, `linen.css` holds the rule it would have drawn, and linen uses none of the Base UI parts that draw an inline `<script>`, such as `Tabs.Indicator` and `Slider.Thumb`. A page served under a Content Security Policy that forbids inline styles and scripts needs no nonce for linen; an app that renders such a part itself wraps it in Base UI's `CSPProvider`.
 
 The links in `Shell`, `TopBar` and `SectionNav` are plain anchors that load the page they lead to. An app with a router hands its links to linen as `navigation`; for React Router, `linen/react-router` exports the adapter, and holding a move for unsaved work (`UnsavedChangesGuard`) needs a data router (`createBrowserRouter`):
 
