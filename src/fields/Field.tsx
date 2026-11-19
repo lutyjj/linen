@@ -125,7 +125,20 @@ export function Field({
             name={name}
             validate={validate}
             data-field
-            className={classes("min-w-0 max-w-full", className)}
+            className={classes(
+                // In a row of fields, its name and messages widen it to 20rem
+                // at most, and not at all once it states that much; one that
+                // states no width is held to the row alone.
+                "min-w-0 max-w-full @md/row:max-w-[max(20rem,var(--width,100%))]",
+                className,
+            )}
+            style={
+                width === undefined
+                    ? undefined
+                    : ({
+                          "--width": `calc(var(--spacing) * ${width})`,
+                      } as CSSProperties)
+            }
         >
             <BaseField.Label
                 nativeLabel={false}
@@ -140,15 +153,7 @@ export function Field({
                 // A stated width is the control's, up to the width the field
                 // is given. Its name and its messages take the room the field
                 // stands in, so a narrow control's error reads in a line.
-                <div
-                    data-width
-                    className="w-(--width) max-w-full"
-                    style={
-                        {
-                            "--width": `calc(var(--spacing) * ${width})`,
-                        } as CSSProperties
-                    }
-                >
+                <div data-width className="w-(--width) max-w-full">
                     {children}
                 </div>
             )}
@@ -191,8 +196,10 @@ export function Field({
  * on the foot of the line. While any field says something under its control,
  * the row stands on the top instead, and what is not a field stands a name's
  * room down, its 20px line and 4px gap, so the controls keep one line and the
- * message hangs below it. A field widens to hold its message, which moves
- * what follows it along the row. A field may stand in an element of its own.
+ * message hangs below it. A narrow field widens to hold its name and its
+ * messages, up to 20rem, which moves what follows it along the row; a field
+ * that states 20rem or more keeps its width, and its messages wrap under its
+ * control. A field may stand in an element of its own.
  *
  * In a column narrower than 28rem, a phone's, the row stands its fields one
  * under another, each filling the column whatever width it states, and its

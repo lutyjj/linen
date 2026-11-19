@@ -621,6 +621,46 @@ export function ControlsSection() {
             </Specimen>
 
             <Specimen
+                title="Fields in a row"
+                rule="A narrow field widens to hold its name and messages, up to 20rem, so a refusal reads in a line. A field that states 20rem or more keeps its width, and its hint wraps under its control: wide fields stand two by two, and an action stays beside the field it belongs to."
+            >
+                <div className="grid max-w-2xl gap-4">
+                    <FieldRow>
+                        <TextField
+                            label="Title"
+                            width={80}
+                            defaultValue="Quarterly report"
+                        />
+                        <TextField
+                            label="Recipients"
+                            width={80}
+                            defaultValue="team@example.com"
+                        />
+                        <TextField
+                            label="Subject"
+                            width={80}
+                            hint="Shown at the top of every mail it sends, and as the name of the file it attaches."
+                            defaultValue="Your report for the quarter"
+                        />
+                        <TextField
+                            label="Reply to"
+                            width={80}
+                            defaultValue="reports@example.com"
+                        />
+                    </FieldRow>
+                    <FieldRow>
+                        <TextField
+                            label="Project name"
+                            width={96}
+                            hint="Everyone in the workspace sees it, in the rail, on every report and in each mail."
+                            defaultValue="Atlas"
+                        />
+                        <Button>Save</Button>
+                    </FieldRow>
+                </div>
+            </Specimen>
+
+            <Specimen
                 title="Fields on a phone"
                 rule="A field's stated width is its control's, up to the width it is given; its name and its messages take the room the field stands in. On a phone a row of fields stands them one under another, each filling the column. A picker's list is never wider than the screen; a long choice wraps. Narrow the window to a phone's width: every chevron stays inside the card."
             >

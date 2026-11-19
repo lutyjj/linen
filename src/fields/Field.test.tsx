@@ -163,7 +163,9 @@ it("holds only its control to a stated width, never its name or its messages", (
     );
     const port = screen.getByRole("textbox", { name: "Port" });
     const held = port.parentElement;
-    expect(held).toHaveStyle({ "--width": "calc(var(--spacing) * 20)" });
+    expect(held?.parentElement).toHaveStyle({
+        "--width": "calc(var(--spacing) * 20)",
+    });
     expect(held).not.toContainElement(
         screen.getByText("A port is a whole number up to 65535."),
     );
