@@ -88,19 +88,21 @@ export function Conditions({
                         <div
                             className={classes(
                                 COLUMN_CLASS,
-                                "flex flex-wrap items-center gap-x-2.5 gap-y-1.5 py-2 text-sm",
+                                "flex flex-wrap items-center gap-x-4 gap-y-2 py-2 text-sm",
                             )}
                         >
-                            <ToneIcon tone={tone} active={active} />
-                            <div className="flex min-w-0 flex-[1_1_14rem] flex-wrap items-baseline gap-x-2">
-                                <span className="font-medium break-words">
-                                    {title}
-                                </span>
-                                {isContent(description) && (
-                                    <span className="text-text-secondary">
-                                        {description}
+                            <div className="flex min-w-0 flex-[1_1_16rem] items-center gap-2">
+                                <ToneIcon tone={tone} active={active} />
+                                <div className="flex min-w-0 flex-wrap items-baseline gap-x-2">
+                                    <span className="font-medium break-words">
+                                        {title}
                                     </span>
-                                )}
+                                    {isContent(description) && (
+                                        <span className="text-text-secondary">
+                                            {description}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                             {isContent(action) && (
                                 <div className="ml-auto flex shrink-0 items-center gap-2">
