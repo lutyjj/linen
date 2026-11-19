@@ -184,7 +184,7 @@ function Toaster({ children }: { children: ReactNode }) {
                     onKeyDown={(event) => {
                         if (event.key === "Escape") event.stopPropagation();
                     }}
-                    className="fixed bottom-[calc(var(--inset-tabbar,0px)_+_env(safe-area-inset-bottom)_+_--spacing(3))] left-1/2 z-60 w-max max-w-[calc(100vw_-_--spacing(6))] -translate-x-1/2 outline-none md:bottom-5 md:max-w-none"
+                    className="fixed bottom-[calc(var(--inset-tabbar,0px)_+_env(safe-area-inset-bottom)_+_--spacing(3))] left-1/2 z-60 w-max max-w-[calc(100vw_-_--spacing(6))] -translate-x-1/2 outline-none md:bottom-5 md:max-w-md"
                 >
                     {toasts.toasts.map((toast) => (
                         <ToastSurface key={toast.id} toast={toast} />
