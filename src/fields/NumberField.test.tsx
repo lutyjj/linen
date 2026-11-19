@@ -11,14 +11,15 @@ function Volume(
         ComponentProps<typeof NumberField>,
         "label" | "value" | "onValueChange"
     > & {
+        label?: string;
         start?: number;
     },
 ) {
-    const { start = -20, ...rest } = props;
+    const { label = "Volume", start = -20, ...rest } = props;
     const [value, setValue] = useState<number | null>(start);
     return (
         <NumberField
-            label="Volume"
+            label={label}
             hint="The level the output starts at."
             unit="dB"
             min={-60}
@@ -91,6 +92,24 @@ it("takes ten of its own steps with Shift held, unless it says otherwise", async
     await user.click(fine);
     await user.keyboard("{Shift>}{ArrowDown}{/Shift}");
     expect(fine).toHaveValue("0.5");
+});
+
+it("takes its own step with Alt held, unless it says otherwise", async () => {
+    const user = userEvent.setup();
+    render(
+        <>
+            <Volume label="Whole" />
+            <Volume label="Halves" smallStep={0.5} />
+        </>,
+    );
+    const whole = screen.getByRole("textbox", { name: "Whole" });
+    await user.click(whole);
+    await user.keyboard("{Alt>}{ArrowUp}{/Alt}");
+    expect(whole).toHaveValue("-19");
+    const halves = screen.getByRole("textbox", { name: "Halves" });
+    await user.click(halves);
+    await user.keyboard("{Alt>}{ArrowDown}{/Alt}");
+    expect(halves).toHaveValue("-20.5");
 });
 
 it("at either end of its range disables only the step that cannot go further", async () => {

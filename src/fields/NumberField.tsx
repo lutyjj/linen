@@ -22,9 +22,10 @@ const STEP_CLASS =
  * A number set within a range in steps: its value where every field's value
  * starts, its unit a space after it, and the step down and the step up
  * together at the frame's end, where a picker's mark stands. The keyboard
- * steps it with the arrows, a large step at a time with Shift held, and to
- * either end with Home and End; typing sets it directly and leaving the field
- * brings it back inside the range. Base UI's number field carries all of it.
+ * steps it with the arrows, by its own step with Alt held too, a large step
+ * at a time with Shift held, and to either end with Home and End; typing
+ * sets it directly and leaving the field brings it back inside the range.
+ * Base UI's number field carries all of it.
  *
  * This is the bare control, named by `aria-label`, for a setting's row or a
  * table cell; `NumberField` stands it under its name.
@@ -40,6 +41,7 @@ export function CellNumber({
     min,
     max,
     step = 1,
+    smallStep = step,
     largeStep = step * 10,
     unit,
     format,
@@ -56,6 +58,8 @@ export function CellNumber({
     min?: number;
     max?: number;
     step?: number;
+    /** A step with Alt held: its own step unless it says otherwise. */
+    smallStep?: number;
     /** A step with Shift held: ten of its steps unless it says otherwise. */
     largeStep?: number;
     /** What the number counts, such as `dB`, a space after it. */
@@ -82,6 +86,7 @@ export function CellNumber({
             min={min}
             max={max}
             step={step}
+            smallStep={smallStep}
             largeStep={largeStep}
             format={format}
             disabled={disabled}
