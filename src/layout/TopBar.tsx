@@ -310,10 +310,9 @@ export function TitleField({
                 {...props}
                 value={value}
                 placeholder={placeholder}
-                size={1}
                 className={classes(
                     frame,
-                    "col-start-1 row-start-1 w-full min-w-0 bg-transparent text-ellipsis placeholder:text-text-muted hover:border-border focus-visible:border-border-strong focus-visible:bg-surface",
+                    "col-start-1 row-start-1 w-0 min-w-full bg-transparent text-ellipsis placeholder:text-text-muted hover:border-border focus-visible:border-border-strong focus-visible:bg-surface",
                 )}
             />
         </span>
