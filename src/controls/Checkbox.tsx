@@ -6,7 +6,7 @@ import { isContent } from "../foundation/slot";
 
 /** The box, marked in the ink while ticked or mixed. */
 const BOX_CLASS =
-    "inline-flex size-4 shrink-0 items-center justify-center rounded-check border border-border-strong bg-surface align-[-2px] text-bg data-[checked]:border-accent data-[checked]:bg-accent data-[indeterminate]:border-accent data-[indeterminate]:bg-accent";
+    "inline-flex size-4 shrink-0 items-center justify-center rounded-check border border-border-strong bg-surface align-[-2px] text-bg pressable:hover:border-text-muted data-[checked]:border-accent data-[checked]:bg-accent data-[indeterminate]:border-accent data-[indeterminate]:bg-accent";
 
 /** A box that stands alone answers the hand and dims itself. */
 const ALONE_CLASS = "pressable:cursor-pointer inactive:dimmed";
