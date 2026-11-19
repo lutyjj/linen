@@ -58,7 +58,7 @@ export function Card({
  * description takes the head's width either way. The title's row is a
  * control tall in every head, so heads side by side or one under another
  * keep their titles, descriptions and hairlines in line, with actions or
- * without.
+ * without, and whatever reads beside the title.
  */
 export function CardHead({
     title,
@@ -95,9 +95,14 @@ export function CardHead({
             <div className="flex flex-wrap items-start gap-x-4 gap-y-2">
                 <div className={`min-w-0 ${WORDS_SHARE_CLASS}`}>
                     {/* The title's first line is centred in a control's
-                        height, the band the actions stand in. */}
-                    <div className="flex min-w-0 flex-wrap items-baseline gap-2 py-[calc((var(--height-control)-var(--text-md--line-height))/2)]">
-                        <h2 className="text-md font-semibold">{title}</h2>
+                        height, the band the actions stand in, and what
+                        reads beside it stands on its baseline inside that
+                        band, so it never makes the row taller; one that
+                        wraps stands 8px under the title's words. */}
+                    <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+                        <h2 className="py-[calc((var(--height-control)-var(--text-md--line-height))/2)] text-md font-semibold">
+                            {title}
+                        </h2>
                         {aside}
                     </div>
                     {/* The description reaches under the actions and lends

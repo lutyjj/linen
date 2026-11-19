@@ -384,6 +384,7 @@ export function LayoutSection() {
                     <Card>
                         <CardHead
                             title="Last week"
+                            aside={<Chip size="row">Archived</Chip>}
                             description="Tasks closed the week before."
                         />
                         <Nothing>None were closed.</Nothing>
