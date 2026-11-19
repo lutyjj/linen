@@ -46,6 +46,17 @@ if (!("scrollIntoView" in Element.prototype)) {
     });
 }
 
+// Nor does it scroll a box to a place: it only keeps the place it is given.
+if (!("scrollTo" in Element.prototype)) {
+    Object.defineProperty(Element.prototype, "scrollTo", {
+        configurable: true,
+        value(this: Element, { left, top }: ScrollToOptions) {
+            if (left !== undefined) this.scrollLeft = left;
+            if (top !== undefined) this.scrollTop = top;
+        },
+    });
+}
+
 // Nor does jsdom know an animation's events, which name the animation.
 if (!("AnimationEvent" in window)) {
     class AnimationEventStub extends Event {

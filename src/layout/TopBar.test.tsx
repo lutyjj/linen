@@ -242,22 +242,51 @@ it("holds the bars' room as the page's scroll padding while the focus is inside 
     expect(root.style.scrollPaddingTop).toBe("");
 });
 
-it("brings a focus the Tab key takes into a box into view again, and leaves any other as it came", async () => {
+it("brings each stop the Tab key moves to in a box into view from where the key found it, and leaves any other focus as it came", async () => {
     renderBox();
+    const box = screen.getByRole("button", { name: "First" }).parentElement!;
     const shown = vi.spyOn(Element.prototype, "scrollIntoView");
     screen
         .getByRole("button", { name: "First" })
         .focus({ preventScroll: true });
     expect(shown).not.toHaveBeenCalled();
     screen.getByRole("button", { name: "Elsewhere" }).focus();
+    // The browser scrolls to where the key goes as the key is pressed, as
+    // Chromium does, here to the middle of the box.
+    box.scrollTop = 30;
+    const centre = ({ key }: KeyboardEvent) => {
+        if (key === "Tab") box.scrollTop = 99;
+    };
+    document.addEventListener("keydown", centre);
     await userEvent.tab({ shift: true });
+    expect(box.scrollTop).toBe(30);
     await userEvent.tab({ shift: true });
     expect(screen.getByRole("button", { name: "First" })).toHaveFocus();
-    // Once as the focus entered the box, at Second, and not again at First.
-    expect(shown).toHaveBeenCalledTimes(1);
-    expect(shown.mock.contexts[0]).toBe(
+    expect(box.scrollTop).toBe(30);
+    expect(shown.mock.contexts).toEqual([
         screen.getByRole("button", { name: "Second" }),
-    );
+        screen.getByRole("button", { name: "First" }),
+    ]);
+    expect(shown).toHaveBeenCalledWith({ block: "nearest" });
+    document.removeEventListener("keydown", centre);
+    shown.mockRestore();
+});
+
+it("leaves a focus as it came where a script takes the Tab key itself", async () => {
+    renderBox();
+    const shown = vi.spyOn(Element.prototype, "scrollIntoView");
+    const first = screen.getByRole("button", { name: "First" });
+    const own = (press: KeyboardEvent) => {
+        if (press.key !== "Tab") return;
+        press.preventDefault();
+        first.focus({ preventScroll: true });
+    };
+    document.addEventListener("keydown", own);
+    screen.getByRole("button", { name: "Elsewhere" }).focus();
+    await userEvent.tab();
+    expect(first).toHaveFocus();
+    expect(shown).not.toHaveBeenCalled();
+    document.removeEventListener("keydown", own);
     shown.mockRestore();
 });
 

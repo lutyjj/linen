@@ -125,11 +125,33 @@ export function scrolls(box: Element): boolean {
 /** The bars that stand now, each with the property that says its height. */
 const bars = new Map<HTMLElement, string>();
 
-/** Whether the key last pressed was Tab, which moves the focus in turn. */
-let tabbed = false;
+/**
+ * The Tab key's press, with where the page and each box that scrolls inside
+ * a screen stood as it was pressed, until the focus it moves arrives: the
+ * browser moves it, and scrolls to it, as part of the press, so a Tab that
+ * moves no focus forgets it once that press is over.
+ */
+let tab: {
+    press: KeyboardEvent;
+    places: [Element, number, number][];
+} | null = null;
 
-function noteKey({ key }: KeyboardEvent) {
-    tabbed = key === "Tab";
+function noteKey(press: KeyboardEvent) {
+    tab = null;
+    if (press.key !== "Tab") return;
+    const scrollers = [
+        document.documentElement,
+        ...document.querySelectorAll("[data-scroll-box]"),
+    ];
+    tab = {
+        press,
+        places: scrollers.map((scroller) => [
+            scroller,
+            scroller.scrollLeft,
+            scroller.scrollTop,
+        ]),
+    };
+    setTimeout(() => (tab = null));
 }
 
 /** Whether a focus target stands inside a box that scrolls in a screen. */
@@ -148,26 +170,37 @@ function unpad() {
  * While the focus is inside a box that scrolls inside a screen
  * (`data-scroll-box`), the room of the bars stuck to the page is the page's
  * scroll padding, so the focus comes to rest clear of them; elsewhere the
- * page has none, so the bars and the popups over them move nothing. Where
- * the Tab key goes, a browser may scroll before it tells of the focus, as
- * Chromium does, so a focus the Tab key brings into a box is brought into
- * view once more with the padding; every other focus stays as it came.
- * LANGUAGE.md says what this leaves short.
+ * page has none, so the bars and the popups over them move nothing.
+ *
+ * A workaround for how Chromium scrolls to where the Tab key moves the
+ * focus: it scrolls before it tells of the focus, so without the padding
+ * as the focus enters a box, and it centres a stop it finds wholly out of
+ * view, as one under the bars or under the box's heading is. So a focus
+ * the Tab key moves into or inside a box, where the press was not
+ * prevented, puts back what the press scrolled and comes into view the
+ * nearest way with the padding, before anything is painted: a stop
+ * already in view moves nothing, and an engine that already scrolls the
+ * nearest way sees no change. A scroller between the box and the page,
+ * such as a dialog's body, still centres the stop. It goes once Chromium
+ * scrolls the nearest way for the Tab key. A focus a script or a pointer
+ * moves stays as it came. LANGUAGE.md says what this leaves short.
  */
 function enter({ target }: FocusEvent) {
-    const byTab = tabbed;
-    tabbed = false;
+    const pressed = tab;
+    tab = null;
     if (!inBox(target)) return unpad();
-    const root = document.documentElement;
-    const entering = root.style.scrollPaddingTop === "";
     let foot = 0;
     for (const bar of bars.keys()) {
         if (!bar.hasAttribute("data-sticky")) continue;
         const top = parseFloat(getComputedStyle(bar).top) || 0;
         foot = Math.max(foot, top + bar.offsetHeight);
     }
-    root.style.scrollPaddingTop = `${foot}px`;
-    if (entering && byTab) target.scrollIntoView({ block: "nearest" });
+    document.documentElement.style.scrollPaddingTop = `${foot}px`;
+    if (pressed === null || pressed.press.defaultPrevented) return;
+    for (const [scroller, left, top] of pressed.places) {
+        scroller.scrollTo({ left, top, behavior: "instant" });
+    }
+    target.scrollIntoView({ block: "nearest" });
 }
 
 function leave({ relatedTarget }: FocusEvent) {
