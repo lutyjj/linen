@@ -159,7 +159,9 @@ function Specimen() {
             }
         >
             <TopBar title={screen?.label ?? "linen"} />
-            <Content>{screen?.element}</Content>
+            {/* A toast that stays covers the foot of the screen until it is
+                dismissed: the room lets the last samples scroll clear of it. */}
+            <Content className="pb-24">{screen?.element}</Content>
         </Shell>
     );
 }
